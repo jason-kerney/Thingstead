@@ -9,4 +9,12 @@
     <Compile Include="Program.fs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TestRunner.Default\TestRunner.Default.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.2.3" />
+  </ItemGroup>
+
 </Project>

@@ -28,3 +28,9 @@ type Test =
         TestName : string
         TestFunction : unit -> TestResult
     }
+
+type TestExecutionReport =
+    {
+        Failures: Test list
+        Successes: Test list
+    }
