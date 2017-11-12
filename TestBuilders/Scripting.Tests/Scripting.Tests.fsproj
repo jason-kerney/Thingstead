@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>TestBuilders.Scripting.Tests</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TestRunner.Default\TestRunner.Default.fsproj" />
+    <ProjectReference Include="..\Scripting\Scripting.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
