@@ -1,6 +1,12 @@
 namespace SolStone.SharedTypes
 open System
 
+//type IndeterminateInfo =
+//    {
+//        OriginalFailure : FailureType
+//        NewFailure: FailureType
+//    }
+//and 
 type FailureType =
     | GeneralFailure of string
     | ExpectationFailure of string
@@ -8,6 +14,7 @@ type FailureType =
     | Ignored of String
     | StandardNotMet of String
     | SetupFailure of FailureType
+//   | IndeterminateFailure of IndeterminateInfo
 
 type TestResult =
     | Success
@@ -31,6 +38,6 @@ type Test =
 
 type TestExecutionReport =
     {
-        Failures: Test list
+        Failures: (Test * FailureType) list
         Successes: Test list
     }
