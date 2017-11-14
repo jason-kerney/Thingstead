@@ -1,5 +1,9 @@
-namespace TestRunner.Default
+namespace SolStone.TestRunner.Default
+open SolStone.SharedTypes
 
-module Say =
-    let hello name =
-        printfn "Hello %s" name
+module Framework =
+    let executer tests =  
+        {
+            Failures = []
+            Successes = tests
+        }
