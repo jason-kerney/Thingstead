@@ -20,6 +20,19 @@ let test name fn =
     with
     | e -> printfn "Failure: %s" e.Message
 
+let createTest name fn = 
+    {
+        TestContainerPath = []
+        TestName = name
+        TestFunction = fn
+    }
+
+let createSuccessfullTest name =
+    createTest name (fun () -> Success)
+
+let createFailingTest name failure =
+    createTest name (fun () -> Failure failure)
+
 [<EntryPoint>]
 let main _argv =
     test "true is true" (fun () ->
@@ -28,12 +41,7 @@ let main _argv =
 
     test "Shows a successful test as being successfull" 
             (fun () ->
-                let testCase = {
-                        TestContainerPath = []
-                        TestName = "A passing test"
-                        TestFunction = (fun () -> Success)
-                    }
-
+                let testCase = createSuccessfullTest "A passing test"
                 let result = executer [testCase] |> fun result -> result.Successes |> List.head
             
                 let expected : string = testCase.TestName
@@ -45,11 +53,7 @@ let main _argv =
     test "Shows a failed test as failing" 
             (fun () ->
                 let failure = GeneralFailure "Bad Test"
-                let testCase = {
-                        TestContainerPath = []
-                        TestName = "A passing test"
-                        TestFunction = (fun () -> Failure (failure))
-                    }
+                let testCase = createFailingTest "A passing test" failure
 
                 let result = executer [testCase] |> fun result -> result.Failures |> List.head
                 let expected = testCase.TestName, failure
