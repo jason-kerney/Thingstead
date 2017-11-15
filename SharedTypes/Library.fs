@@ -41,3 +41,7 @@ type TestExecutionReport =
         Failures: (Test * FailureType) list
         Successes: Test list
     }
+
+[<AutoOpen>]
+module Support =
+    let startingReport = { Failures = []; Successes = [] }
