@@ -26,11 +26,12 @@ module Framework =
 
     let executerWithSeed (tests : Test list) seed =
         let rand = Random (seed) 
-        let report = 
-            tests
-                |> shuffle (rand.Next)
-                |> List.fold addTest startingReport
-        { report with Seed = Some seed }            
+        
+        tests
+            |> shuffle (rand.Next)
+            |> List.fold addTest { startingReport with Seed = Some seed } 
+                   
 
-    let executer (tests : Test list) =  
-        int(DateTime.Now.Ticks &&& 0x0000FFFFL) |> executerWithSeed tests
+    let executer (tests : Test list) = 
+        let dateTimeAsIntSeed = int(DateTime.Now.Ticks &&& 0x0000FFFFL)
+        dateTimeAsIntSeed |> executerWithSeed tests
