@@ -30,7 +30,7 @@ module Framework =
             tests
                 |> shuffle (rand.Next)
                 |> List.fold addTest startingReport
-        { report with Seed = seed }            
+        { report with Seed = Some seed }            
 
     let executer (tests : Test list) =  
         int(DateTime.Now.Ticks &&& 0x0000FFFFL) |> executerWithSeed tests

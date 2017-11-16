@@ -98,9 +98,9 @@ let main _argv =
             |> andAlso 
                 expectsToBe resultA resultC
             |> andAlso
-                expectsToBe resultSeedA 45
+                expectsToBe resultSeedA (Some 45)
             |> andAlso
-                expectsToBe resultSeedB 1889
+                expectsToBe resultSeedB (Some 1889)
             |> printResult
         )        
 

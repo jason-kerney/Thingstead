@@ -38,11 +38,11 @@ type Test =
 
 type TestExecutionReport =
     {
-        Seed: int
+        Seed: int option
         Failures: (Test * FailureType) list
         Successes: Test list
     }
 
 [<AutoOpen>]
 module Support =
-    let startingReport = { Seed = 0; Failures = []; Successes = [] }
+    let startingReport = { Seed = None ; Failures = []; Successes = [] }
