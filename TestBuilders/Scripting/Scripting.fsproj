@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\SharedTypes\SharedTypes.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="Library.fs" />
   </ItemGroup>
 
