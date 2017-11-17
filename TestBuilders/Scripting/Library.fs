@@ -1,5 +1,9 @@
 namespace TestBuilder.Scripting
+open SolStone.SharedTypes
 
-module Say =
-    let hello name =
-        printfn "Hello %s" name
+module Framework =
+    let testedWith testFn name =
+        {emptyTest with
+            TestName = name
+            TestFunction = testFn
+        }

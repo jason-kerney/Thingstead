@@ -45,4 +45,5 @@ type TestExecutionReport =
 
 [<AutoOpen>]
 module Support =
+    let emptyTest = { TestContainerPath = []; TestName = "Empty Test"; TestFunction = fun () -> "Not Implemented" |> Ignored |> Failure }
     let startingReport = { Seed = None ; Failures = []; Successes = [] }
