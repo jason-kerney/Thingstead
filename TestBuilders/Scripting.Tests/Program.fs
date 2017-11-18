@@ -55,14 +55,14 @@ let asSummary test =
     }
 
 type SuiteSummary =
-    | Summaries of string * SuiteSummary
+    | Summaries of string * SuiteSummary list
     | TestSummaries of TestSummary list
 
 let asSuiteSummary suite =
     let rec asSuiteSummary suite =
         match suite with
-        | TestSuite (name, suite) ->
-            Summaries (name, suite |> asSuiteSummary)
+        | TestSuite (name, suites) ->
+            Summaries (name, suites |> List.map asSuiteSummary)
         | Tests tests ->
             tests |> List.map asSummary |> TestSummaries
 
@@ -95,22 +95,24 @@ let main _argv =
         (fun () ->
             let testSuite =
                 grouping "Some Related Tests"
-                    (
+                    [
                         Tests ([ "A passing Test" |> testedWith (fun () -> Success) ])
-                    )
+                    ]
 
             verify (testSuite |> asSuiteSummary) 
                    (Summaries 
                         (
                             "Some Related Tests",
-                            TestSummaries 
-                                [
-                                    {
-                                        ContainerPath = [];
-                                        Name = "A passing Test";
-                                        Result = Some Success;
-                                    }
-                                ]
+                            [
+                                TestSummaries 
+                                    [
+                                        {
+                                            ContainerPath = [];
+                                            Name = "A passing Test";
+                                            Result = Some Success;
+                                        }
+                                    ]
+                            ]
                         )
                     )
         )        
