@@ -2,7 +2,7 @@
 
 open System
 open SolStone.SharedTypes
-open TestBuilder.Scripting.Framework
+open TestBuilder.Scripting
 
 let pause () = 
     printfn "\n\nPress any key to continue"
@@ -43,7 +43,7 @@ type TestSummary =
         ContainerPath: string list
         Name: string
         Result: TestResult option
-    }
+    }    
 
 let blankSummary = { ContainerPath = []; Name = ""; Result = None }
 
@@ -53,7 +53,20 @@ let asSummary test =
         Name = test.TestName
         Result = Some (test.TestFunction ())
     }
-    
+
+type SuiteSummary =
+    | Summaries of string * SuiteSummary
+    | TestSummaries of TestSummary list
+
+let asSuiteSummary suite =
+    let rec asSuiteSummary suite =
+        match suite with
+        | TestSuite (name, suite) ->
+            Summaries (name, suite |> asSuiteSummary)
+        | Tests tests ->
+            tests |> List.map asSummary |> TestSummaries
+
+    suite |> asSuiteSummary        
 
 [<EntryPoint>]
 let main _argv =
@@ -68,15 +81,39 @@ let main _argv =
     *)
 
     test "Creates a test once given all the parts" 
-            (fun () ->
-                let name = "My Test"
-                let result =
-                    name
-                    |> testedWith (fun () -> Success)
-                    |> asSummary
+        (fun () ->
+            let name = "My Test"
+            let result =
+                name
+                |> testedWith (fun () -> Success)
+                |> asSummary
 
-                verify result {blankSummary with Name=name; Result = Some Success}
-            )
+            verify result {blankSummary with Name=name; Result = Some Success}
+        )
+
+    test "Groups tests and creates paths"
+        (fun () ->
+            let testSuite =
+                grouping "Some Related Tests"
+                    (
+                        Tests ([ "A passing Test" |> testedWith (fun () -> Success) ])
+                    )
+
+            verify (testSuite |> asSuiteSummary) 
+                   (Summaries 
+                        (
+                            "Some Related Tests",
+                            TestSummaries 
+                                [
+                                    {
+                                        ContainerPath = [];
+                                        Name = "A passing Test";
+                                        Result = Some Success;
+                                    }
+                                ]
+                        )
+                    )
+        )        
 
     pause ()
     0 // return an integer exit code
