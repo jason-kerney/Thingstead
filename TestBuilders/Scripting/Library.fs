@@ -4,7 +4,7 @@ open SolStone.SharedTypes
 [<AutoOpen>]
 module Framework =
     type SuiteTree =
-        | TestSuite of (string * SuiteTree)
+        | TestSuite of (string * SuiteTree list)
         | Tests of Test list
 
     let testedWith testFn name =
