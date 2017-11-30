@@ -85,7 +85,9 @@ let main _argv =
     result.Failures
         |> List.iter 
             (fun (test, failure) ->
-                printfn "\n%s:\n%s" (test |> getTestName) (failure |> sprintf "%A" |> indent 1)
+                let failureText = failure |> sprintf "%A" |> indent 1
+                let testName = test |> getTestName
+                printfn "\n%s:\n%s" testName failureText
             )
 
     printfn "\n%d out of %d failed" (failedCount) (result.TotalTests)
