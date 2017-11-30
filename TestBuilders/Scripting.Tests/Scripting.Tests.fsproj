@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\SharedTypes\SharedTypes.fsproj" />
+    <ProjectReference Include="..\..\Platforms\Default\Default.fsproj" />
     <ProjectReference Include="..\Scripting\Scripting.fsproj" />
   </ItemGroup>
 

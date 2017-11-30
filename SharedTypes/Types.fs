@@ -39,6 +39,7 @@ type Test =
 type TestExecutionReport =
     {
         Seed: int option
+        TotalTests: int
         Failures: (Test * FailureType) list
         Successes: Test list
     }
@@ -46,4 +47,4 @@ type TestExecutionReport =
 [<AutoOpen>]
 module Support =
     let emptyTest = { TestContainerPath = []; TestName = "Empty Test"; TestFunction = fun () -> "Not Implemented" |> Ignored |> Failure }
-    let startingReport = { Seed = None ; Failures = []; Successes = [] }
+    let startingReport = { Seed = None ; TotalTests = 0 ; Failures = []; Successes = [] }

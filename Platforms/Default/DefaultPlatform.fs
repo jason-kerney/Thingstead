@@ -21,8 +21,8 @@ module Framework =
     let addTest result test =
         match test.TestFunction () with
         | Success
-            -> { result with Successes = test :: result.Successes}
-        | Failure failure -> { result with Failures = (test, failure) :: result.Failures }
+            -> { result with Successes = test :: result.Successes; TotalTests = result.TotalTests + 1 }
+        | Failure failure -> { result with Failures = (test, failure) :: result.Failures; TotalTests = result.TotalTests + 1  }
 
     let executerWithSeed (tests : Test list) seed =
         let rand = Random (seed) 
