@@ -4,6 +4,7 @@ open System
 open SolStone.SharedTypes
 open TestBuilder.Scripting
 open SolStone.TestRunner.Default.Framework
+open System.Runtime.CompilerServices
 
 let pause () = 
     printfn "\n\nPress any key to continue"
@@ -132,12 +133,41 @@ let main _argv =
                 )
         }
 
+    let ``Scripting puts it together`` =
+        {blankTest with 
+            TestContainerPath = ["Scripting";]
+            TestName = "puts it together"
+            TestFunction = 
+                (fun () ->
+                    let suite = 
+                        "My Suite"
+                        |> suite (
+                                "first feature"
+                                |> feature
+                                    (
+                                        [
+                                            "hello"
+                                                |> testedWith
+                                                    (fun () -> Success)
+                                            "world"
+                                                |> testedWith
+                                                    (fun () -> Success)
+                                        ]
+                                    )
+                            )
+                        |> List.map asSummary
+
+                    "Not Yet done" |> Ignored |> Failure
+                )
+        }    
+
     let result = 
         [
             ``Creates a test once given all the parts``
             ``Scripting appends suite name to a single test``
             ``Scripting appends suite to all tests``
             ``Scripting suite does not fail when given no tests``
+            ``Scripting puts it together``
         ] |> executer
 
     let failedCount = result.Failures |> List.length

@@ -16,3 +16,7 @@ module Framework =
             (fun test ->
                 { test with TestContainerPath = name::(test.TestContainerPath) }
             )
+
+    let describe = suite
+    let feature = suite
+    let product = suite        
