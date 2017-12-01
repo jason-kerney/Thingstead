@@ -6,28 +6,28 @@ open TestBuilder.Scripting
 open SolStone.TestRunner.Default.Framework
 
 module Program =
-    let ``Creates a test once given all the parts`` =
-        {emptyTest with
-            TestContainerPath = ["Scripting"; "a tests"]
-            TestName = "creates a test once given all the parts"
-            TestFunction = (fun () ->
-                let name = "My Test"
-                let result =
-                    name
-                    |> testedWith successfullResult
-                    |> asSummary
+    let tsts = 
+        "Scripting"
+        |> asSuite (
+            "a test"
+            |> feature [
+                "creates a test once given all the parts"
+                |> testedWith (fun () ->
+                    let name = "My Test"
+                    let result =
+                        name
+                        |> testedWith successfullResult
+                        |> asSummary
 
-                let expected = { blankSummary with Name=name; Result = Some Success }
-                expectsToBe expected result
-            )
-        }
-
-    let ``Scripting appends suite name to a single test`` =
-         {emptyTest with
-                TestContainerPath = ["Scripting"; "suite"]
-                TestName = "appends suite name to a single test"
-                TestFunction =
-                    (fun () ->
+                    let expected = { blankSummary with Name=name; Result = Some Success }
+                    expectsToBe expected result
+                )
+            ]
+            |> andThen (
+                "suite"
+                |> feature [
+                    "appends suite name to a single test"
+                    |> testedWith (fun () ->
                         let path = 
                             "Suite" 
                             |> suite
@@ -40,7 +40,10 @@ module Program =
                         let expected = ["Suite"; "contains a test"]
                         path |> expectsToBe expected
                     )
-         }
+                ]
+            )
+            
+        )    
 
     let ``Scripting appends suite to all tests`` =
         {emptyTest with
@@ -117,14 +120,12 @@ module Program =
     let main _argv =
         let tests = 
             [
-                ``Creates a test once given all the parts``
-                ``Scripting appends suite name to a single test``
                 ``Scripting appends suite to all tests``
                 ``Scripting suite does not fail when given no tests``
                 ``Scripting tests can be concatinated with "andThen"``
             ]
             
-        let result = tests |> executer
+        let result = tests |> andThen tsts |> executer
 
         let failedCount = result |> getFailCount
 
