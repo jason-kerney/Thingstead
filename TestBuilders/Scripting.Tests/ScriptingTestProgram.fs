@@ -6,9 +6,13 @@ open TestBuilder.Scripting
 open SolStone.TestRunner.Default.Framework
 
 module Program =
-    let tsts = 
-        "Scripting"
-        |> asSuite (
+    let defineSuite name = 
+        fun test -> suite test name
+
+    let scripting = defineSuite "Scripting"
+
+    let testFeature = 
+        scripting (
             "a test"
             |> feature [
                 "creates a test once given all the parts"
@@ -23,27 +27,32 @@ module Program =
                     expectsToBe expected result
                 )
             ]
-            |> andThen (
-                "suite"
-                |> feature [
-                    "appends suite name to a single test"
-                    |> testedWith (fun () ->
-                        let path = 
-                            "Suite" 
-                            |> suite
-                                [{blankTest with
-                                    TestContainerPath = ["contains a test"]
-                                }]
-                            |> List.map (fun test -> test.TestContainerPath)
-                            |> List.head
+        )
 
-                        let expected = ["Suite"; "contains a test"]
-                        path |> expectsToBe expected
-                    )
-                ]
-            )
-            
-        )    
+    let suiteFeature = 
+        scripting (
+            "suite"
+            |> feature [
+                "appends suite name to a single test"
+                |> testedWith (fun () ->
+                    let path = 
+                        "Suite" 
+                        |> suite
+                            [{blankTest with
+                                TestContainerPath = ["contains a test"]
+                            }]
+                        |> List.map (fun test -> test.TestContainerPath)
+                        |> List.head
+
+                    let expected = ["Suite"; "contains a test"]
+                    path |> expectsToBe expected
+                )
+            ]
+        )
+
+    let tsts = 
+        testFeature
+        |> andThen suiteFeature
 
     let ``Scripting appends suite to all tests`` =
         {emptyTest with
