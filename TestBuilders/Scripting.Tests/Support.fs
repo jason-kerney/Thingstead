@@ -56,7 +56,7 @@ module Support =
 
     let successfullResult () = Success
 
-    let getFailures (report: TestExecutionReport) = 
+    let getFailureNames (report: TestExecutionReport) = 
         report.Failures
         |> List.map 
             (fun (test, failure) ->
@@ -65,4 +65,4 @@ module Support =
                 sprintf "\n%s:\n%s" testName failureText
             )
 
-    let reportFailures = getFailures >> List.iter (printfn "%s")
+    let reportFailures = getFailureNames >> List.iter (printfn "%s")

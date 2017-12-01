@@ -56,3 +56,9 @@ module Support =
     let getTestName test =
         let path = test.TestContainerPath |> joinWith " "
         sprintf "%s %s" path (test.TestName)
+
+    let getFailCount (report : TestExecutionReport) = 
+        report.Failures |> List.length
+
+    let getSuccessCount (report : TestExecutionReport) =
+        report.Successes |> List.length

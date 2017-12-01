@@ -126,7 +126,7 @@ module Program =
             
         let result = tests |> executer
 
-        let failedCount = result.Failures |> List.length    
+        let failedCount = result |> getFailCount
 
         result |> reportFailures
 
