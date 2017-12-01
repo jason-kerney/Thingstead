@@ -61,8 +61,8 @@ let asSummary test =
 let main _argv =
     let ``Creates a test once given all the parts`` =
         {emptyTest with
-            TestName = "creates a test once given all the parts"
             TestContainerPath = ["Scripting"; "a tests"]
+            TestName = "creates a test once given all the parts"
             TestFunction = (fun () ->
                 let name = "My Test"
                 let result =
@@ -75,12 +75,72 @@ let main _argv =
             )
         }
 
+    let ``Scripting appends suite name to a single test`` =
+         {emptyTest with
+                TestContainerPath = ["Scripting"; "suite"]
+                TestName = "appends suite name to a single test"
+                TestFunction =
+                    (fun () ->
+                        let path = 
+                            "Suite" 
+                            |> suite
+                                [{blankTest with
+                                    TestContainerPath = ["contains a test"]
+                                }]
+                            |> List.map (fun test -> test.TestContainerPath)
+                            |> List.head
+
+                        let expected = ["Suite"; "contains a test"]
+                        path |> expectsToBe expected
+                    )
+         }
+
+    let ``Scripting appends suite to all tests`` =
+        {emptyTest with
+            TestContainerPath = ["Scripting"; "suite"]
+            TestName = "appents suite to all tests"
+            TestFunction = 
+                (fun () ->
+                    let paths = 
+                        "Suite"
+                        |> suite 
+                            [
+                                {blankTest with
+                                    TestContainerPath = ["does some thing"]
+                                }
+                                blankTest
+                            ]
+                        |> List.map (fun test -> test.TestContainerPath)                        
+
+                    let expected = [["Suite"; "does some thing"]; ["Suite"]]
+                    paths |> expectsToBe expected                        
+                )
+        }
+
+    let ``Scripting suite does not fail when given no tests`` =
+        {blankTest with
+            TestContainerPath = ["Scripting"; "suite"]
+            TestName = "does not fail when given no tests"
+            TestFunction = 
+                (fun () ->
+                    let paths = 
+                        "Suite" |> suite [] |> List.map asSummary
+
+                    let expected : TestSummary list = []
+
+                    paths |> expectsToBe expected                    
+                )
+        }
+
     let result = 
         [
             ``Creates a test once given all the parts``
+            ``Scripting appends suite name to a single test``
+            ``Scripting appends suite to all tests``
+            ``Scripting suite does not fail when given no tests``
         ] |> executer
 
-    let failedCount = result.Failures |> List.length    
+    let failedCount = result.Failures |> List.length
 
     result.Failures
         |> List.iter 

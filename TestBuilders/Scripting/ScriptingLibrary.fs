@@ -9,3 +9,10 @@ module Framework =
             TestName = name
             TestFunction = testFn
         }
+
+    let suite tests name =
+        tests
+        |> List.map
+            (fun test ->
+                { test with TestContainerPath = name::(test.TestContainerPath) }
+            )
