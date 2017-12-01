@@ -49,3 +49,10 @@ module Support =
     let emptyTest = { TestContainerPath = []; TestName = "Empty Test"; TestFunction = fun () -> "Not Implemented" |> Ignored |> Failure }
     let blankTest = emptyTest
     let startingReport = { Seed = None ; TotalTests = 0 ; Failures = []; Successes = [] }
+
+    let private joinWith (seperator: string) (values : string seq) = 
+        String.Join (seperator, values)
+
+    let getTestName test =
+        let path = test.TestContainerPath |> joinWith " "
+        sprintf "%s %s" path (test.TestName)

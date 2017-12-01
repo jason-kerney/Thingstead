@@ -1,0 +1,68 @@
+namespace SolStone.TestBuilder.Scripting.Tests
+open SolStone.SharedTypes
+open TestBuilder.Scripting
+open System
+
+
+module Support =
+
+    let pause () = 
+        printfn "\n\nPress any key to continue"
+        Console.ReadKey true |> ignore
+
+    let joinWith (seperator: string) (values : string seq) = 
+        String.Join (seperator, values)
+
+    let joinAsLines : string seq -> string = joinWith "\n"
+
+    let indent amount (value : string) =
+        let tab = if amount > 0 then "\t" else ""
+        let amount = if amount >= 0 then amount else 0
+        value.Split ([|'\n'; '\r'|], StringSplitOptions.RemoveEmptyEntries)
+            |> Array.map (fun s -> sprintf "%s%s" (String.replicate amount tab) s )
+            |> joinAsLines
+        
+
+    let test name fn =
+        printf "%s: " name
+        try
+            fn ()
+        with
+        | e -> printfn "Failure: %s" e.Message
+
+    let expectsToBe a b =
+        if a = b then Success
+        else sprintf "%A <> %A" a b |> asExpectationFailure
+
+    let expectsToNotBe a b =
+        if a = b then sprintf "%A = %A" a b |> asExpectationFailure
+        else Success
+
+    type TestSummary = 
+        {
+            ContainerPath: string list
+            Name: string
+            Result: TestResult option
+        }    
+
+    let blankSummary = { ContainerPath = []; Name = ""; Result = None }
+
+    let asSummary test = 
+        { blankSummary with
+            ContainerPath = test.TestContainerPath
+            Name = test.TestName
+            Result = Some (test.TestFunction ())
+        }
+
+    let successfullResult () = Success
+
+    let getFailures (report: TestExecutionReport) = 
+        report.Failures
+        |> List.map 
+            (fun (test, failure) ->
+                let failureText = failure |> sprintf "%A" |> indent 1
+                let testName = test |> getTestName
+                sprintf "\n%s:\n%s" testName failureText
+            )
+
+    let reportFailures = getFailures >> List.iter (printfn "%s")
