@@ -36,10 +36,10 @@ let getTestName test =
 
 let expectsToBe a b =
     if a = b then Success
-    else Failure (ExpectationFailure (sprintf "%A <> %A" a b))
+    else sprintf "%A <> %A" a b |> asExpectationFailure
 
 let expectsToNotBe a b =
-    if a = b then Failure (ExpectationFailure (sprintf "%A = %A" a b))
+    if a = b then sprintf "%A = %A" a b |> asExpectationFailure
     else Success
 
 type TestSummary = 
@@ -56,7 +56,10 @@ let asSummary test =
         ContainerPath = test.TestContainerPath
         Name = test.TestName
         Result = Some (test.TestFunction ())
-    }   
+    }
+
+let successfullResult () = Success
+
 
 [<EntryPoint>]
 let main _argv =
@@ -68,7 +71,7 @@ let main _argv =
                 let name = "My Test"
                 let result =
                     name
-                    |> testedWith (fun () -> Success)
+                    |> testedWith successfullResult
                     |> asSummary
 
                 let expected = { blankSummary with Name=name; Result = Some Success }
@@ -133,33 +136,78 @@ let main _argv =
                 )
         }
 
-    let ``Scripting puts it together`` =
-        {blankTest with 
+    let ``Scripting tests can be concatinated with "andThen"`` =
+        {blankTest with
             TestContainerPath = ["Scripting";]
-            TestName = "puts it together"
+            TestName = "tests can be concatinated with \"andThen\""
             TestFunction = 
                 (fun () ->
-                    let suite = 
-                        "My Suite"
-                        |> suite (
-                                "first feature"
-                                |> feature
-                                    (
-                                        [
-                                            "hello"
-                                                |> testedWith
-                                                    (fun () -> Success)
-                                            "world"
-                                                |> testedWith
-                                                    (fun () -> Success)
-                                        ]
-                                    )
-                            )
+                    let tests = 
+                        [
+                            "Test A"
+                            |> testedWith successfullResult
+                        ] 
+                        |> andThen [
+                            "Test B"
+                            |> testedWith (fun () -> "Did not work" |> asExpectationFailure)
+                        ]
                         |> List.map asSummary
+                        
 
-                    "Not Yet done" |> Ignored |> Failure
+                    let expected = 
+                        [
+                            {blankSummary with
+                                Name = "Test B"
+                                Result = Some ("Did not work" |> asExpectationFailure)
+                            }
+                            {blankSummary with
+                                Name = "Test A"
+                                Result = Some Success
+                            }
+                        ]
+
+                    tests |> expectsToBe expected
                 )
-        }    
+        }
+
+    // let ``Scripting puts it together`` =
+    //     {blankTest with 
+    //         TestContainerPath = ["Scripting";]
+    //         TestName = "puts it together"
+    //         TestFunction = 
+    //             (fun () ->
+    //                 let suite = 
+    //                     "My Suite"
+    //                     |> suite (
+    //                             "first feature"
+    //                             |> feature
+    //                                 (
+    //                                     [
+    //                                         "hello"
+    //                                             |> testedWith
+    //                                                 (fun () -> Success)
+    //                                         "world"
+    //                                             |> testedWith
+    //                                                 (fun () -> Success)
+    //                                     ]
+    //                                     |> andThen
+    //                                         (
+    //                                             "Name" 
+    //                                             |> subFeature (
+    //                                                 [
+    //                                                     "frank"
+    //                                                     |> testedWith 
+    //                                                         (fun () -> "Nope" |> ExpectationFailure |> Failure)
+    //                                                 ]
+    //                                              )
+    //                                         )
+    //                                 )
+    //                         )
+    //                     |> List.map asSummary
+
+    //                 "Not Yet done" |> Ignored |> Failure
+    //             )
+    //     }
 
     let result = 
         [
@@ -167,7 +215,7 @@ let main _argv =
             ``Scripting appends suite name to a single test``
             ``Scripting appends suite to all tests``
             ``Scripting suite does not fail when given no tests``
-            ``Scripting puts it together``
+            ``Scripting tests can be concatinated with "andThen"``
         ] |> executer
 
     let failedCount = result.Failures |> List.length

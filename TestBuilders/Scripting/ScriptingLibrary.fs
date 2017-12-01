@@ -19,4 +19,10 @@ module Framework =
 
     let describe = suite
     let feature = suite
-    let product = suite        
+    let subFeature = suite
+    let product = suite
+    
+    let asExpectationFailure = ExpectationFailure >> Failure
+    let asIgnored = Ignored >> Failure
+    
+    let andThen : Test list -> Test list -> Test list = List.append
