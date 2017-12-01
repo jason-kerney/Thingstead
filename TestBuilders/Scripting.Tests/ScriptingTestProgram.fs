@@ -170,45 +170,6 @@ let main _argv =
                 )
         }
 
-    // let ``Scripting puts it together`` =
-    //     {blankTest with 
-    //         TestContainerPath = ["Scripting";]
-    //         TestName = "puts it together"
-    //         TestFunction = 
-    //             (fun () ->
-    //                 let suite = 
-    //                     "My Suite"
-    //                     |> suite (
-    //                             "first feature"
-    //                             |> feature
-    //                                 (
-    //                                     [
-    //                                         "hello"
-    //                                             |> testedWith
-    //                                                 (fun () -> Success)
-    //                                         "world"
-    //                                             |> testedWith
-    //                                                 (fun () -> Success)
-    //                                     ]
-    //                                     |> andThen
-    //                                         (
-    //                                             "Name" 
-    //                                             |> subFeature (
-    //                                                 [
-    //                                                     "frank"
-    //                                                     |> testedWith 
-    //                                                         (fun () -> "Nope" |> ExpectationFailure |> Failure)
-    //                                                 ]
-    //                                              )
-    //                                         )
-    //                                 )
-    //                         )
-    //                     |> List.map asSummary
-
-    //                 "Not Yet done" |> Ignored |> Failure
-    //             )
-    //     }
-
     let result = 
         [
             ``Creates a test once given all the parts``

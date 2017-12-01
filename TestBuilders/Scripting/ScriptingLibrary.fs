@@ -17,6 +17,7 @@ module Framework =
                 { test with TestContainerPath = name::(test.TestContainerPath) }
             )
 
+    let asSuite = suite
     let describe = suite
     let feature = suite
     let subFeature = suite
