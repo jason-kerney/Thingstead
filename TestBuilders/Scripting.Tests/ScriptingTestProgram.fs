@@ -6,83 +6,65 @@ open TestBuilder.Scripting
 open SolStone.TestRunner.Default.Framework
 
 module Program =
-    let ``Creates a test once given all the parts`` =
-        {emptyTest with
-            TestContainerPath = ["Scripting"; "a tests"]
-            TestName = "creates a test once given all the parts"
-            TestFunction = (fun () ->
-                let name = "My Test"
-                let result =
-                    name
-                    |> testedWith successfullResult
-                    |> asSummary
+    let tsts = 
+        asSuite "Scripting" (
+            feature "a test" [
+                "creates a test once given all the parts"
+                    |> testedWith (fun () ->
+                        let name = "My Test"
+                        let result =
+                            name
+                            |> testedWith successfullResult
+                            |> asSummary
 
-                let expected = { blankSummary with Name=name; Result = Some Success }
-                expectsToBe expected result
-            )
-        }
-
-    let ``Scripting appends suite name to a single test`` =
-         {emptyTest with
-                TestContainerPath = ["Scripting"; "suite"]
-                TestName = "appends suite name to a single test"
-                TestFunction =
-                    (fun () ->
-                        let path = 
-                            suite "Suite" [
-                                {blankTest with
-                                    TestContainerPath = ["contains a test"]
-                                }
-                            ]
-                            |> List.map (fun test -> test.TestContainerPath)
-                            |> List.head
-
-                        let expected = ["Suite"; "contains a test"]
-                        path |> expectsToBe expected
+                        let expected = { blankSummary with Name=name; Result = Some Success }
+                        expectsToBe expected result
                     )
-         }
+            ]
+            |> andThen (
+                feature "suite" [
+                    "appends suite name to a single test"
+                        |> testedWith (fun () ->
+                            let path = 
+                                suite "Suite" [
+                                    {blankTest with
+                                        TestContainerPath = ["contains a test"]
+                                    }
+                                ]
+                                |> List.map (fun test -> test.TestContainerPath)
+                                |> List.head
 
-    let ``Scripting appends suite to all tests`` =
-        {emptyTest with
-            TestContainerPath = ["Scripting"; "suite"]
-            TestName = "appents suite to all tests"
-            TestFunction = 
-                (fun () ->
-                    let paths = 
-                        suite "Suite" [
-                            {blankTest with
-                                TestContainerPath = ["does some thing"]
-                            }
-                            blankTest
-                        ]
-                        |> List.map (fun test -> test.TestContainerPath)                        
+                            let expected = ["Suite"; "contains a test"]
+                            path |> expectsToBe expected
+                        )
+                    "appents suite to all tests"
+                        |> testedWith (fun () ->
+                            let paths = 
+                                suite "Suite" [
+                                    {blankTest with
+                                        TestContainerPath = ["does some thing"]
+                                    }
+                                    blankTest
+                                ]
+                                |> List.map (fun test -> test.TestContainerPath)                        
 
-                    let expected = [["Suite"; "does some thing"]; ["Suite"]]
-                    paths |> expectsToBe expected                        
-                )
-        }
+                            let expected = [["Suite"; "does some thing"]; ["Suite"]]
+                            paths |> expectsToBe expected                        
+                        )
+                    "does not fail when given no tests"
+                        |> testedWith (fun () ->
+                            let paths = 
+                                suite "Suite" [] |> List.map asSummary
 
-    let ``Scripting suite does not fail when given no tests`` =
-        {blankTest with
-            TestContainerPath = ["Scripting"; "suite"]
-            TestName = "does not fail when given no tests"
-            TestFunction = 
-                (fun () ->
-                    let paths = 
-                        suite "Suite" [] |> List.map asSummary
+                            let expected : TestSummary list = []
 
-                    let expected : TestSummary list = []
-
-                    paths |> expectsToBe expected                    
-                )
-        }
-
-    let ``Scripting tests can be concatinated with "andThen"`` =
-        {blankTest with
-            TestContainerPath = ["Scripting";]
-            TestName = "tests can be concatinated with \"andThen\""
-            TestFunction = 
-                (fun () ->
+                            paths |> expectsToBe expected
+                        )
+                ]
+            )
+            |> andThen [
+                "tests can be concatinated with \"andThen\""
+                    |> testedWith (fun () ->
                     let tests = 
                         [
                             "Test A"
@@ -109,18 +91,12 @@ module Program =
 
                     tests |> expectsToBe expected
                 )
-        }
+            ]
+        )
 
     [<EntryPoint>]
     let main _argv =
-        let tests = 
-            [
-                ``Creates a test once given all the parts``
-                ``Scripting appends suite name to a single test``
-                ``Scripting appends suite to all tests``
-                ``Scripting suite does not fail when given no tests``
-                ``Scripting tests can be concatinated with "andThen"``
-            ]
+        let tests =  tsts
             
         let result = tests |> executer
 

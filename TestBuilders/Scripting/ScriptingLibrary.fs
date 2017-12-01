@@ -22,11 +22,8 @@ module Framework =
     let describe = suite
     let subFeature = suite
     let product = suite
-
-    let groupedBy name test= 
-        suite test name
-    
-    let featured = groupedBy
+    let groupedBy = suite
+    let featured = suite
 
     let asExpectationFailure = ExpectationFailure >> Failure
     let asIgnored = Ignored >> Failure
