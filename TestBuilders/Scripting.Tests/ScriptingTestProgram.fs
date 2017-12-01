@@ -6,53 +6,41 @@ open TestBuilder.Scripting
 open SolStone.TestRunner.Default.Framework
 
 module Program =
-    let defineSuite name = 
-        fun test -> suite test name
+    let ``Creates a test once given all the parts`` =
+        {emptyTest with
+            TestContainerPath = ["Scripting"; "a tests"]
+            TestName = "creates a test once given all the parts"
+            TestFunction = (fun () ->
+                let name = "My Test"
+                let result =
+                    name
+                    |> testedWith successfullResult
+                    |> asSummary
 
-    let scripting = defineSuite "Scripting"
+                let expected = { blankSummary with Name=name; Result = Some Success }
+                expectsToBe expected result
+            )
+        }
 
-    let testFeature = 
-        scripting (
-            "a test"
-            |> feature [
-                "creates a test once given all the parts"
-                |> testedWith (fun () ->
-                    let name = "My Test"
-                    let result =
-                        name
-                        |> testedWith successfullResult
-                        |> asSummary
+    let ``Scripting appends suite name to a single test`` =
+         {emptyTest with
+                TestContainerPath = ["Scripting"; "suite"]
+                TestName = "appends suite name to a single test"
+                TestFunction =
+                    (fun () ->
+                        let path = 
+                            suite "Suite" [
+                                {blankTest with
+                                    TestContainerPath = ["contains a test"]
+                                }
+                            ]
+                            |> List.map (fun test -> test.TestContainerPath)
+                            |> List.head
 
-                    let expected = { blankSummary with Name=name; Result = Some Success }
-                    expectsToBe expected result
-                )
-            ]
-        )
-
-    let suiteFeature = 
-        scripting (
-            "suite"
-            |> feature [
-                "appends suite name to a single test"
-                |> testedWith (fun () ->
-                    let path = 
-                        "Suite" 
-                        |> suite
-                            [{blankTest with
-                                TestContainerPath = ["contains a test"]
-                            }]
-                        |> List.map (fun test -> test.TestContainerPath)
-                        |> List.head
-
-                    let expected = ["Suite"; "contains a test"]
-                    path |> expectsToBe expected
-                )
-            ]
-        )
-
-    let tsts = 
-        testFeature
-        |> andThen suiteFeature
+                        let expected = ["Suite"; "contains a test"]
+                        path |> expectsToBe expected
+                    )
+         }
 
     let ``Scripting appends suite to all tests`` =
         {emptyTest with
@@ -61,14 +49,12 @@ module Program =
             TestFunction = 
                 (fun () ->
                     let paths = 
-                        "Suite"
-                        |> suite 
-                            [
-                                {blankTest with
-                                    TestContainerPath = ["does some thing"]
-                                }
-                                blankTest
-                            ]
+                        suite "Suite" [
+                            {blankTest with
+                                TestContainerPath = ["does some thing"]
+                            }
+                            blankTest
+                        ]
                         |> List.map (fun test -> test.TestContainerPath)                        
 
                     let expected = [["Suite"; "does some thing"]; ["Suite"]]
@@ -83,7 +69,7 @@ module Program =
             TestFunction = 
                 (fun () ->
                     let paths = 
-                        "Suite" |> suite [] |> List.map asSummary
+                        suite "Suite" [] |> List.map asSummary
 
                     let expected : TestSummary list = []
 
@@ -129,12 +115,14 @@ module Program =
     let main _argv =
         let tests = 
             [
+                ``Creates a test once given all the parts``
+                ``Scripting appends suite name to a single test``
                 ``Scripting appends suite to all tests``
                 ``Scripting suite does not fail when given no tests``
                 ``Scripting tests can be concatinated with "andThen"``
             ]
             
-        let result = tests |> andThen tsts |> executer
+        let result = tests |> executer
 
         let failedCount = result |> getFailCount
 

@@ -10,7 +10,7 @@ module Framework =
             TestFunction = testFn
         }
 
-    let suite tests name =
+    let suite name tests =
         tests
         |> List.map
             (fun test ->
@@ -18,11 +18,16 @@ module Framework =
             )
 
     let asSuite = suite
-    let describe = suite
     let feature = suite
+    let describe = suite
     let subFeature = suite
     let product = suite
+
+    let groupedBy name test= 
+        suite test name
     
+    let featured = groupedBy
+
     let asExpectationFailure = ExpectationFailure >> Failure
     let asIgnored = Ignored >> Failure
     
