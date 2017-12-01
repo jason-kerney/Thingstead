@@ -170,14 +170,16 @@ let main _argv =
                 )
         }
 
-    let result = 
+    let tests = 
         [
             ``Creates a test once given all the parts``
             ``Scripting appends suite name to a single test``
             ``Scripting appends suite to all tests``
             ``Scripting suite does not fail when given no tests``
             ``Scripting tests can be concatinated with "andThen"``
-        ] |> executer
+        ] 
+        
+    let result = tests |> executer
 
     let failedCount = result.Failures |> List.length
 
