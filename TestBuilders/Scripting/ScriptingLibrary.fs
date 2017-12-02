@@ -10,20 +10,25 @@ module Framework =
             TestFunction = testFn
         }
 
-    let suite name tests =
+    let private alterPath name tests =
         tests
         |> List.map
             (fun test ->
                 { test with TestContainerPath = name::(test.TestContainerPath) }
             )
 
+    let private namedAlterPath indicator = 
+        sprintf "%s \"%s\"" indicator >> alterPath
+
+    let suite = namedAlterPath "Suite"
+
     let asSuite = suite
-    let feature = suite
-    let describe = suite
-    let subFeature = suite
-    let product = suite
-    let groupedBy = suite
-    let featured = suite
+    let feature = namedAlterPath "Feature"
+    let describe = namedAlterPath "Described"
+    let subFeature = feature
+    let product = namedAlterPath "Product"
+    let groupedBy = namedAlterPath "Group"
+    let featured = feature
 
     let asExpectationFailure = ExpectationFailure >> Failure
     let asIgnored = Ignored >> Failure
