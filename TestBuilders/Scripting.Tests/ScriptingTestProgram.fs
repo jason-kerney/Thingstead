@@ -4,7 +4,6 @@ open SolStone.TestBuilder.Scripting.Tests.Support
 open SolStone.SharedTypes
 open TestBuilder.Scripting
 open SolStone.TestRunner.Default.Framework
-open System.ComponentModel.Design.Serialization
 
 module Program =
     let tests = 

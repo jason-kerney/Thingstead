@@ -6,7 +6,7 @@ module Framework =
     let shuffle<'a> (getRandom: (int * int) -> int) (items: 'a list) =
         let arr = items |> List.toArray
 
-        let rec shuffle pt =
+        let rec shuffle pt (arr: 'a []) =
             if pt >= arr.Length
             then arr
             else
@@ -14,9 +14,14 @@ module Framework =
                 let hold = arr.[pt]
                 arr.[pt] <- arr.[pt2]
                 arr.[pt2] <- hold
-                shuffle (pt + 1)
+                shuffle (pt + 1) arr
 
-        shuffle 0 |> List.ofArray
+        let shuffleTimes times arr = 
+            seq { for _ in 1 .. times do yield 0 }
+                |> Seq.map shuffle
+                |> Seq.fold (fun a fn -> fn a) arr
+
+        shuffleTimes 3 arr |> List.ofArray
 
     let addTest result test =
         match test.TestFunction () with
