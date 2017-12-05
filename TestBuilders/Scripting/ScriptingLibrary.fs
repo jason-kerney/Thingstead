@@ -1,4 +1,4 @@
-namespace TestBuilder.Scripting
+namespace SolStone.TestBuilder.Scripting
 open SolStone.SharedTypes
 
 [<AutoOpen>]

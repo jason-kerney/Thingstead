@@ -2,7 +2,7 @@
 
 open SolStone.TestBuilder.Scripting.Tests.Support
 open SolStone.SharedTypes
-open TestBuilder.Scripting
+open SolStone.TestBuilder.Scripting
 open SolStone.TestRunner.Default.Framework
 
 module Program =
