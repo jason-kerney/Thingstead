@@ -3,14 +3,14 @@ open SolStone.SharedTypes
 open System
 
 module Framework =
-    let shuffle<'a> (getRandom: (int * int) -> int) (items: 'a list) =
+    let shuffle<'a> (getRandom: (int * int) -> int) (items: Test list) =
         let arr = items |> List.toArray
 
-        let rec shuffle pt (arr: 'a []) =
+        let rec shuffle pt (arr: Test []) =
             if pt >= arr.Length
             then arr
             else
-                let pt2 = getRandom (pt, arr.Length - 1)
+                let pt2 = getRandom (0, arr.Length - 1)
                 let hold = arr.[pt]
                 arr.[pt] <- arr.[pt2]
                 arr.[pt2] <- hold
