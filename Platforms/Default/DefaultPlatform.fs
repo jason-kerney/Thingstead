@@ -29,13 +29,12 @@ module Framework =
             -> { result with Successes = test :: result.Successes; TotalTests = result.TotalTests + 1 }
         | Failure failure -> { result with Failures = (test, failure) :: result.Failures; TotalTests = result.TotalTests + 1  }
 
-    let executerWithSeed (tests : Test list) seed =
+    let executerWithSeed tests seed =
         let rand = Random (seed) 
         
         tests
             |> shuffle (rand.Next)
             |> List.fold addTest { startingReport with Seed = Some seed } 
-                   
 
     let executer (tests : Test list) = 
         let dateTimeAsIntSeed = int(DateTime.Now.Ticks &&& 0x0000FFFFL)

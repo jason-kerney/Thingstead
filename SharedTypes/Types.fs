@@ -44,6 +44,9 @@ type TestExecutionReport =
         Successes: Test list
     }
 
+type TestExecutor = Test list -> TestExecutionReport
+type TestExecutorWithSeed = Test list -> int -> TestExecutionReport
+
 [<AutoOpen>]
 module Support =
     let emptyTest = { TestContainerPath = []; TestName = "Empty Test"; TestFunction = fun () -> "Not Implemented" |> Ignored |> Failure }

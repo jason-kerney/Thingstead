@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="DefaultPlatform.fsi" />
     <Compile Include="DefaultPlatform.fs" />
   </ItemGroup>
 
