@@ -4,6 +4,7 @@ open SolStone.TestBuilder.Scripting.Tests.Support
 open SolStone.SharedTypes
 open SolStone.TestBuilder.Scripting
 open SolStone.TestRunner.Default.Framework
+open Reporters.Console.Reporter
 
 module Program =
     let tests = 
@@ -151,24 +152,10 @@ module Program =
             )
         )
         
-    tests 
-        |> List.map getTestName
-        |> List.sort 
-        |> List.iteri (fun i name -> printfn "%3d: %s" (i + 1) name)
-    
-    printfn "\n\n\n\n\n\n\n"
-
     [<EntryPoint>]
     let main _argv =
         let result = tests |> executer
 
-        let failedCount = result |> getFailCount
+        result |> report |> ignore
 
-        result |> reportFailures
-
-        printfn "\n%d out of %d failed" (failedCount) (result.TotalTests)
-        
-        if failedCount = 0 && result.TotalTests > 0 then
-            printfn "All Good!"
-
-        0 // return an integer exit code
+        result |> getFailCount

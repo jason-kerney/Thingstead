@@ -1,6 +1,5 @@
 namespace SolStone.SharedTypes
 open System
-open System.ComponentModel
 
 //type IndeterminateInfo =
 //    {
@@ -48,7 +47,6 @@ type TestExecutionReport =
 type RandomSeed = int
 type TestExecutor = Test list -> TestExecutionReport
 type TestExecutorWithSeed = Test list -> RandomSeed -> TestExecutionReport
-
 
 type TestReporter = TestExecutionReport -> TestExecutionReport
 

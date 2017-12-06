@@ -10,7 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Reporters.Console.fs" />
+    <Compile Include="ConsoleReports.fsi" />
+    <Compile Include="ConsoleReports.fs" />
   </ItemGroup>
 
   <ItemGroup>
