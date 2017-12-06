@@ -48,6 +48,9 @@ module Reporter =
         (fun () -> printf "%s" value)
         |> changeColorTo color
 
+    let printHeader value =
+        value |> printInColor ConsoleColor.Yellow
+
     let report (testResults : TestExecutionReport) =
         let failedTests = testResults.Failures
         let failedTestCount = testResults |>  getFailCount
@@ -85,7 +88,7 @@ module Reporter =
         let notificationColor = if failedTestCount > 0 then ConsoleColor.Red else ConsoleColor.Green
         sprintf "%d of %d Failed\n\n" failedTestCount testCount
             |> printInColor notificationColor
-            
+
         if (failedTestCount = 0) then
             sprintf "Good Job!\n" |> printInColor notificationColor
 

@@ -5,6 +5,7 @@ open SolStone.SharedTypes
 open SolStone.TestBuilder.Scripting
 open SolStone.TestRunner.Default.Framework
 open Reporters.Console.Reporter
+open System
 
 module Program =
     let tests = 
@@ -156,6 +157,7 @@ module Program =
     let main _argv =
         let result = tests |> executer
 
+        "SolStone Scripting Syntax Tests\n" |> printHeader
         result |> report |> ignore
 
         result |> getFailCount
