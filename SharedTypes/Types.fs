@@ -1,5 +1,6 @@
 namespace SolStone.SharedTypes
 open System
+open System.ComponentModel
 
 //type IndeterminateInfo =
 //    {
@@ -44,8 +45,12 @@ type TestExecutionReport =
         Successes: Test list
     }
 
+type RandomSeed = int
 type TestExecutor = Test list -> TestExecutionReport
-type TestExecutorWithSeed = Test list -> int -> TestExecutionReport
+type TestExecutorWithSeed = Test list -> RandomSeed -> TestExecutionReport
+
+
+type TestReporter = TestExecutionReport -> TestExecutionReport
 
 [<AutoOpen>]
 module Support =
@@ -65,3 +70,6 @@ module Support =
 
     let getSuccessCount (report : TestExecutionReport) =
         report.Successes |> List.length
+
+    let getTestCount (report : TestExecutionReport) =
+        (report |> getFailCount) + (report |> getSuccessCount)
