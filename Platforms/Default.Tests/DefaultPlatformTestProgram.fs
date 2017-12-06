@@ -6,11 +6,6 @@ open SolStone.SharedTypes
 open SolStone.Reporters.Console.Reporter
 open SolStone.TestBuilder.Scripting
 
-
-let pause () = 
-    printfn "\n\nPress any key to continue"
-    Console.ReadKey true |> ignore    
-
 let createTest name fn = 
     {
         TestContainerPath = []
@@ -87,5 +82,4 @@ let main _argv =
     "SolStone Default Test Executioner Tests" |> printHeader
     result |> report |> ignore
 
-    // pause ()
-    failedTestCount // return an integer exit code
+    failedTestCount

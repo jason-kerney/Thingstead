@@ -77,10 +77,11 @@ module Reporter =
             printTestTitle i test
 
         if failedTestCount > 0 then
-            "-- Failed Test Details --\n\n" |> printInColor (ConsoleColor.Green)
+            let reportHeaderColor = ConsoleColor.Cyan
+            "-- Failed Test Details --\n\n" |> printInColor reportHeaderColor
             failedTests |> List.iteri printDetailedFailure
             
-            "\n\n--Failed Test Summary --\n\n" |> printInColor (ConsoleColor.Green)
+            "\n\n--Failed Test Summary --\n\n" |> printInColor reportHeaderColor
             failedTests |> List.iteri printFailure
             
             printfn "\n"
