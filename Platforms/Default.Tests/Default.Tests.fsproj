@@ -11,6 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\TestBuilders\Scripting\Scripting.fsproj" />
+    <ProjectReference Include="..\..\Reporters\Console\ConsoleReporters.fsproj" />
     <ProjectReference Include="..\..\SharedTypes\SharedTypes.fsproj" />
     <ProjectReference Include="..\Default\Default.fsproj" />
   </ItemGroup>

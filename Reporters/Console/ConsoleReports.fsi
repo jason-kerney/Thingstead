@@ -1,4 +1,4 @@
-namespace Reporters.Console
+namespace SolStone.Reporters.Console
 open SolStone.SharedTypes
 open System
 

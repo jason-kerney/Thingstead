@@ -3,17 +3,13 @@
 open System
 open SolStone.TestRunner.Default.Framework
 open SolStone.SharedTypes
+open SolStone.Reporters.Console.Reporter
+open SolStone.TestBuilder.Scripting
+
 
 let pause () = 
     printfn "\n\nPress any key to continue"
     Console.ReadKey true |> ignore    
-
-let test name fn =
-    printf "%s: " name
-    try
-        fn ()
-    with
-    | e -> printfn "Failure: %s" e.Message
 
 let createTest name fn = 
     {
@@ -28,81 +24,68 @@ let createSuccessfullTest name =
 let createFailingTest name failure =
     createTest name (fun () -> Failure failure)
 
-let getTestName test =
+let getSimpleTestName test =
     test.TestName
 
-let expectsToBe a b =
-    if a = b then Success
-    else Failure (ExpectationFailure (sprintf "%A <> %A" a b))
-
-let expectsToNotBe a b =
-    if a = b then Failure (ExpectationFailure (sprintf "%A = %A" a b))
-    else Success
-
-let andAlso check a b pastResult =
-    if pastResult = Success then check a b
-    else pastResult
-
-let printResult result =
-    match result with
-    | Success -> printfn "%A" result
-    | Failure failure -> printfn "Failed: %A" failure
-
-let verify a b = 
-    a |> expectsToBe b |> printResult
 
 [<EntryPoint>]
 let main _argv =
-    test "true is true" (fun () ->
-            verify true true
+    let tests = 
+        product "SolStone" (
+            suite "Default Test Execution" [
+                "Shows a successful test as being successfull"
+                    |> testedWith (fun () ->
+                        let testCase = createSuccessfullTest "A passing test"
+                        let result = executer [testCase] |> fun result -> result.Successes |> List.head
+                    
+                        let expected : string = testCase.TestName
+                        let actual : string = result.TestName
+
+                        actual |> expectsToBe expected
+                    )
+
+                "Shows a failed test as failing"
+                    |> testedWith (fun () ->
+                        let failure = GeneralFailure "Bad Test"
+                        let testCase = createFailingTest "A passing test" failure
+
+                        let result = executer [testCase] |> fun result -> result.Failures |> List.head
+                        let expected = testCase.TestName, failure
+                        let actual = 
+                            match result with
+                            | test, testResult ->
+                                test.TestName, testResult
+
+                        actual |> expectsToBe expected
+                    )
+
+                "Multiple tests run in random order"
+                    |> testedWith (fun () ->
+                        let testCase1 = createSuccessfullTest "A"
+                        let testCase2 = createSuccessfullTest "B"
+                        let testCase3 = createSuccessfullTest "C"
+
+                        let resultSeedA, resultA = 45   |> executerWithSeed [testCase1; testCase2; testCase3] |> fun result -> result.Seed, result.Successes |> List.map getSimpleTestName
+                        let resultSeedB, resultB = 1889 |> executerWithSeed [testCase1; testCase2; testCase3] |> fun result -> result.Seed, result.Successes |> List.map getSimpleTestName
+                        let _, resultC = 45   |> executerWithSeed [testCase1; testCase2; testCase3] |> fun result -> result.Seed, result.Successes |> List.map getSimpleTestName
+
+                        resultA 
+                            |> expectsToNotBe resultB
+                            |> andAlso 
+                                expectsToBe resultA resultC
+                            |> andAlso
+                                expectsToBe resultSeedA (Some 45)
+                            |> andAlso
+                                expectsToBe resultSeedB (Some 1889)
+                    )
+            ]
         )
 
-    test "Shows a successful test as being successfull" 
-            (fun () ->
-                let testCase = createSuccessfullTest "A passing test"
-                let result = executer [testCase] |> fun result -> result.Successes |> List.head
-            
-                let expected : string = testCase.TestName
-                let actual : string = result.TestName
+    let result = tests |> executer
+    let failedTestCount = result |> getFailCount
 
-                verify actual expected
-            )
-
-    test "Shows a failed test as failing" 
-            (fun () ->
-                let failure = GeneralFailure "Bad Test"
-                let testCase = createFailingTest "A passing test" failure
-
-                let result = executer [testCase] |> fun result -> result.Failures |> List.head
-                let expected = testCase.TestName, failure
-                let actual = 
-                    match result with
-                    | test, testResult ->
-                        test.TestName, testResult
-
-                verify actual expected
-            )
-
-    test "Multiple tests run in random order"
-        (fun () ->
-            let testCase1 = createSuccessfullTest "A"
-            let testCase2 = createSuccessfullTest "B"
-            let testCase3 = createSuccessfullTest "C"
-
-            let resultSeedA, resultA = 45   |> executerWithSeed [testCase1; testCase2; testCase3] |> fun result -> result.Seed, result.Successes |> List.map getTestName
-            let resultSeedB, resultB = 1889 |> executerWithSeed [testCase1; testCase2; testCase3] |> fun result -> result.Seed, result.Successes |> List.map getTestName
-            let _, resultC = 45   |> executerWithSeed [testCase1; testCase2; testCase3] |> fun result -> result.Seed, result.Successes |> List.map getTestName
-
-            resultA 
-                |> expectsToNotBe resultB
-            |> andAlso 
-                expectsToBe resultA resultC
-            |> andAlso
-                expectsToBe resultSeedA (Some 45)
-            |> andAlso
-                expectsToBe resultSeedB (Some 1889)
-            |> printResult
-        )        
+    "SolStone Default Test Executioner Tests" |> printHeader
+    result |> report |> ignore
 
     // pause ()
-    0 // return an integer exit code
+    failedTestCount // return an integer exit code

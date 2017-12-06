@@ -30,14 +30,6 @@ module Support =
         with
         | e -> printfn "Failure: %s" e.Message
 
-    let expectsToBe a b =
-        if a = b then Success
-        else sprintf "%A <> %A" a b |> asExpectationFailure
-
-    let expectsToNotBe a b =
-        if a = b then sprintf "%A = %A" a b |> asExpectationFailure
-        else Success
-
     type TestSummary = 
         {
             ContainerPath: string list

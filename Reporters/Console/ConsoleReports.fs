@@ -1,4 +1,4 @@
-namespace Reporters.Console
+namespace SolStone.Reporters.Console
 open SolStone.SharedTypes
 open System
 
@@ -49,7 +49,7 @@ module Reporter =
         |> changeColorTo color
 
     let printHeader value =
-        value |> printInColor ConsoleColor.Yellow
+        value |> sprintf "%s\n" |> printInColor ConsoleColor.Yellow
 
     let report (testResults : TestExecutionReport) =
         let failedTests = testResults.Failures
@@ -57,7 +57,7 @@ module Reporter =
         let testCount = testResults |> getTestCount
 
         let printTestTitle i (test: Test) =
-            printfn "%3d: %s" (i + 1) test.TestName
+            printfn "%3d: %s" (i + 1) (test |> getTestName)
 
         let printDetailedFailure i (test: Test, failure: FailureType) = 
             printTestTitle i test
@@ -88,8 +88,5 @@ module Reporter =
         let notificationColor = if failedTestCount > 0 then ConsoleColor.Red else ConsoleColor.Green
         sprintf "%d of %d Failed\n\n" failedTestCount testCount
             |> printInColor notificationColor
-
-        if (failedTestCount = 0) then
-            sprintf "Good Job!\n" |> printInColor notificationColor
 
         testResults 
