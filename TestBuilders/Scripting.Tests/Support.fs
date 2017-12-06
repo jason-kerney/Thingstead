@@ -1,6 +1,5 @@
 namespace SolStone.TestBuilder.Scripting.Tests
 open SolStone.SharedTypes
-open SolStone.TestBuilder.Scripting
 open System
 
 
