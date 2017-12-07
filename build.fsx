@@ -1,3 +1,5 @@
+open System.Runtime.InteropServices.ComTypes
+open System.IO
 // --------------------------------------------------------------------------------------
 // FAKE build script
 // --------------------------------------------------------------------------------------
@@ -43,29 +45,48 @@ let runDotnet workingDir args =
 // Targets
 // --------------------------------------------------------------------------------------
 
-Target "Clean" (fun _ ->
+let clean _ =
     CleanDirs [buildDir]
-)
+    
+Target "Clean" clean
+Target "FClean" clean
 
-Target "InstallDotNetCLI" (fun _ ->
+let installDotNetCli _ =
     dotnetExePath <- DotNetCli.InstallDotNetSDK dotnetcliVersion
-)
+Target "InstallDotNetCLI" installDotNetCli
 
-Target "Restore" (fun _ ->
+let restore _ =
     appReferences
     |> Seq.iter (fun p ->
         let dir = System.IO.Path.GetDirectoryName p
         runDotnet dir "restore"
     )
-)
 
-Target "Build" (fun _ ->
+Target "Restore" restore
+Target "FRestore" restore
+
+let build _ =
     appReferences
     |> Seq.iter (fun p ->
-        let dir = System.IO.Path.GetDirectoryName p
+        let dir = Path.GetDirectoryName p
         runDotnet dir "build"
     )
-)
+
+Target "Build" build
+Target "FBuild" build
+
+let test _ = 
+    appReferences
+    |> Seq.map (Path.GetDirectoryName >> DirectoryInfo)
+    |> Seq.filter (fun dir -> dir.Name.Contains("Test")) 
+    |> Seq.iter (fun dir ->
+        let path = dir.FullName
+        printfn "running: %s" path
+        runDotnet path "run"
+    )
+
+Target "Test" test
+Target "FTest" test
 
 // --------------------------------------------------------------------------------------
 // Build order
@@ -75,5 +96,10 @@ Target "Build" (fun _ ->
   ==> "InstallDotNetCLI"
   ==> "Restore"
   ==> "Build"
+  ==> "Test"
 
-RunTargetOrDefault "Build"
+"FClean"
+  ==> "FRestore"
+  ==> "FBuild"
+  ==> "FTest"
+RunTargetOrDefault "FTest"
