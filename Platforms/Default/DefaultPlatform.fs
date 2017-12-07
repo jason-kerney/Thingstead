@@ -1,5 +1,5 @@
 namespace SolStone.TestRunner.Default
-open SolStone.SharedTypes
+open SolStone.Core.SharedTypes
 open System
 
 module Framework =

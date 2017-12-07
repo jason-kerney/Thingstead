@@ -1,5 +1,5 @@
 namespace SolStone.TestBuilder.Scripting
-open SolStone.SharedTypes
+open SolStone.Core.SharedTypes
 
 [<AutoOpen>]
 module Framework =

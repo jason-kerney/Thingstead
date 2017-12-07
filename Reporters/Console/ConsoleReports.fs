@@ -1,5 +1,5 @@
 namespace SolStone.Reporters.Console
-open SolStone.SharedTypes
+open SolStone.Core.SharedTypes
 open System
 
 module Reporter = 

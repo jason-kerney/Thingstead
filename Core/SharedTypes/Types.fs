@@ -1,4 +1,4 @@
-namespace SolStone.SharedTypes
+namespace SolStone.Core.SharedTypes
 open System
 
 //type IndeterminateInfo =

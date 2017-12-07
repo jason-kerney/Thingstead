@@ -1,7 +1,7 @@
 ﻿// Learn more about F# at http://fsharp.org
 
 open SolStone.TestRunner.Default.Framework
-open SolStone.SharedTypes
+open SolStone.Core.SharedTypes
 open SolStone.Reporters.Console.Reporter
 open SolStone.TestBuilder.Scripting
 

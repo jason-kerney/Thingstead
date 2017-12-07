@@ -1,7 +1,7 @@
 ﻿namespace SolStone.TestBuilder.Scripting.Tests
 
 open SolStone.TestBuilder.Scripting.Tests.Support
-open SolStone.SharedTypes
+open SolStone.Core.SharedTypes
 open SolStone.TestBuilder.Scripting
 open SolStone.TestRunner.Default.Framework
 open SolStone.Reporters.Console.Reporter
