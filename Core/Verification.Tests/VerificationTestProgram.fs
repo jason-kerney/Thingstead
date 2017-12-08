@@ -1,9 +1,8 @@
 ﻿open SolStone.TestRunner.Default.Framework
 open SolStone.Core.SharedTypes
+open SolStone.Core.Verification
 open SolStone.Reporters.Console.Reporter
 open SolStone.TestBuilder.Scripting
-
-let expectsToBe = SolStone.Core.Verification.expectsToBe
 
 [<EntryPoint>]
 let main _argv =

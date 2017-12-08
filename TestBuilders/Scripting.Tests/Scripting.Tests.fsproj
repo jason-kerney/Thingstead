@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\SharedTypes\SharedTypes.fsproj" />
+    <ProjectReference Include="..\..\Core\Verification\Verification.fsproj" />
     <ProjectReference Include="..\..\Platforms\Default\Default.fsproj" />
     <ProjectReference Include="..\..\Reporters\Console\ConsoleReporters.fsproj" />
     <ProjectReference Include="..\Scripting\Scripting.fsproj" />

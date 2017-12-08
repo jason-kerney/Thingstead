@@ -34,10 +34,7 @@ module Framework =
     let asIgnored = Ignored >> Failure
     
     let andThen : Test list -> Test list -> Test list = List.append
-    let expectsToBe a b =
-        if a = b then Success
-        else Failure (ExpectationFailure (sprintf "%A <> %A" a b))
-
+    
     let expectsToNotBe a b =
         if a = b then Failure (ExpectationFailure (sprintf "%A = %A" a b))
         else Success

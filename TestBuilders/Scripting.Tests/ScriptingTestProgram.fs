@@ -2,6 +2,7 @@
 
 open SolStone.TestBuilder.Scripting.Tests.Support
 open SolStone.Core.SharedTypes
+open SolStone.Core.Verification
 open SolStone.TestBuilder.Scripting
 open SolStone.TestRunner.Default.Framework
 open SolStone.Reporters.Console.Reporter
