@@ -34,6 +34,11 @@ module Framework =
     let asIgnored = Ignored >> Failure
     
     let andThen : Test list -> Test list -> Test list = List.append
+
+    let andThenBy (fn : string -> Test list -> Test list) (groupTitle : string) (tests : Test list) =
+        andThen (
+            fn groupTitle tests
+        )
     
     let expectsToNotBe a b =
         if a = b then Failure (ExpectationFailure (sprintf "%A = %A" a b))

@@ -8,6 +8,10 @@ open SolStone.TestRunner.Default.Framework
 open SolStone.Reporters.Console.Reporter
 
 module Program =
+    let buildTestName testName fn =
+        fn [{blankTest with TestName = testName}]
+        |> List.head
+        |> getTestName
     let tests = 
         product "SolStone"(
             suite "Scripting" (
@@ -24,47 +28,45 @@ module Program =
                             expectsToBe expected result
                         )
                 ]
-                |> andThen (
-                    feature "suite" [
-                        "appends suite name to a single test"
-                            |> testedWith (fun () ->
-                                let path = 
-                                    suite "Suite" [
-                                        {blankTest with
-                                            TestContainerPath = ["contains a test"]
-                                        }
-                                    ]
-                                    |> List.map (fun test -> test.TestContainerPath)
-                                    |> List.head
+                |> andThenBy feature "suite" [
+                    "appends suite name to a single test"
+                        |> testedWith (fun () ->
+                            let path = 
+                                suite "Suite" [
+                                    {blankTest with
+                                        TestContainerPath = ["contains a test"]
+                                    }
+                                ]
+                                |> List.map (fun test -> test.TestContainerPath)
+                                |> List.head
 
-                                let expected = ["Suite \"Suite\""; "contains a test"]
-                                path |> expectsToBe expected
-                            )
-                        "appents suite to all tests"
-                            |> testedWith (fun () ->
-                                let paths = 
-                                    suite "Suite" [
-                                        {blankTest with
-                                            TestContainerPath = ["does some thing"]
-                                        }
-                                        blankTest
-                                    ]
-                                    |> List.map (fun test -> test.TestContainerPath)                        
+                            let expected = ["Suite \"Suite\""; "contains a test"]
+                            path |> expectsToBe expected
+                        )
+                    "appents suite to all tests"
+                        |> testedWith (fun () ->
+                            let paths = 
+                                suite "Suite" [
+                                    {blankTest with
+                                        TestContainerPath = ["does some thing"]
+                                    }
+                                    blankTest
+                                ]
+                                |> List.map (fun test -> test.TestContainerPath)                        
 
-                                let expected = [["Suite \"Suite\""; "does some thing"]; ["Suite \"Suite\""]]
-                                paths |> expectsToBe expected                        
-                            )
-                        "does not fail when given no tests"
-                            |> testedWith (fun () ->
-                                let paths = 
-                                    suite "Suite" [] |> List.map asSummary
+                            let expected = [["Suite \"Suite\""; "does some thing"]; ["Suite \"Suite\""]]
+                            paths |> expectsToBe expected                        
+                        )
+                    "does not fail when given no tests"
+                        |> testedWith (fun () ->
+                            let paths = 
+                                suite "Suite" [] |> List.map asSummary
 
-                                let expected : TestSummary list = []
+                            let expected : TestSummary list = []
 
-                                paths |> expectsToBe expected
-                            )
-                    ]
-                )
+                            paths |> expectsToBe expected
+                        )
+                ]
                 |> andThen [
                     "tests can be concatinated with \"andThen\""
                         |> testedWith (fun () ->
@@ -95,63 +97,56 @@ module Program =
                         tests |> expectsToBe expected
                     )
                 ]
-                |> andThen (
-                    let buildTestName testName fn =
-                        fn [{blankTest with TestName = testName}]
-                        |> List.head
-                        |> getTestName
+                |> andThenBy feature "Named Groups" [
+                    "method asSuite works the same as suite"
+                        |> testedWith (fun () ->
+                            let testName = 
+                                asSuite "suite" |> buildTestName "test name"
 
-                    feature "Named Groups" [
-                        "method asSuite works the same as suite"
-                            |> testedWith (fun () ->
-                                let testName = 
-                                    asSuite "suite" |> buildTestName "test name"
+                            testName |> expectsToBe "Suite \"suite\" test name"
+                        )
+                    "method feature appends feature"
+                        |> testedWith (fun () ->
+                            let testName =
+                                feature "feature" |> buildTestName "some test"
 
-                                testName |> expectsToBe "Suite \"suite\" test name"
-                            )
-                        "method feature appends feature"
-                            |> testedWith (fun () ->
-                                let testName =
-                                    feature "feature" |> buildTestName "some test"
+                            testName |> expectsToBe "Feature \"feature\" some test"
+                        )
+                    "method describe appends Described"
+                        |> testedWith (fun () ->
+                            let testName =
+                                describe "describe" |> buildTestName "a test"
+                            testName |> expectsToBe "Described \"describe\" a test"
+                        )
+                    "method subFeature works the same as feature"
+                        |> testedWith (fun () ->
+                            let testName =
+                                subFeature "sub-feature" |> buildTestName "test"
 
-                                testName |> expectsToBe "Feature \"feature\" some test"
-                            )
-                        "method describe appends Described"
-                            |> testedWith (fun () ->
-                                let testName =
-                                    describe "describe" |> buildTestName "a test"
-                                testName |> expectsToBe "Described \"describe\" a test"
-                            )
-                        "method subFeature works the same as feature"
-                            |> testedWith (fun () ->
-                                let testName =
-                                    subFeature "sub-feature" |> buildTestName "test"
+                            testName |> expectsToBe "Feature \"sub-feature\" test"
+                        )
+                    "method product appends Product"
+                        |> testedWith (fun () ->
+                            let testName = 
+                                product "product" |> buildTestName "test"
 
-                                testName |> expectsToBe "Feature \"sub-feature\" test"
-                            )
-                        "method product appends Product"
-                            |> testedWith (fun () ->
-                                let testName = 
-                                    product "product" |> buildTestName "test"
+                            testName |> expectsToBe "Product \"product\" test"
+                        )
+                    "method groupedBy appends Group"
+                        |> testedWith (fun () -> 
+                            let testName =
+                                groupedBy "grouped by" |> buildTestName "test"
 
-                                testName |> expectsToBe "Product \"product\" test"
-                            )
-                        "method groupedBy appends Group"
-                            |> testedWith (fun () -> 
-                                let testName =
-                                    groupedBy "grouped by" |> buildTestName "test"
+                            testName |> expectsToBe "Group \"grouped by\" test"
+                        )
+                    "method featured works like feature"
+                        |> testedWith (fun () -> 
+                            let testName =
+                                featured "featured" |> buildTestName "test"
 
-                                testName |> expectsToBe "Group \"grouped by\" test"
-                            )
-                        "method featured works like feature"
-                            |> testedWith (fun () -> 
-                                let testName =
-                                    featured "featured" |> buildTestName "test"
-
-                                testName |> expectsToBe "Feature \"featured\" test"
-                            )
-                    ]
-                )
+                            testName |> expectsToBe "Feature \"featured\" test"
+                        )
+                ]
             )
         )
         
