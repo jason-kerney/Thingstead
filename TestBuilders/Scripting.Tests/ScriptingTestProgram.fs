@@ -28,7 +28,7 @@ module Program =
                             expectsToBe expected result
                         )
                 ]
-                |> andNext feature "suite" [
+                |> alsoWith feature "suite" [
                     "appends suite name to a single test"
                         |> testedWith (fun () ->
                             let path = 
@@ -67,15 +67,15 @@ module Program =
                             paths |> expectsToBe expected
                         )
                 ]
-                |> andThen [
-                    "tests can be concatinated with \"andThen\""
+                |> also [
+                    "tests can be concatinated with \"also\""
                         |> testedWith (fun () ->
                         let tests = 
                             [
                                 "Test A"
                                 |> testedWith successfullResult
                             ] 
-                            |> andThen [
+                            |> also [
                                 "Test B"
                                 |> testedWith (fun () -> "Did not work" |> asExpectationFailure)
                             ]
@@ -97,7 +97,7 @@ module Program =
                         tests |> expectsToBe expected
                     )
                 ]
-                |> andNext feature "Named Groups" [
+                |> alsoWith feature "Named Groups" [
                     "method asSuite works the same as suite"
                         |> testedWith (fun () ->
                             let testName = 

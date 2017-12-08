@@ -34,7 +34,7 @@ let main _argv =
                             |> Failure
                     )
             ] 
-            |> andNext feature "expectsNotToBe" [
+            |> alsoWith feature "expectsNotToBe" [
                 "should return Success if given \"3 |> expectsNotToBe 5\""
                     |> testedWith (fun _ ->
                         let result = 3 |> expectsNotToBe 5
@@ -52,7 +52,7 @@ let main _argv =
                         else result |> sprintf "%A <> %A" expected |> ExpectationFailure |> Failure
                     )
             ]
-            |> andNext feature "andAlso" [
+            |> alsoWith feature "andAlso" [
                 "should return Success when Success is checked with a Success"
                     |> testedWith (fun _ ->
                         let result = Success |> andAlso expectsToBe "H" "H"
