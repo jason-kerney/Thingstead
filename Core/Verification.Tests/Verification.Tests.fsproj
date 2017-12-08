@@ -13,8 +13,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\TestBuilders\Scripting\Scripting.fsproj" />
     <ProjectReference Include="..\..\Reporters\Console\ConsoleReporters.fsproj" />
-    <ProjectReference Include="..\..\Core\SharedTypes\SharedTypes.fsproj" />
     <ProjectReference Include="..\..\Platforms\Default\Default.fsproj" />
+    <ProjectReference Include="..\SharedTypes\SharedTypes.fsproj" />
+    <ProjectReference Include="..\Verification\Verification.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
