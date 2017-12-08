@@ -28,7 +28,7 @@ module Program =
                             expectsToBe expected result
                         )
                 ]
-                |> andThenBy feature "suite" [
+                |> andNext feature "suite" [
                     "appends suite name to a single test"
                         |> testedWith (fun () ->
                             let path = 
@@ -97,7 +97,7 @@ module Program =
                         tests |> expectsToBe expected
                     )
                 ]
-                |> andThenBy feature "Named Groups" [
+                |> andNext feature "Named Groups" [
                     "method asSuite works the same as suite"
                         |> testedWith (fun () ->
                             let testName = 

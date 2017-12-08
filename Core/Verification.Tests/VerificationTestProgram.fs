@@ -33,6 +33,24 @@ let main _argv =
                             |> ExpectationFailure 
                             |> Failure
                     )
+            ] 
+            |> andNext feature "expectsNotToBe" [
+                "should return Success if given \"3 |> expectsNotToBe 5\""
+                    |> testedWith (fun _ ->
+                        let result = 3 |> expectsNotToBe 5
+                        if result = Success then Success
+                        else result |> sprintf "Success <> %A" |> ExpectationFailure |> Failure
+                    )
+
+                "should return an expectation failure if given \"2 |> expectsNotToBe 2\""
+                    |> testedWith (fun _ ->
+                        let expected = ("2 expected not to be 2" |> ExpectationFailure |> Failure)
+                        let result = 2 |> expectsNotToBe 2
+                        
+                        if result = expected
+                        then Success
+                        else result |> sprintf "%A <> %A" expected |> ExpectationFailure |> Failure
+                    )
             ]
         )
     ) 

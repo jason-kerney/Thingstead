@@ -35,7 +35,7 @@ module Framework =
     
     let andThen : Test list -> Test list -> Test list = List.append
 
-    let andThenBy (fn : string -> Test list -> Test list) (groupTitle : string) (tests : Test list) =
+    let andNext (fn : string -> Test list -> Test list) (groupTitle : string) (tests : Test list) =
         andThen (
             fn groupTitle tests
         )
