@@ -46,10 +46,21 @@ let main _argv =
                     |> testedWith (fun _ ->
                         let expected = ("2 expected not to be 2" |> ExpectationFailure |> Failure)
                         let result = 2 |> expectsNotToBe 2
-                        
+
                         if result = expected
                         then Success
                         else result |> sprintf "%A <> %A" expected |> ExpectationFailure |> Failure
+                    )
+            ]
+            |> andNext feature "andThen" [
+                "should combine 2 test lists"
+                    |> testedWith (fun _ ->
+                        let testA = {blankTest with TestName = "Hello A"}
+                        let testB = {blankTest with TestName = "Hello B"}
+                        [testA]
+                        |> andThen [testB]
+                        |> List.map (fun test -> test.TestName)
+                        |> expectsToBe [testB.TestName; testA.TestName]
                     )
             ]
         )

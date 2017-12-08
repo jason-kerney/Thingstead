@@ -33,10 +33,8 @@ module Framework =
     let asExpectationFailure = ExpectationFailure >> Failure
     let asIgnored = Ignored >> Failure
     
-    let andThen : Test list -> Test list -> Test list = List.append
-
     let andNext (fn : string -> Test list -> Test list) (groupTitle : string) (tests : Test list) =
-        andThen (
+        List.append (
             fn groupTitle tests
         )
 

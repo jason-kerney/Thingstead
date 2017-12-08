@@ -3,6 +3,8 @@ namespace SolStone.Core
 open SolStone.Core.SharedTypes
 
 module Verification =
+    let andThen : Test list -> Test list -> Test list = List.append
+
     let expectsNotToBe expected actual = 
         if expected <> actual then Success
         else 
