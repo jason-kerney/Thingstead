@@ -32,12 +32,10 @@ module Framework =
 
     let asExpectationFailure = ExpectationFailure >> Failure
     let asIgnored = Ignored >> Failure
+
+    let andThen : Test list -> Test list -> Test list = List.append
     
     let andNext (fn : string -> Test list -> Test list) (groupTitle : string) (tests : Test list) =
         List.append (
             fn groupTitle tests
         )
-
-    let andAlso check a b pastResult =
-        if pastResult = Success then check a b
-        else pastResult

@@ -52,15 +52,28 @@ let main _argv =
                         else result |> sprintf "%A <> %A" expected |> ExpectationFailure |> Failure
                     )
             ]
-            |> andNext feature "andThen" [
-                "should combine 2 test lists"
+            |> andNext feature "andAlso" [
+                "should return Success when Success is checked with a Success"
                     |> testedWith (fun _ ->
-                        let testA = {blankTest with TestName = "Hello A"}
-                        let testB = {blankTest with TestName = "Hello B"}
-                        [testA]
-                        |> andThen [testB]
-                        |> List.map (fun test -> test.TestName)
-                        |> expectsToBe [testB.TestName; testA.TestName]
+                        let result = Success |> andAlso expectsToBe "H" "H"
+                        
+                        result |> expectsToBe Success
+                    )
+                
+                "should return the failure if given a failure as the last argument"
+                    |> testedWith (fun _ ->
+                        let failure = "Some Failure" |> ExpectationFailure |> Failure
+                        let result = failure |> andAlso expectsToBe 5 5
+
+                        result |> expectsToBe failure
+                    )
+
+                "should return the failure if the check results in a failure and the last item is a Success"
+                    |> testedWith (fun _ ->
+                        let expectedFailure = expectsToBe "bob" "Tom"
+                        let result = Success |> andAlso expectsToBe "bob" "Tom"
+                        
+                        result |> expectsToBe expectedFailure
                     )
             ]
         )
