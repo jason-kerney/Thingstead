@@ -39,10 +39,6 @@ module Framework =
         andThen (
             fn groupTitle tests
         )
-    
-    let expectsToNotBe a b =
-        if a = b then Failure (ExpectationFailure (sprintf "%A = %A" a b))
-        else Success
 
     let andAlso check a b pastResult =
         if pastResult = Success then check a b

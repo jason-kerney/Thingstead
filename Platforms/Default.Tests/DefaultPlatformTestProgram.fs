@@ -65,7 +65,7 @@ let main _argv =
                         let _, resultC = 45   |> executerWithSeed [testCase1; testCase2; testCase3] |> fun result -> result.Seed, result.Successes |> List.map getSimpleTestName
 
                         resultA 
-                            |> expectsToNotBe resultB
+                            |> expectsNotToBe resultB
                             |> andAlso 
                                 expectsToBe resultA resultC
                             |> andAlso
