@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>TestBuilders.Scripting</AssemblyName>
+    <AssemblyName>SolStone.Reporters.Console</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,7 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="ScriptingLibrary.fs" />
+    <Compile Include="ConsoleReports.fsi" />
+    <Compile Include="ConsoleReports.fs" />
   </ItemGroup>
 
   <ItemGroup>

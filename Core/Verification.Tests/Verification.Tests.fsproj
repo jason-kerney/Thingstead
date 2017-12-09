@@ -3,19 +3,19 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <AssemblyName>Platforms.Default.Tests</AssemblyName>
+    <AssemblyName>Core.Verification.Tests</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="DefaultPlatformTestProgram.fs" />
+    <Compile Include="VerificationTestProgram.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\TestBuilders\Scripting\Scripting.fsproj" />
     <ProjectReference Include="..\..\Reporters\Console\ConsoleReporters.fsproj" />
-    <ProjectReference Include="..\..\Core\SharedTypes\SharedTypes.fsproj" />
-    <ProjectReference Include="..\..\Core\Verification\Verification.fsproj" />
-    <ProjectReference Include="..\Default\Default.fsproj" />
+    <ProjectReference Include="..\..\Platforms\Default\Default.fsproj" />
+    <ProjectReference Include="..\SharedTypes\SharedTypes.fsproj" />
+    <ProjectReference Include="..\Verification\Verification.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

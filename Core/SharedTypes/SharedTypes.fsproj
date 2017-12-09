@@ -2,16 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>Platforms.Default</AssemblyName>
+    <AssemblyName>SolStone.SharedTypes</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="DefaultPlatform.fsi" />
-    <Compile Include="DefaultPlatform.fs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Core\SharedTypes\SharedTypes.fsproj" />
+    <Compile Include="Types.fs" />
   </ItemGroup>
 
   <ItemGroup>
