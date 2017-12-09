@@ -1,5 +1,7 @@
 namespace SolStone.Core.SharedTypes
 open System
+open System.Xml.XPath
+open System.Reflection
 
 //type IndeterminateInfo =
 //    {
@@ -29,9 +31,15 @@ type TestResult =
 //        Reporters                  : (unit -> IApprovalFailureReporter) List;
 //    }
 
+type PathInformation = 
+    {
+        PathName : string
+        PathType : string option
+    }
+
 type Test =
     {
-        TestContainerPath : string list
+        TestContainerPath : PathInformation list
         TestName : string
         TestFunction : unit -> TestResult
     }
@@ -52,6 +60,7 @@ type TestReporter = TestExecutionReport -> TestExecutionReport
 
 [<AutoOpen>]
 module Support =
+    let private trim (value: string) = value.Trim ()
     let emptyTest = { TestContainerPath = []; TestName = "Empty Test"; TestFunction = fun () -> "Not Implemented" |> Ignored |> Failure }
     let blankTest = emptyTest
     let startingReport = { Seed = None ; TotalTests = 0 ; Failures = []; Successes = [] }
@@ -59,9 +68,25 @@ module Support =
     let private joinWith (seperator: string) (values : string seq) = 
         String.Join (seperator, values)
 
-    let getTestName test =
-        let path = test.TestContainerPath |> joinWith " "
-        sprintf "%s %s" path (test.TestName)
+    let getOptionalString = function
+        | None -> ""
+        | Some value -> value
+
+    let getPathName { PathName = name; PathType = typeName } =
+        if typeName = None then
+            name
+        else
+            let typeName = typeName |> getOptionalString
+            sprintf "%s %A" typeName name
+                  
+
+    let getTestName {TestContainerPath = containerPath; TestName = testName} =
+        let path = 
+            containerPath
+            |> List.map getPathName
+            |> joinWith " "
+
+        sprintf "%s %s" path testName
 
     let getFailCount (report : TestExecutionReport) = 
         report.Failures |> List.length
@@ -71,3 +96,5 @@ module Support =
 
     let getTestCount (report : TestExecutionReport) =
         (report |> getFailCount) + (report |> getSuccessCount)
+
+    let getPath (test : Test) = test.TestContainerPath    

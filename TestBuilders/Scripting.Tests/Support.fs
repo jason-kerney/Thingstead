@@ -31,7 +31,7 @@ module Support =
 
     type TestSummary = 
         {
-            ContainerPath: string list
+            ContainerPath: PathInformation list
             Name: string
             Result: TestResult option
         }    

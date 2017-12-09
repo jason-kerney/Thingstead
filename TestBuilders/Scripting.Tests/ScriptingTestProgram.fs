@@ -8,6 +8,12 @@ open SolStone.TestRunner.Default.Framework
 open SolStone.Reporters.Console.Reporter
 
 module Program =
+    let asPath name = 
+        {
+            PathName = name
+            PathType = None
+        }
+
     let buildTestName testName fn =
         fn [{blankTest with TestName = testName}]
         |> List.head
@@ -34,11 +40,12 @@ module Program =
                             let path = 
                                 suite "Suite" [
                                     {blankTest with
-                                        TestContainerPath = ["contains a test"]
+                                        TestContainerPath = ["contains a test" |> asPath]
                                     }
                                 ]
-                                |> List.map (fun test -> test.TestContainerPath)
+                                |> List.map getPath
                                 |> List.head
+                                |> List.map getPathName
 
                             let expected = ["Suite \"Suite\""; "contains a test"]
                             path |> expectsToBe expected
@@ -48,13 +55,13 @@ module Program =
                             let paths = 
                                 suite "Suite" [
                                     {blankTest with
-                                        TestContainerPath = ["does some thing"]
+                                        TestContainerPath = ["does some thing" |> asPath]
                                     }
                                     blankTest
                                 ]
-                                |> List.map (fun test -> test.TestContainerPath)                        
+                                |> List.map (fun test -> test.TestContainerPath)                      
 
-                            let expected = [["Suite \"Suite\""; "does some thing"]; ["Suite \"Suite\""]]
+                            let expected = [[{ PathName = "Suite"; PathType = Some "Suite" }; "does some thing" |> asPath]; [{ PathName = "Suite"; PathType = Some "Suite" }]]
                             paths |> expectsToBe expected                        
                         )
                     "does not fail when given no tests"

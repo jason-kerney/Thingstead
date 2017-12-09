@@ -3,6 +3,7 @@ open SolStone.Core.SharedTypes
 
 [<AutoOpen>]
 module Framework =
+    let trim (value : string) = value.Trim ()
 
     let testedWith testFn name =
         {emptyTest with
@@ -17,8 +18,14 @@ module Framework =
                 { test with TestContainerPath = name::(test.TestContainerPath) }
             )
 
+    let buildPath typeName name = 
+        {
+            PathName = name;
+            PathType = typeName
+        }
     let private namedAlterPath indicator = 
-        sprintf "%s \"%s\"" indicator >> alterPath
+        let typeName = if (indicator |> trim) |> Seq.isEmpty then None else Some indicator
+        buildPath typeName >> alterPath
 
     let suite = namedAlterPath "Suite"
 
