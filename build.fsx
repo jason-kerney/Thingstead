@@ -13,7 +13,7 @@ open System
 // Build variables
 // --------------------------------------------------------------------------------------
 
-let buildDir  = "./build/"
+let buildDir  = "./build/" |> IO.Path.GetFullPath
 let appReferences = !! "/**/*.fsproj"
 let dotnetcliVersion = "2.0.2"
 let mutable dotnetExePath = "dotnet"
@@ -66,23 +66,21 @@ Target "Restore" restore
 Target "FRestore" restore
 
 let build _ =
-    appReferences
-    |> Seq.iter (fun p ->
-        let dir = Path.GetDirectoryName p
-        runDotnet dir "build"
-    )
+    let currentPath = ".\\" |> IO.Path.GetFullPath
+    runDotnet currentPath ("build -o " + buildDir)
 
 Target "Build" build
 Target "FBuild" build
 
 let test _ = 
-    appReferences
-    |> Seq.map (Path.GetDirectoryName >> DirectoryInfo)
-    |> Seq.filter (fun dir -> dir.Name.Contains("Test")) 
-    |> Seq.iter (fun dir ->
-        let path = dir.FullName
-        printfn "running: %s" path
-        runDotnet path "run"
+    buildDir
+    |> DirectoryInfo
+    |> fun d -> d.GetFiles ("*.Tests.dll")
+    |> Seq.iter (fun file ->
+        let fileName = file.FullName
+        let path = fileName |> IO.Path.GetDirectoryName
+        printfn "running: %s" fileName
+        runDotnet path fileName
     )
 
 Target "Test" test
