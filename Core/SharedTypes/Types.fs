@@ -56,7 +56,8 @@ type RandomSeed = int
 type TestExecutor = Test list -> TestExecutionReport
 type TestExecutorWithSeed = Test list -> RandomSeed -> TestExecutionReport
 
-type TestReporter = TestExecutionReport -> TestExecutionReport
+type Header = string
+type TestReporter = Header -> TestExecutionReport -> TestExecutionReport
 
 [<AutoOpen>]
 module Support =

@@ -6,8 +6,6 @@ open SolStone.Core.SharedTypes.Support
 module Program =
     [<EntryPoint>]
     let main _argv =
-        "SolStone Tests" |> printHeader
-        
         [
             TestRunners.DefaultRunner.tests
             TestBuilders.Scripting.tests
@@ -15,7 +13,7 @@ module Program =
         ] 
         |> List.concat
         |> executer
-        |> report
+        |> report "SolStone Tests"
         |> getFailCount
 
 

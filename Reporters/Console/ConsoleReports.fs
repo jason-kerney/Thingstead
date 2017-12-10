@@ -51,7 +51,7 @@ module Reporter =
     let printHeader value =
         value |> sprintf "%s\n" |> printInColor ConsoleColor.Yellow
 
-    let report (testResults : TestExecutionReport) =
+    let report header (testResults : TestExecutionReport) =
         let failedTests = testResults.Failures
         let failedTestCount = testResults |>  getFailCount
         let testCount = testResults |> getTestCount
@@ -76,6 +76,7 @@ module Reporter =
         let printFailure i (test: Test, _failure: FailureType) =
             printTestTitle i test
 
+        header |> printHeader
         if failedTestCount > 0 then
             let reportHeaderColor = ConsoleColor.Cyan
             "-- Failed Test Details --\n\n" |> printInColor reportHeaderColor
