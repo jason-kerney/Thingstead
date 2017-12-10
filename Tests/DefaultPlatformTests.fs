@@ -58,12 +58,3 @@ module DefaultRunner =
                     )
             ]
         )
-
-    let run _ =
-        let result = tests |> executer
-        let failedTestCount = result |> getFailCount
-
-        "SolStone Default Test Executioner Tests" |> printHeader
-        result |> report |> ignore
-
-        failedTestCount

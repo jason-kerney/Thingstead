@@ -78,12 +78,4 @@ module VerificationTests =
                         )
                 ]
             )
-        ) 
-
-    let run _ =
-        "Test Verification Tests" |> printHeader
-
-        tests
-        |> executer
-        |> report
-        |> getFailCount
+        )

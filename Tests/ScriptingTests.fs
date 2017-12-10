@@ -145,11 +145,3 @@ module Scripting =
                 ]
             )
         )
-        
-    let run _ =
-        let result = tests |> executer
-
-        "SolStone Scripting Syntax Tests" |> printHeader
-        result |> report |> ignore
-
-        result |> getFailCount
