@@ -1,4 +1,4 @@
-namespace SolStone.Tests.TestRunners
+namespace SolStone.Tests
 open SolStone.Core.SharedTypes
 
 module Support =
@@ -17,3 +17,32 @@ module Support =
 
     let getSimpleTestName test =
         test.TestName
+
+    let successfullResult () = Success
+
+    type TestSummary = 
+        {
+            ContainerPath: PathInformation list
+            Name: string
+            Result: TestResult option
+        }    
+
+    let blankSummary = { ContainerPath = []; Name = ""; Result = None }
+
+    let asSummary test = 
+        { blankSummary with
+            ContainerPath = test.TestContainerPath
+            Name = test.TestName
+            Result = Some (test.TestFunction ())
+        }
+
+    let asPath name = 
+        {
+            PathName = name
+            PathType = None
+        }
+
+    let buildTestName testName fn =
+        fn [{blankTest with TestName = testName}]
+        |> List.head
+        |> getTestName

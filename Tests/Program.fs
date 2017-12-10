@@ -6,4 +6,5 @@ module Program =
     let main _argv =
         [
             TestRunners.DefaultRunner.run ()
+            TestBuilders.Scripting.run ()
         ] |> List.sum

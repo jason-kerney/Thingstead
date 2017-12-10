@@ -6,7 +6,7 @@ open SolStone.Core.Verification
 open SolStone.Reporters.Console.Reporter
         
 module DefaultRunner =
-    open Support
+    open SolStone.Tests.Support
 
     let tests = 
         product "SolStone" (

@@ -23,6 +23,7 @@
   <ItemGroup>
     <Compile Include="Suport.fs" />
     <Compile Include="DefaultPlatformTests.fs" />
+    <Compile Include="ScriptingTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 </Project>
