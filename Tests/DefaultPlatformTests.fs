@@ -4,23 +4,6 @@ open SolStone.TestRunner.Default.Framework
 open SolStone.Core.SharedTypes
 open SolStone.Core.Verification
 open SolStone.Reporters.Console.Reporter
-
-module Support =
-    let createTest name fn = 
-        {
-            TestContainerPath = []
-            TestName = name
-            TestFunction = fn
-        }
-
-    let createSuccessfullTest name =
-        createTest name (fun () -> Success)
-
-    let createFailingTest name failure =
-        createTest name (fun () -> Failure failure)
-
-    let getSimpleTestName test =
-        test.TestName
         
 module DefaultRunner =
     open Support
