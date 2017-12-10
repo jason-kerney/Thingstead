@@ -1,5 +1,4 @@
 ﻿namespace SolStone.Tests
-// Learn more about F# at http://fsharp.org
 
 module Program =
     [<EntryPoint>]
