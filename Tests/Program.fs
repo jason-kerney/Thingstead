@@ -6,4 +6,5 @@ module Program =
         [
             TestRunners.DefaultRunner.run ()
             TestBuilders.Scripting.run ()
+            Core.VerificationTests.run ()
         ] |> List.sum
