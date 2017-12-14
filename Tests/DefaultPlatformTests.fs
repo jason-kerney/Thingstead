@@ -3,7 +3,6 @@ open SolStone.TestBuilder.Scripting
 open SolStone.TestRunner.Default.Framework
 open SolStone.Core.SharedTypes
 open SolStone.Core.Verification
-open SolStone.Reporters.Console.Reporter
 open System
         
 module DefaultRunner =
@@ -13,7 +12,7 @@ module DefaultRunner =
         product "SolStone" (
             suite "Default Test Execution" [
                 "Shows a successful test as being successfull"
-                    |> testedWith (fun () ->
+                    |> testedWith (fun _ ->
                         let testCase = createSuccessfullTest "A passing test"
                         let result = executer [testCase] |> fun result -> result.Successes |> List.head
                     
@@ -24,7 +23,7 @@ module DefaultRunner =
                     )
 
                 "Shows a failed test as failing"
-                    |> testedWith (fun () ->
+                    |> testedWith (fun _ ->
                         let failure = GeneralFailure "Bad Test"
                         let testCase = createFailingTest "A passing test" failure
 
@@ -39,7 +38,7 @@ module DefaultRunner =
                     )
 
                 "Multiple tests run in random order"
-                    |> testedWith (fun () ->
+                    |> testedWith (fun _ ->
                         let testCase1 = createSuccessfullTest "A"
                         let testCase2 = createSuccessfullTest "B"
                         let testCase3 = createSuccessfullTest "C"
@@ -58,7 +57,7 @@ module DefaultRunner =
                                 expectsToBe resultSeedB (Some 1889)
                     )
                 "A test function that throws an error returns with an exception Failure instead"
-                    |> testedWith (fun () ->
+                    |> testedWith (fun _ ->
                         let e = ApplicationException "This is an exeption"
                         let expected = e :> Exception |> ExceptionFailure
                         let test = 

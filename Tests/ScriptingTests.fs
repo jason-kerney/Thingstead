@@ -3,8 +3,6 @@ open SolStone.Core.SharedTypes
 open SolStone.TestBuilder.Scripting
 open SolStone.Core.Verification
 open SolStone.Tests.Support
-open SolStone.TestRunner.Default.Framework
-open SolStone.Reporters.Console.Reporter
 
 module Scripting =
     let tests = 
@@ -12,7 +10,7 @@ module Scripting =
             suite "Scripting" (
                 feature "a test" [
                     "creates a test once given all the parts"
-                        |> testedWith (fun () ->
+                        |> testedWith (fun _ ->
                             let name = "My Test"
                             let result =
                                 name
@@ -25,7 +23,7 @@ module Scripting =
                 ]
                 |> alsoWith feature "suite" [
                     "appends suite name to a single test"
-                        |> testedWith (fun () ->
+                        |> testedWith (fun _ ->
                             let path = 
                                 suite "Suite" [
                                     {blankTest with
@@ -40,7 +38,7 @@ module Scripting =
                             path |> expectsToBe expected
                         )
                     "appents suite to all tests"
-                        |> testedWith (fun () ->
+                        |> testedWith (fun _ ->
                             let paths = 
                                 suite "Suite" [
                                     {blankTest with
@@ -54,7 +52,7 @@ module Scripting =
                             paths |> expectsToBe expected                        
                         )
                     "does not fail when given no tests"
-                        |> testedWith (fun () ->
+                        |> testedWith (fun _ ->
                             let paths = 
                                 suite "Suite" [] |> List.map asSummary
 
@@ -65,7 +63,7 @@ module Scripting =
                 ]
                 |> also [
                     "tests can be concatinated with \"also\""
-                        |> testedWith (fun () ->
+                        |> testedWith (fun _ ->
                         let tests = 
                             [
                                 "Test A"
@@ -73,7 +71,7 @@ module Scripting =
                             ] 
                             |> also [
                                 "Test B"
-                                |> testedWith (fun () -> "Did not work" |> asExpectationFailure)
+                                |> testedWith (fun _ -> "Did not work" |> asExpectationFailure)
                             ]
                             |> List.map asSummary
                             
@@ -95,48 +93,48 @@ module Scripting =
                 ]
                 |> alsoWith feature "Named Groups" [
                     "method asSuite works the same as suite"
-                        |> testedWith (fun () ->
+                        |> testedWith (fun _ ->
                             let testName = 
                                 asSuite "suite" |> buildTestName "test name"
 
                             testName |> expectsToBe "Suite \"suite\" test name"
                         )
                     "method feature appends feature"
-                        |> testedWith (fun () ->
+                        |> testedWith (fun _ ->
                             let testName =
                                 feature "feature" |> buildTestName "some test"
 
                             testName |> expectsToBe "Feature \"feature\" some test"
                         )
                     "method describe appends Described"
-                        |> testedWith (fun () ->
+                        |> testedWith (fun _ ->
                             let testName =
                                 describe "describe" |> buildTestName "a test"
                             testName |> expectsToBe "Described \"describe\" a test"
                         )
                     "method subFeature works the same as feature"
-                        |> testedWith (fun () ->
+                        |> testedWith (fun _ ->
                             let testName =
                                 subFeature "sub-feature" |> buildTestName "test"
 
                             testName |> expectsToBe "Feature \"sub-feature\" test"
                         )
                     "method product appends Product"
-                        |> testedWith (fun () ->
+                        |> testedWith (fun _ ->
                             let testName = 
                                 product "product" |> buildTestName "test"
 
                             testName |> expectsToBe "Product \"product\" test"
                         )
                     "method groupedBy appends Group"
-                        |> testedWith (fun () -> 
+                        |> testedWith (fun _ -> 
                             let testName =
                                 groupedBy "grouped by" |> buildTestName "test"
 
                             testName |> expectsToBe "Group \"grouped by\" test"
                         )
                     "method featured works like feature"
-                        |> testedWith (fun () -> 
+                        |> testedWith (fun _ -> 
                             let testName =
                                 featured "featured" |> buildTestName "test"
 
