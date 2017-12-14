@@ -1,6 +1,7 @@
 namespace SolStone.TestRunner.Default
 open SolStone.Core.SharedTypes
 open System
+open SolStone.Core.SharedTypes
 
 module Framework =
     let shuffle<'a> (getRandom: (int * int) -> int) (items: Test list) =
@@ -23,11 +24,18 @@ module Framework =
 
         shuffleTimes 3 arr |> List.ofArray
 
-    let addTest result test =
-        match test.TestFunction () with
-        | Success
-            -> { result with Successes = test :: result.Successes; TotalTests = result.TotalTests + 1 }
-        | Failure failure -> { result with Failures = (test, failure) :: result.Failures; TotalTests = result.TotalTests + 1  }
+    let addTest (result : TestExecutionReport) test =
+        try
+            match test.TestFunction () with
+            | Success
+                -> result |> addSuccess test Success
+            | Failure failure -> 
+                result |> addFailure test (Failure failure)
+        with
+        | e -> 
+            let failure = e |> ExceptionFailure |> Failure
+            result |> addFailure test failure
+
 
     let executerWithSeed tests seed =
         let rand = Random (seed) 

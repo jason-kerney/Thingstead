@@ -4,6 +4,7 @@ open SolStone.TestRunner.Default.Framework
 open SolStone.Core.SharedTypes
 open SolStone.Core.Verification
 open SolStone.Reporters.Console.Reporter
+open System
         
 module DefaultRunner =
     open SolStone.Tests.Support
@@ -55,6 +56,18 @@ module DefaultRunner =
                                 expectsToBe resultSeedA (Some 45)
                             |> andAlso
                                 expectsToBe resultSeedB (Some 1889)
+                    )
+                "A test function that throws an error returns with an exception Failure instead"
+                    |> testedWith (fun () ->
+                        let e = ApplicationException "This is an exeption"
+                        let expected = e :> Exception |> ExceptionFailure
+                        let test = 
+                            { blankTest with
+                                TestFunction = fun _ -> raise e
+                            }
+                        
+                        let _, result = [test] |> executer |> getFailures |> List.head
+                        result |> expectsToBe expected
                     )
             ]
         )

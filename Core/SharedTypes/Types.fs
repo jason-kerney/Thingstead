@@ -98,4 +98,19 @@ module Support =
     let getTestCount (report : TestExecutionReport) =
         (report |> getFailCount) + (report |> getSuccessCount)
 
-    let getPath (test : Test) = test.TestContainerPath    
+    let getPath (test : Test) = test.TestContainerPath
+
+    let getFailures (results : TestExecutionReport) =
+        results.Failures
+
+    let addFailure test result (report : TestExecutionReport) =
+        match result with
+        | Success -> report
+        | Failure failure ->
+            { report with Failures = (test, failure) :: report.Failures; TotalTests = report.TotalTests + 1  }
+
+    let addSuccess test result (report : TestExecutionReport) =
+        match result with
+        | Failure _ -> report
+        | Success ->
+            { report with Successes = test :: report.Successes; TotalTests = report.TotalTests + 1 }
