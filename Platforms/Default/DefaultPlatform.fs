@@ -1,7 +1,6 @@
 namespace SolStone.TestRunner.Default
 open SolStone.Core.SharedTypes
 open System
-open SolStone.Core.SharedTypes
 
 module Framework =
     let shuffle<'a> (getRandom: (int * int) -> int) (items: Test list) =

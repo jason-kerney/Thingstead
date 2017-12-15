@@ -61,8 +61,7 @@ type TestReporter = Header -> TestExecutionReport -> TestExecutionReport
 
 [<AutoOpen>]
 module Support =
-    let private trim (value: string) = value.Trim ()
-    let emptyTest = { TestContainerPath = []; TestName = "Empty Test"; TestFunction = fun () -> "Not Implemented" |> Ignored |> Failure }
+    let emptyTest = { TestContainerPath = []; TestName = "Empty Test"; TestFunction = fun _ -> "Not Implemented" |> Ignored |> Failure }
     let blankTest = emptyTest
     let startingReport = { Seed = None ; TotalTests = 0 ; Failures = []; Successes = [] }
 

@@ -27,7 +27,7 @@ module DefaultRunner =
                         let failure = GeneralFailure "Bad Test"
                         let testCase = createFailingTest "A passing test" failure
 
-                        let result = executer [testCase] |> fun result -> result.Failures |> List.head
+                        let result = executer [testCase] |> getFirstFailure
                         let expected = testCase.TestName, failure
                         let actual = 
                             match result with
@@ -65,7 +65,7 @@ module DefaultRunner =
                                 TestFunction = fun _ -> raise e
                             }
                         
-                        let _, result = [test] |> executer |> getFailures |> List.head
+                        let result = [test] |> executer |> getFirstFailure |> snd
                         result |> expectsToBe expected
                     )
             ]
