@@ -16,6 +16,7 @@ type FailureType =
     | Ignored of String
     | StandardNotMet of String
     | SetupFailure of FailureType
+    | TearDownFailure of FailureType
 //   | IndeterminateFailure of IndeterminateInfo
 
 type TestResult =

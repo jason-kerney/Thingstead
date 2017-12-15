@@ -15,6 +15,7 @@ open SolStone.TestBuilder.Scripting.Framework
 open SolStone.TestBuilder.Scripting.Framework
 open SolStone.Core.SharedTypes
 open SolStone.TestBuilder.Scripting.Framework
+open System
 
 module Scripting =
     let tests = 
@@ -151,7 +152,7 @@ module Scripting =
                                 setup "a test of tear down" (fun _ -> Ok ())
                                 |> testedBy (fun _ -> Success) (fun _ ->
                                     called <- true
-                                    Success
+                                    Ok Success
                                 )
                             test.TestFunction () |> ignore
                             called |> expectsToBe true
@@ -165,7 +166,7 @@ module Scripting =
                                 )
                                 |> testedBy (fun _ -> Success) (fun _ ->
                                     called <- true
-                                    Success
+                                    Ok Success
                                 )
 
                             test.TestFunction () |> ignore
@@ -180,7 +181,7 @@ module Scripting =
                                     "test fails" |> GeneralFailure |> Failure
                                 ) (fun _ ->
                                     called <- true
-                                    Success
+                                    Ok Success
                                 )
 
                             test.TestFunction () |> ignore
@@ -195,7 +196,7 @@ module Scripting =
                                 )
                                 |> testedBy (fun _ -> Success) (fun _ ->
                                     called <- true
-                                    Success
+                                    Ok Success
                                 )
 
                             test.TestFunction () |> ignore
@@ -208,7 +209,7 @@ module Scripting =
                                 setup "a test that throws an exception" (fun _ -> Ok ())
                                 |> testedBy (fun _ -> failwith "bad test") (fun _ ->
                                     called <- true
-                                    Success
+                                    Ok Success
                                 )
 
                             test.TestFunction () |> ignore
@@ -222,7 +223,7 @@ module Scripting =
                                 setup "a test" (fun _ -> Ok expected)
                                 |> testedBy (fun _ -> Success) (fun (context, _testResult) -> 
                                     result <- (context |> expectsToBe (Ok expected))
-                                    Success
+                                    Ok Success
                                 )
 
                             test.TestFunction () |> ignore
@@ -235,7 +236,7 @@ module Scripting =
                                 setup "a test" (fun _ -> Ok ())
                                 |> testedBy (fun _ -> Success) (fun (_context, testResult) ->
                                     result <- testResult
-                                    Success
+                                    Ok Success
                                 )
 
                             test.TestFunction () |> ignore
@@ -252,7 +253,7 @@ module Scripting =
                                 )
                                 |> testedBy (fun _ -> Success) (fun (context, _testResult) ->
                                     result <- context
-                                    Success
+                                    Ok Success
                                 )
 
                             test.TestFunction () |> ignore
@@ -267,10 +268,33 @@ module Scripting =
                                 setup "some failing test" (fun _ -> Ok ())
                                 |> testedBy (fun _ -> expected) (fun (_context, testResult) ->
                                     result <- testResult
-                                    Success
+                                    Ok Success
                                 )
                             
                             test.TestFunction () |> ignore
+                            
+                            result |> expectsToBe expected
+                        )
+                    "returns a TearDownFailure if it fails"
+                        |> testedWith (fun _ ->
+                            let data = "bad teardown" |> GeneralFailure
+                            let expected = data |> TearDownFailure |> Failure
+                            let test =
+                                setup "some test" (fun _ -> Ok ())
+                                |> testedBy (fun _ -> Success) (fun _ -> Error data)
+
+                            let actual = test.TestFunction ()
+                            actual |> expectsToBe expected
+                        )
+                    "returns a TearDownFailure if it throws an exception"
+                        |> testedWith (fun _ ->
+                            let ex = Exception ("Bad Teardown")
+                            let expected = ex |> ExceptionFailure |> TearDownFailure |> Failure
+                            let test = 
+                                setup "a test" (fun _ -> Ok ())
+                                |> testedBy (fun _ -> Success) (fun _ -> raise ex)
+
+                            let result = test.TestFunction ()
                             
                             result |> expectsToBe expected
                         )

@@ -7,6 +7,7 @@ open SolStone.Core.SharedTypes
 open SolStone.Core.SharedTypes.Support
 open System.Data
 open System.Runtime.InteropServices.ComTypes
+open SolStone.Core.SharedTypes
 
 type TestSetup<'a> = 
     {
@@ -66,7 +67,7 @@ module Framework =
             SetupFunction = fn
         }
 
-    let testedBy<'a> (testFunction : 'a -> TestResult) (tearDown : Result<'a, FailureType> * TestResult -> TestResult) (setup : TestSetup<'a>) =
+    let testedBy<'a> (testFunction : 'a -> TestResult) (tearDown : Result<'a, FailureType> * TestResult -> Result<TestResult, FailureType>) (setup : TestSetup<'a>) =
         let runTestWithTearDown testFunction result =
             let results = 
                 match result with
@@ -83,7 +84,13 @@ module Framework =
                     let setupFailure = failureType |> SetupFailure
                     Error (setupFailure), setupFailure |> Failure
 
-            tearDown results
+            try
+                match tearDown results with
+                | Ok testingResult -> testingResult
+                | Error errorResult -> 
+                    errorResult |> TearDownFailure |> Failure
+            with
+            | e -> e |> ExceptionFailure |> TearDownFailure |> Failure
 
                 
 
@@ -96,13 +103,13 @@ module Framework =
                     e |> ExceptionFailure |> SetupFailure |> Error
 
             runTestWithTearDown testFunction r
-            
+
         {blankTest with
             TestName = setup.SetupName
             TestFunction = test
         }
 
-    let fin (_setupResult, result) = result
+    let fin (_setupResult : 'a, testResult : TestResult) : Result<TestResult, FailureType> = Ok testResult
 
     let notYetImplemented name = 
         {blankTest with
