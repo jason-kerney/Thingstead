@@ -3,6 +3,10 @@ open SolStone.Core.SharedTypes
 open SolStone.Core.SharedTypes
 open SolStone.Core.SharedTypes.Support
 open SolStone.Core.SharedTypes
+open SolStone.Core.SharedTypes
+open SolStone.Core.SharedTypes.Support
+open System.Data
+open System.Runtime.InteropServices.ComTypes
 
 type TestSetup<'a> = 
     {
@@ -62,17 +66,48 @@ module Framework =
             SetupFunction = fn
         }
 
-    let testedBy<'a> (testFunction : 'a -> TestResult) (_tearDown : 'a -> TestResult) (setup : TestSetup<'a>) =
-        let setupPassThrough fn result =
-            match result with
-            | Ok data -> fn data
-            | Error failureType -> failureType |> SetupFailure |> Failure
+    let testedBy<'a> (testFunction : 'a -> TestResult) (tearDown : Result<'a, FailureType> * TestResult -> TestResult) (setup : TestSetup<'a>) =
+        let runTestWithTearDown testFunction result =
+            let results = 
+                match result with
+                | Ok data -> 
+                    let testResult = 
+                        try
+                            testFunction data
+                        with
+                        | e ->
+                            e |> ExceptionFailure |> Failure
 
-        let test = setupPassThrough testFunction
-        
+                    (Ok data), testResult
+                | Error failureType -> 
+                    let setupFailure = failureType |> SetupFailure
+                    Error (setupFailure), setupFailure |> Failure
+
+            tearDown results
+
+                
+
+        let test () = 
+            let r = 
+                try
+                    setup.SetupFunction ()
+                with
+                | e -> 
+                    e |> ExceptionFailure |> SetupFailure |> Error
+
+            runTestWithTearDown testFunction r
+            
         {blankTest with
             TestName = setup.SetupName
-            TestFunction = setup.SetupFunction >> test
+            TestFunction = test
         }
 
-    let fin _ = Success
+    let fin (_setupResult, result) = result
+
+    let notYetImplemented name = 
+        {blankTest with
+            TestName = name
+            TestFunction = (fun _ -> "Not implemented" |> Ignored |> Failure)
+        }
+
+    let ``Not Yet Implemented`` = notYetImplemented

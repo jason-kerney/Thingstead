@@ -5,6 +5,16 @@ open SolStone.Core.Verification
 open SolStone.Tests.Support
 open SolStone.TestBuilder.Scripting.Framework
 open SolStone.TestBuilder.Scripting.Framework
+open SolStone.TestBuilder.Scripting.Framework
+open SolStone.TestBuilder.Scripting.Framework
+open SolStone.TestBuilder.Scripting.Framework
+open SolStone.TestBuilder.Scripting.Framework
+open SolStone.TestBuilder.Scripting.Framework
+open SolStone.TestBuilder.Scripting.Framework
+open SolStone.TestBuilder.Scripting.Framework
+open SolStone.TestBuilder.Scripting.Framework
+open SolStone.Core.SharedTypes
+open SolStone.TestBuilder.Scripting.Framework
 
 module Scripting =
     let tests = 
@@ -131,6 +141,138 @@ module Scripting =
 
                             let result = test.TestFunction ()
                             result |> expectsToBe ("Failed" |> GeneralFailure |> SetupFailure |> Failure)
+                        )
+                ]
+                |> alsoWith feature "testedBy - teardown" [
+                    "is called if everything is successful"
+                        |> testedWith (fun _ ->
+                            let mutable called = false
+                            let test = 
+                                setup "a test of tear down" (fun _ -> Ok ())
+                                |> testedBy (fun _ -> Success) (fun _ ->
+                                    called <- true
+                                    Success
+                                )
+                            test.TestFunction () |> ignore
+                            called |> expectsToBe true
+                        )
+                    "is called if setup fails"
+                        |> testedWith (fun _ ->
+                            let mutable called = false
+                            let test =
+                                setup "a test with a bad setup" (fun _ ->
+                                    Error("A failed Setup" |> GeneralFailure)
+                                )
+                                |> testedBy (fun _ -> Success) (fun _ ->
+                                    called <- true
+                                    Success
+                                )
+
+                            test.TestFunction () |> ignore
+                            called |> expectsToBe true
+                        )
+                    "is called if a test fails"
+                        |> testedWith (fun _ ->
+                            let mutable called = false
+                            let test =
+                                setup "a test that fails" (fun _ -> Ok ())
+                                |> testedBy (fun _ -> 
+                                    "test fails" |> GeneralFailure |> Failure
+                                ) (fun _ ->
+                                    called <- true
+                                    Success
+                                )
+
+                            test.TestFunction () |> ignore
+                            called |> expectsToBe true
+                        )
+                    "is called if setup throws an exception"
+                        |> testedWith (fun _ ->
+                            let mutable called = false
+                            let test = 
+                                setup "a test where setup throws" (fun _ ->
+                                    failwith "Bad setup"
+                                )
+                                |> testedBy (fun _ -> Success) (fun _ ->
+                                    called <- true
+                                    Success
+                                )
+
+                            test.TestFunction () |> ignore
+                            called |> expectsToBe true
+                        )
+                    "is called if a test throws an exception"
+                        |> testedWith (fun _ ->
+                            let mutable called = false
+                            let test = 
+                                setup "a test that throws an exception" (fun _ -> Ok ())
+                                |> testedBy (fun _ -> failwith "bad test") (fun _ ->
+                                    called <- true
+                                    Success
+                                )
+
+                            test.TestFunction () |> ignore
+                            called |> expectsToBe true
+                        )
+                    "is called with the result of a successful setup"
+                        |> testedWith (fun _ ->
+                            let mutable result = "not good" |> GeneralFailure |> Failure
+                            let expected = "Some Context"
+                            let test = 
+                                setup "a test" (fun _ -> Ok expected)
+                                |> testedBy (fun _ -> Success) (fun (context, _testResult) -> 
+                                    result <- (context |> expectsToBe (Ok expected))
+                                    Success
+                                )
+
+                            test.TestFunction () |> ignore
+                            result |> expectsToBe Success
+                        )
+                    "is called with the result of a successful test"
+                        |> testedWith (fun _ ->
+                            let mutable result = "not good" |> GeneralFailure |> Failure
+                            let test = 
+                                setup "a test" (fun _ -> Ok ())
+                                |> testedBy (fun _ -> Success) (fun (_context, testResult) ->
+                                    result <- testResult
+                                    Success
+                                )
+
+                            test.TestFunction () |> ignore
+                            result |> expectsToBe Success
+                        )
+                    "is called with the result of a failed setup"
+                        |> testedWith (fun _ ->
+                            let mutable result: Result<unit, FailureType> = Ok ()
+                            let data = "Bad Setup" |> GeneralFailure
+                            let expected = data |> SetupFailure |> Error
+                            let test = 
+                                setup "setup fails" (fun _ ->
+                                    data |> Error
+                                )
+                                |> testedBy (fun _ -> Success) (fun (context, _testResult) ->
+                                    result <- context
+                                    Success
+                                )
+
+                            test.TestFunction () |> ignore
+
+                            result |> expectsToBe expected
+                        )
+                    "is called with the result of a failed test"
+                        |> testedWith (fun _ ->
+                            let mutable result = Success
+                            let expected = "Nothing is as expected" |> ExpectationFailure |> Failure
+                            let test =
+                                setup "some failing test" (fun _ -> Ok ())
+                                |> testedBy (fun _ -> expected) (fun (_context, testResult) ->
+                                    result <- testResult
+                                    Success
+                                )
+                            
+                            test.TestFunction () |> ignore
+                            
+                            result |> expectsToBe expected
                         )
                 ]
                 |> also [
