@@ -1,5 +1,14 @@
 namespace SolStone.TestBuilder.Scripting
 open SolStone.Core.SharedTypes
+open SolStone.Core.SharedTypes
+open SolStone.Core.SharedTypes.Support
+open SolStone.Core.SharedTypes
+
+type TestSetup<'a> = 
+    {
+        SetupName : string
+        SetupFunction: unit -> Result<'a, FailureType>
+    }
 
 [<AutoOpen>]
 module Framework =
@@ -46,3 +55,24 @@ module Framework =
         also (
             fn groupTitle tests
         )
+
+    let setup name fn = 
+        {
+            SetupName = name
+            SetupFunction = fn
+        }
+
+    let testedBy<'a> (testFunction : 'a -> TestResult) (_tearDown : 'a -> TestResult) (setup : TestSetup<'a>) =
+        let setupPassThrough fn result =
+            match result with
+            | Ok data -> fn data
+            | Error failureType -> failureType |> SetupFailure |> Failure
+
+        let test = setupPassThrough testFunction
+        
+        {blankTest with
+            TestName = setup.SetupName
+            TestFunction = setup.SetupFunction >> test
+        }
+
+    let fin _ = Success

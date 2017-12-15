@@ -3,6 +3,8 @@ open SolStone.Core.SharedTypes
 open SolStone.TestBuilder.Scripting
 open SolStone.Core.Verification
 open SolStone.Tests.Support
+open SolStone.TestBuilder.Scripting.Framework
+open SolStone.TestBuilder.Scripting.Framework
 
 module Scripting =
     let tests = 
@@ -59,6 +61,76 @@ module Scripting =
                             let expected : TestSummary list = []
 
                             paths |> expectsToBe expected
+                        )
+                ]
+                |> alsoWith feature "setup - testedBy" [
+                    "creates a test with the correct name"
+                        |> testedWith (fun _ ->
+                            let expectedTestName = "my test name"
+                            let test = 
+                                setup expectedTestName (fun _ ->
+                                    Ok ()
+                                )
+                                |> testedBy (fun _ -> Success) fin
+                            
+                            test.TestName |> expectsToBe expectedTestName
+                        )
+                    "calls the test function if setup succeeds"
+                        |> testedWith (fun _ ->
+                            let mutable called = false
+                            let test =
+                                setup "A test" (fun _ ->
+                                    Ok ()
+                                )
+                                |> testedBy (fun _ ->
+                                    called <- true
+                                    Success
+                                ) fin
+
+                            test.TestFunction () |> ignore
+                            called |> expectsToBe true
+                        )
+                    "calls the test with data created in the setup"
+                        |> testedWith (fun _ -> 
+                            let mutable actual = 0
+                            let expected = 5
+                            let test =
+                                setup "Some test" (fun _ ->
+                                    Ok expected
+                                )
+                                |> testedBy (fun context ->
+                                    actual <- context
+                                    Success
+                                ) fin
+
+                            test.TestFunction () |> ignore
+                            actual |> expectsToBe expected
+                        )
+                    "does not call test if setup fails"
+                        |> testedWith (fun _ ->
+                            let mutable called = false
+                            let test = 
+                                setup "a test with a failing setup" (fun _ ->
+                                    Error ("Failed" |> GeneralFailure)
+                                )
+                                |> testedBy (fun _ -> 
+                                    called <- true
+                                    Success
+                                ) fin
+
+                            test.TestFunction () |> ignore
+                            called |> expectsToBe false
+                        )
+                    "returns a failure genreated during setup"
+                        |> testedWith (fun _ ->
+                            let test = 
+                                setup "a test with a failing setup" (fun _ ->
+                                    Error ("Failed" |> GeneralFailure)
+                                )
+                                |> testedBy (fun _ -> Success) fin
+
+                            let result = test.TestFunction ()
+                            result |> expectsToBe ("Failed" |> GeneralFailure |> SetupFailure |> Failure)
                         )
                 ]
                 |> also [
