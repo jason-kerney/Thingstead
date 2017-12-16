@@ -275,10 +275,10 @@ module Scripting =
                             
                             result |> expectsToBe expected
                         )
-                    "returns a TearDownFailure if it fails"
+                    "returns a TeardownFailure if it fails"
                         |> testedWith (fun _ ->
                             let data = "bad teardown" |> GeneralFailure
-                            let expected = data |> TearDownFailure |> Failure
+                            let expected = data |> TeardownFailure |> Failure
                             let test =
                                 setup "some test" (fun _ -> Ok ())
                                 |> testedBy (fun _ -> Success) (fun _ -> Error data)
@@ -286,10 +286,10 @@ module Scripting =
                             let actual = test.TestFunction ()
                             actual |> expectsToBe expected
                         )
-                    "returns a TearDownFailure if it throws an exception"
+                    "returns a TeardownFailure if it throws an exception"
                         |> testedWith (fun _ ->
                             let ex = Exception ("Bad Teardown")
-                            let expected = ex |> ExceptionFailure |> TearDownFailure |> Failure
+                            let expected = ex |> ExceptionFailure |> TeardownFailure |> Failure
                             let test = 
                                 setup "a test" (fun _ -> Ok ())
                                 |> testedBy (fun _ -> Success) (fun _ -> raise ex)
@@ -311,7 +311,7 @@ module Scripting =
                     "returns the teardown failure even if the test fails"
                         |> testedWith (fun _ ->
                             let data = "bad teardown" |> GeneralFailure
-                            let expected = data |> TearDownFailure |> Failure
+                            let expected = data |> TeardownFailure |> Failure
                             let test =
                                 setup "some test" (fun _ -> Ok ())
                                 |> testedBy (fun _ -> "bad test" |> GeneralFailure |> Failure) (fun _ ->
