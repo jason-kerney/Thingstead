@@ -1,5 +1,5 @@
-namespace SolStone.TestRunner.Default
-open SolStone.Core.SharedTypes
+namespace ThingStead.TestRunner.Default
+open ThingStead.Core.SharedTypes
 open System
 
 module Framework =

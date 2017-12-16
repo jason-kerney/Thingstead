@@ -1,4 +1,4 @@
-namespace SolStone.Core.SharedTypes
+namespace ThingStead.Core.SharedTypes
 open System
 open System.Xml.XPath
 open System.Reflection

@@ -1,25 +1,25 @@
-namespace SolStone.Tests.TestBuilders
-open SolStone.Core.SharedTypes
-open SolStone.TestBuilder.Scripting
-open SolStone.Core.Verification
-open SolStone.Tests.Support
-open SolStone.TestBuilder.Scripting.Framework
-open SolStone.TestBuilder.Scripting.Framework
-open SolStone.TestBuilder.Scripting.Framework
-open SolStone.TestBuilder.Scripting.Framework
-open SolStone.TestBuilder.Scripting.Framework
-open SolStone.TestBuilder.Scripting.Framework
-open SolStone.TestBuilder.Scripting.Framework
-open SolStone.TestBuilder.Scripting.Framework
-open SolStone.TestBuilder.Scripting.Framework
-open SolStone.TestBuilder.Scripting.Framework
-open SolStone.Core.SharedTypes
-open SolStone.TestBuilder.Scripting.Framework
+namespace ThingStead.Tests.TestBuilders
+open ThingStead.Core.SharedTypes
+open ThingStead.TestBuilder.Scripting
+open ThingStead.Core.Verification
+open ThingStead.Tests.Support
+open ThingStead.TestBuilder.Scripting.Framework
+open ThingStead.TestBuilder.Scripting.Framework
+open ThingStead.TestBuilder.Scripting.Framework
+open ThingStead.TestBuilder.Scripting.Framework
+open ThingStead.TestBuilder.Scripting.Framework
+open ThingStead.TestBuilder.Scripting.Framework
+open ThingStead.TestBuilder.Scripting.Framework
+open ThingStead.TestBuilder.Scripting.Framework
+open ThingStead.TestBuilder.Scripting.Framework
+open ThingStead.TestBuilder.Scripting.Framework
+open ThingStead.Core.SharedTypes
+open ThingStead.TestBuilder.Scripting.Framework
 open System
 
 module Scripting =
     let tests = 
-        product "SolStone"(
+        product "ThingStead"(
             suite "Scripting" (
                 feature "a test" [
                     "creates a test once given all the parts"

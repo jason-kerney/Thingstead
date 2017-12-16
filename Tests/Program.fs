@@ -1,7 +1,7 @@
-﻿namespace SolStone.Tests
-open SolStone.TestRunner.Default.Framework
-open SolStone.Reporters.Console.Reporter
-open SolStone.Core.SharedTypes.Support
+﻿namespace ThingStead.Tests
+open ThingStead.TestRunner.Default.Framework
+open ThingStead.Reporters.Console.Reporter
+open ThingStead.Core.SharedTypes.Support
 
 module Program =
     [<EntryPoint>]
@@ -13,7 +13,7 @@ module Program =
         ] 
         |> List.concat
         |> executer
-        |> report "SolStone Tests"
+        |> report "ThingStead Tests"
         |> getFailCount
 
 

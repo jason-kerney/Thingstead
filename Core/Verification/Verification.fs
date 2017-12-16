@@ -1,6 +1,6 @@
-namespace SolStone.Core
+namespace ThingStead.Core
 
-open SolStone.Core.SharedTypes
+open ThingStead.Core.SharedTypes
 
 module Verification =
     let andAlso check a b pastResult =

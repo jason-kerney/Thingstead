@@ -1,5 +1,5 @@
-namespace SolStone.TestBuilder.Scripting
-open SolStone.Core.SharedTypes
+namespace ThingStead.TestBuilder.Scripting
+open ThingStead.Core.SharedTypes
 
 type TestSetup<'a> = 
     {
