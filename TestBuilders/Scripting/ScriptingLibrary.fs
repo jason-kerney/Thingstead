@@ -67,8 +67,8 @@ module Framework =
             SetupFunction = fn
         }
 
-    let testedBy<'a> (testFunction : 'a -> TestResult) (tearDown : Result<'a, FailureType> * TestResult -> Result<unit, FailureType>) (setup : TestSetup<'a>) =
-        let runTestWithTearDown testFunction result =
+    let testedBy<'a> (testFunction : 'a -> TestResult) (teardown : Result<'a, FailureType> * TestResult -> Result<unit, FailureType>) (setup : TestSetup<'a>) =
+        let runTestWithTeardown testFunction result =
             let results = 
                 match result with
                 | Ok data -> 
@@ -85,12 +85,12 @@ module Framework =
                     Error (setupFailure), setupFailure |> Failure
 
             try
-                match tearDown results with
+                match teardown results with
                 | Ok _ -> results |> snd
                 | Error errorResult -> 
-                    errorResult |> TearDownFailure |> Failure
+                    errorResult |> TeardownFailure |> Failure
             with
-            | e -> e |> ExceptionFailure |> TearDownFailure |> Failure
+            | e -> e |> ExceptionFailure |> TeardownFailure |> Failure
 
                 
 
@@ -102,7 +102,7 @@ module Framework =
                 | e -> 
                     e |> ExceptionFailure |> SetupFailure |> Error
 
-            runTestWithTearDown testFunction r
+            runTestWithTeardown testFunction r
 
         {blankTest with
             TestName = setup.SetupName
