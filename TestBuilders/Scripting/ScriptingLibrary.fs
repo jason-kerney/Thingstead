@@ -1,6 +1,12 @@
 namespace SolStone.TestBuilder.Scripting
 open SolStone.Core.SharedTypes
 
+type TestSetup<'a> = 
+    {
+        SetupName : string
+        SetupFunction: unit -> Result<'a, FailureType>
+    }
+
 [<AutoOpen>]
 module Framework =
     let trim (value : string) = value.Trim ()
@@ -46,3 +52,61 @@ module Framework =
         also (
             fn groupTitle tests
         )
+
+    let setup name fn = 
+        {
+            SetupName = name
+            SetupFunction = fn
+        }
+
+    let testedBy<'a> (testFunction : 'a -> TestResult) (teardown : Result<'a, FailureType> * TestResult -> Result<unit, FailureType>) (setup : TestSetup<'a>) =
+        let runTestWithTeardown testFunction result =
+            let results = 
+                match result with
+                | Ok data -> 
+                    let testResult = 
+                        try
+                            testFunction data
+                        with
+                        | e ->
+                            e |> ExceptionFailure |> Failure
+
+                    (Ok data), testResult
+                | Error failureType -> 
+                    let setupFailure = failureType |> SetupFailure
+                    Error (setupFailure), setupFailure |> Failure
+
+            try
+                match teardown results with
+                | Ok _ -> results |> snd
+                | Error errorResult -> 
+                    errorResult |> TeardownFailure |> Failure
+            with
+            | e -> e |> ExceptionFailure |> TeardownFailure |> Failure
+
+                
+
+        let test () = 
+            let r = 
+                try
+                    setup.SetupFunction ()
+                with
+                | e -> 
+                    e |> ExceptionFailure |> SetupFailure |> Error
+
+            runTestWithTeardown testFunction r
+
+        {blankTest with
+            TestName = setup.SetupName
+            TestFunction = test
+        }
+
+    let fin (_setupResult : 'a, _testResult : TestResult) : Result<unit, FailureType> = Ok ()
+
+    let notYetImplemented name = 
+        {blankTest with
+            TestName = name
+            TestFunction = (fun _ -> "Not implemented" |> Ignored |> Failure)
+        }
+
+    let ``Not Yet Implemented`` = notYetImplemented

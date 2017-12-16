@@ -1,5 +1,6 @@
 namespace SolStone.Tests
 open SolStone.Core.SharedTypes
+open SolStone.Core.SharedTypes
 
 module Support =
     let createTest name fn = 
@@ -46,3 +47,8 @@ module Support =
         fn [{blankTest with TestName = testName}]
         |> List.head
         |> getTestName
+
+    let getFirstFailure (testReport : TestExecutionReport) = 
+        testReport
+        |> getFailures
+        |> List.head

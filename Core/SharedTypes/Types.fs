@@ -16,6 +16,7 @@ type FailureType =
     | Ignored of String
     | StandardNotMet of String
     | SetupFailure of FailureType
+    | TeardownFailure of FailureType
 //   | IndeterminateFailure of IndeterminateInfo
 
 type TestResult =
@@ -61,8 +62,7 @@ type TestReporter = Header -> TestExecutionReport -> TestExecutionReport
 
 [<AutoOpen>]
 module Support =
-    let private trim (value: string) = value.Trim ()
-    let emptyTest = { TestContainerPath = []; TestName = "Empty Test"; TestFunction = fun () -> "Not Implemented" |> Ignored |> Failure }
+    let emptyTest = { TestContainerPath = []; TestName = "Empty Test"; TestFunction = fun _ -> "Not Implemented" |> Ignored |> Failure }
     let blankTest = emptyTest
     let startingReport = { Seed = None ; TotalTests = 0 ; Failures = []; Successes = [] }
 
@@ -98,4 +98,19 @@ module Support =
     let getTestCount (report : TestExecutionReport) =
         (report |> getFailCount) + (report |> getSuccessCount)
 
-    let getPath (test : Test) = test.TestContainerPath    
+    let getPath (test : Test) = test.TestContainerPath
+
+    let getFailures (results : TestExecutionReport) =
+        results.Failures
+
+    let addFailure test result (report : TestExecutionReport) =
+        match result with
+        | Success -> report
+        | Failure failure ->
+            { report with Failures = (test, failure) :: report.Failures; TotalTests = report.TotalTests + 1  }
+
+    let addSuccess test result (report : TestExecutionReport) =
+        match result with
+        | Failure _ -> report
+        | Success ->
+            { report with Successes = test :: report.Successes; TotalTests = report.TotalTests + 1 }
