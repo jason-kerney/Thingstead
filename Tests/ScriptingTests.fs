@@ -152,7 +152,7 @@ module Scripting =
                                 setup "a test of tear down" (fun _ -> Ok ())
                                 |> testedBy (fun _ -> Success) (fun _ ->
                                     called <- true
-                                    Ok Success
+                                    Ok ()
                                 )
                             test.TestFunction () |> ignore
                             called |> expectsToBe true
@@ -166,7 +166,7 @@ module Scripting =
                                 )
                                 |> testedBy (fun _ -> Success) (fun _ ->
                                     called <- true
-                                    Ok Success
+                                    Ok ()
                                 )
 
                             test.TestFunction () |> ignore
@@ -181,7 +181,7 @@ module Scripting =
                                     "test fails" |> GeneralFailure |> Failure
                                 ) (fun _ ->
                                     called <- true
-                                    Ok Success
+                                    Ok ()
                                 )
 
                             test.TestFunction () |> ignore
@@ -196,7 +196,7 @@ module Scripting =
                                 )
                                 |> testedBy (fun _ -> Success) (fun _ ->
                                     called <- true
-                                    Ok Success
+                                    Ok ()
                                 )
 
                             test.TestFunction () |> ignore
@@ -209,7 +209,7 @@ module Scripting =
                                 setup "a test that throws an exception" (fun _ -> Ok ())
                                 |> testedBy (fun _ -> failwith "bad test") (fun _ ->
                                     called <- true
-                                    Ok Success
+                                    Ok ()
                                 )
 
                             test.TestFunction () |> ignore
@@ -223,7 +223,7 @@ module Scripting =
                                 setup "a test" (fun _ -> Ok expected)
                                 |> testedBy (fun _ -> Success) (fun (context, _testResult) -> 
                                     result <- (context |> expectsToBe (Ok expected))
-                                    Ok Success
+                                    Ok ()
                                 )
 
                             test.TestFunction () |> ignore
@@ -236,7 +236,7 @@ module Scripting =
                                 setup "a test" (fun _ -> Ok ())
                                 |> testedBy (fun _ -> Success) (fun (_context, testResult) ->
                                     result <- testResult
-                                    Ok Success
+                                    Ok ()
                                 )
 
                             test.TestFunction () |> ignore
@@ -253,7 +253,7 @@ module Scripting =
                                 )
                                 |> testedBy (fun _ -> Success) (fun (context, _testResult) ->
                                     result <- context
-                                    Ok Success
+                                    Ok ()
                                 )
 
                             test.TestFunction () |> ignore
@@ -268,7 +268,7 @@ module Scripting =
                                 setup "some failing test" (fun _ -> Ok ())
                                 |> testedBy (fun _ -> expected) (fun (_context, testResult) ->
                                     result <- testResult
-                                    Ok Success
+                                    Ok ()
                                 )
                             
                             test.TestFunction () |> ignore
@@ -295,8 +295,18 @@ module Scripting =
                                 |> testedBy (fun _ -> Success) (fun _ -> raise ex)
 
                             let result = test.TestFunction ()
-                            
+
                             result |> expectsToBe expected
+                        )
+                    "returns the result of a failed test"
+                        |> testedWith (fun _ ->
+                            let expected = "Some failure" |> ExpectationFailure |> Failure
+                            let test = 
+                                setup "a test" (fun _ -> Ok ())
+                                |> testedBy (fun _ -> expected) (fun _ -> Ok ())
+
+                            let actual = test.TestFunction ()
+                            actual |> expectsToBe expected
                         )
                 ]
                 |> also [

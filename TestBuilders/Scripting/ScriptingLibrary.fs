@@ -67,7 +67,7 @@ module Framework =
             SetupFunction = fn
         }
 
-    let testedBy<'a> (testFunction : 'a -> TestResult) (tearDown : Result<'a, FailureType> * TestResult -> Result<TestResult, FailureType>) (setup : TestSetup<'a>) =
+    let testedBy<'a> (testFunction : 'a -> TestResult) (tearDown : Result<'a, FailureType> * TestResult -> Result<unit, FailureType>) (setup : TestSetup<'a>) =
         let runTestWithTearDown testFunction result =
             let results = 
                 match result with
@@ -86,7 +86,7 @@ module Framework =
 
             try
                 match tearDown results with
-                | Ok testingResult -> testingResult
+                | Ok _ -> results |> snd
                 | Error errorResult -> 
                     errorResult |> TearDownFailure |> Failure
             with
@@ -109,7 +109,7 @@ module Framework =
             TestFunction = test
         }
 
-    let fin (_setupResult : 'a, testResult : TestResult) : Result<TestResult, FailureType> = Ok testResult
+    let fin (_setupResult : 'a, _testResult : TestResult) : Result<unit, FailureType> = Ok ()
 
     let notYetImplemented name = 
         {blankTest with
