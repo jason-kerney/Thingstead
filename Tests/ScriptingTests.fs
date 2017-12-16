@@ -308,6 +308,19 @@ module Scripting =
                             let actual = test.TestFunction ()
                             actual |> expectsToBe expected
                         )
+                    "returns the teardown failure even if the test fails"
+                        |> testedWith (fun _ ->
+                            let data = "bad teardown" |> GeneralFailure
+                            let expected = data |> TearDownFailure |> Failure
+                            let test =
+                                setup "some test" (fun _ -> Ok ())
+                                |> testedBy (fun _ -> "bad test" |> GeneralFailure |> Failure) (fun _ ->
+                                    Error data
+                                )
+
+                            let actual = test.TestFunction ()
+                            actual |> expectsToBe expected
+                        )
                 ]
                 |> also [
                     "tests can be concatinated with \"also\""
