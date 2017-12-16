@@ -1,13 +1,5 @@
 namespace SolStone.TestBuilder.Scripting
 open SolStone.Core.SharedTypes
-open SolStone.Core.SharedTypes
-open SolStone.Core.SharedTypes.Support
-open SolStone.Core.SharedTypes
-open SolStone.Core.SharedTypes
-open SolStone.Core.SharedTypes.Support
-open System.Data
-open System.Runtime.InteropServices.ComTypes
-open SolStone.Core.SharedTypes
 
 type TestSetup<'a> = 
     {
