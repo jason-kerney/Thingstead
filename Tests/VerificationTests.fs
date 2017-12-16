@@ -1,11 +1,11 @@
-namespace SolStone.Tests.Core
-open SolStone.Core.SharedTypes
-open SolStone.Core.Verification
-open SolStone.TestBuilder.Scripting
+namespace ThingStead.Tests.Core
+open ThingStead.Core.SharedTypes
+open ThingStead.Core.Verification
+open ThingStead.TestBuilder.Scripting
 
 module VerificationTests = 
     let tests =
-        product "SolStone" (
+        product "ThingStead" (
             suite "Verification" (
                 feature "expectsToBe" [
                     "should return Success if given \"5 |> expectsToBe 5\""

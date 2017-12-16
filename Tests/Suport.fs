@@ -1,6 +1,6 @@
-namespace SolStone.Tests
-open SolStone.Core.SharedTypes
-open SolStone.Core.SharedTypes
+namespace ThingStead.Tests
+open ThingStead.Core.SharedTypes
+open ThingStead.Core.SharedTypes
 
 module Support =
     let createTest name fn = 

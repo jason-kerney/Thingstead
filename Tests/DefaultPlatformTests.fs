@@ -1,15 +1,15 @@
-namespace SolStone.Tests.TestRunners
-open SolStone.TestBuilder.Scripting
-open SolStone.TestRunner.Default.Framework
-open SolStone.Core.SharedTypes
-open SolStone.Core.Verification
+namespace ThingStead.Tests.TestRunners
+open ThingStead.TestBuilder.Scripting
+open ThingStead.TestRunner.Default.Framework
+open ThingStead.Core.SharedTypes
+open ThingStead.Core.Verification
 open System
         
 module DefaultRunner =
-    open SolStone.Tests.Support
+    open ThingStead.Tests.Support
 
     let tests = 
-        product "SolStone" (
+        product "ThingStead" (
             suite "Default Test Execution" [
                 "Shows a successful test as being successfull"
                     |> testedWith (fun _ ->

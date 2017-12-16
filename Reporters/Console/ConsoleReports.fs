@@ -1,5 +1,5 @@
-namespace SolStone.Reporters.Console
-open SolStone.Core.SharedTypes
+namespace ThingStead.Reporters.Console
+open ThingStead.Core.SharedTypes
 open System
 
 module Reporter = 

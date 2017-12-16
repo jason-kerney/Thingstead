@@ -22,7 +22,7 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Verification", "Core\Verifi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{53FCADE4-2BF3-4555-9D14-68C240E15229}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "SolStone.Tests", "Tests\SolStone.Tests.fsproj", "{489C79A9-1F3F-46E3-99FB-054329E1227E}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "ThingStead.Tests", "Tests\ThingStead.Tests.fsproj", "{489C79A9-1F3F-46E3-99FB-054329E1227E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

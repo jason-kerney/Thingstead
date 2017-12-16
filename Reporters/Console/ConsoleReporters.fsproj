@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>SolStone.Reporters.Console</AssemblyName>
+    <AssemblyName>ThingStead.Reporters.Console</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\SharedTypes\SharedTypes.fsproj" />
