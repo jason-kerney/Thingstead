@@ -1,6 +1,5 @@
 namespace ThingStead.Tests
 open ThingStead.Core.SharedTypes
-open ThingStead.Core.SharedTypes
 
 module Support =
     let createTest name fn = 

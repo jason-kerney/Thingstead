@@ -1,7 +1,8 @@
 ﻿namespace ThingStead.Tests
-open ThingStead.TestRunner.Default.Framework
-open ThingStead.Reporters.Console.Reporter
 open ThingStead.Core.SharedTypes.Support
+open ThingStead.Reporters.Console.Reporter
+open ThingStead.TestBuilder.Scripting
+open ThingStead.TestRunner.Default.Framework
 
 module Program =
     [<EntryPoint>]
@@ -12,6 +13,7 @@ module Program =
             Core.VerificationTests.tests
         ] 
         |> List.concat
+        |> product "Thingstead"
         |> executer
         |> report "ThingStead Tests"
         |> getFailCount
