@@ -6,9 +6,8 @@ open ThingStead.Tests.Support
 open System
 
 module Scripting =
-    let tests = 
-        suite "Scripting" (
-            feature "a test" [
+    let private testing_testedWith = 
+        feature "a test" [
                 "creates a test once given all the parts"
                     |> testedWith (fun _ ->
                         let name = "My Test"
@@ -61,7 +60,9 @@ module Scripting =
                         paths |> expectsToBe expected
                     )
             ]
-            |> alsoWith feature "setup - testedBy" [
+
+    let private testing_setupAndTestedBy = 
+        alsoWith feature "setup - testedBy" [
                 "creates a test with the correct name"
                     |> testedWith (fun _ ->
                         let expectedTestName = "my test name"
@@ -131,7 +132,9 @@ module Scripting =
                         result |> expectsToBe ("Failed" |> GeneralFailure |> SetupFailure |> Failure)
                     )
             ]
-            |> alsoWith feature "testedBy - teardown" [
+
+    let testing_testedByAndTearDown =
+        alsoWith feature "testedBy - teardown" [
                 "is called if everything is successful"
                     |> testedWith (fun _ ->
                         let mutable called = false
@@ -309,7 +312,9 @@ module Scripting =
                         actual |> expectsToBe expected
                     )
             ]
-            |> also [
+
+    let testing_buildingOfTests = 
+        also [
                 "tests can be concatinated with \"also\""
                     |> testedWith (fun _ ->
                     let tests = 
@@ -339,7 +344,9 @@ module Scripting =
                     tests |> expectsToBe expected
                 )
             ]
-            |> alsoWith feature "Named Groups" [
+
+    let testing_namedGroups = 
+        alsoWith feature "Named Groups" [
                 "method asSuite works the same as suite"
                     |> testedWith (fun _ ->
                         let testName = 
@@ -389,4 +396,12 @@ module Scripting =
                         testName |> expectsToBe "Feature \"featured\" test"
                     )
             ]
+
+    let tests = 
+        suite "Scripting" (
+            testing_testedWith
+            |> testing_setupAndTestedBy
+            |> testing_testedByAndTearDown
+            |> testing_buildingOfTests
+            |> testing_namedGroups
         )
