@@ -18,7 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{E778E8BF-8
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "SharedTypes", "Core\SharedTypes\SharedTypes.fsproj", "{CD13F611-3E5A-4144-952D-658C10F8501F}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Verification", "Core\Verification\Verification.fsproj", "{6B6BEFA9-CE7D-4145-B19F-F1405F77B0D5}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Verification", "Verification\Verification\Verification.fsproj", "{6B6BEFA9-CE7D-4145-B19F-F1405F77B0D5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{53FCADE4-2BF3-4555-9D14-68C240E15229}"
 EndProject

@@ -7,7 +7,7 @@
     <ProjectReference Include="..\Core\SharedTypes\SharedTypes.fsproj">
       <Name>SharedTypes.fsproj</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Core\Verification\Verification.fsproj">
+    <ProjectReference Include="..\Verification\Verification\Verification.fsproj">
       <Name>Verification.fsproj</Name>
     </ProjectReference>
     <ProjectReference Include="..\Platforms\Default\Default.fsproj">
