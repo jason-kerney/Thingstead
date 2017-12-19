@@ -2,7 +2,7 @@ namespace ThingStead.Tests.TestRunners
 open ThingStead.TestBuilder.Scripting
 open ThingStead.TestRunner.Default.Framework
 open ThingStead.Core.SharedTypes
-open ThingStead.Core.Verification
+open ThingStead.Verification
 open System
         
 module DefaultRunner =

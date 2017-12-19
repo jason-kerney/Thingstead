@@ -1,6 +1,6 @@
 namespace ThingStead.Tests.Core
 open ThingStead.Core.SharedTypes
-open ThingStead.Core.Verification
+open ThingStead.Verification
 open ThingStead.TestBuilder.Scripting
 
 module VerificationTests = 

@@ -1,8 +1,9 @@
-namespace ThingStead.Core
+namespace ThingStead.Verification
 
 open ThingStead.Core.SharedTypes
 
-module Verification =
+[<AutoOpen>]
+module Standard =
     let andAlso check a b pastResult =
         if pastResult = Success then check a b
         else pastResult

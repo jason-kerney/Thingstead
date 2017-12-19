@@ -1,7 +1,7 @@
 namespace ThingStead.Tests.TestBuilders
 open ThingStead.Core.SharedTypes
 open ThingStead.TestBuilder.Scripting
-open ThingStead.Core.Verification
+open ThingStead.Verification
 open ThingStead.Tests.Support
 open System
 

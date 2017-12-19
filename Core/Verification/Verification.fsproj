@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>Core.Verification</AssemblyName>
+    <AssemblyName>Thingstead.Verification</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Verification.fs" />
