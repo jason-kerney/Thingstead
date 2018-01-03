@@ -55,12 +55,7 @@ let installDotNetCli _ =
     dotnetExePath <- DotNetCli.InstallDotNetSDK dotnetcliVersion
 Target "InstallDotNetCLI" installDotNetCli
 
-let restore _ =
-    appReferences
-    |> Seq.iter (fun p ->
-        let dir = System.IO.Path.GetDirectoryName p
-        runDotnet dir "restore"
-    )
+let restore _ = ()
 
 Target "Restore" restore
 Target "FRestore" restore
