@@ -1,10 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>net461</TargetFramework>
-    <DebugType>portable</DebugType>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Types\Types.fsproj">
+      <Name>Types.fsproj</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="Engine.fs" />
     <None Include="Script.fsx" />

@@ -1,4 +1,11 @@
 namespace Thingstead.Engine
 
-type Engine() = 
-    member this.X = "F#"
+open Thingstead.Types
+
+[<AutoOpen>]
+module Executer = 
+    let justExicute tests = 
+        [{
+            Successful = tests
+            Failed = []
+        }]
