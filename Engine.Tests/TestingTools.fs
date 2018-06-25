@@ -90,7 +90,7 @@ module TestingTools =
         failwith (sprintf "expected <%A> got <%A>" expected actual)
 
     let shouldBeEqualTo expected actual = 
-        if expected = actual then ()
+        if expected = actual then Success
         else failTest expected actual
 
     let shouldBeEqualToTestOf (expected: Test) (actual: Test) =

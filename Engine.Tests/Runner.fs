@@ -1,17 +1,31 @@
 namespace Thingstead.Engine.Tests
 
 open Thingstead.Engine.Tests
+open Thingstead.Types
 
   
 
 module Runner =
+    let printFailureMessage message =
+        printfn "\t###################################"
+        printfn "%s" message
+        printfn "\t###################################"
     let runTest test = 
         let join (items: array<string>) = 
             System.String.Join ("\n", items)
 
         try
-            test ()
-            0
+            let result = test ()
+            match result with
+            | Success -> 0
+            | Failure failureType ->
+                match failureType with
+                | ExpectationFailure message ->
+                    printFailureMessage message
+                | _ -> printFailureMessage (sprintf "%A" failureType)
+
+                1
+
         with
         | e -> 
             let message = 
@@ -19,9 +33,7 @@ module Runner =
                 |> Array.map (fun s -> sprintf "\t%s" s)
                 |> join
                 
-            printfn "\t###################################"
-            printfn "%s" message
-            printfn "\t###################################"
+            printFailureMessage message
             
             1 
 
