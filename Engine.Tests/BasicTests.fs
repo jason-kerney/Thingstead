@@ -4,26 +4,34 @@ open Thingstead.Engine
 open Thingstead.Types
 open Thingstead.Engine.Tests.TestingTools
 
-module ``A test engine when running tests should`` =
+module ``Thingstead Test Engine`` =
 
-    let ``run a test and return its result`` () =
-        let test = 
+    module ``justExicute should`` = 
+        let ``run a test and return its result`` =
             {
                 Name = "run a test and return its result"
-                Path = Some "A test engine when running tests should"
+                Path = Some "Thingstead Test Engine justExicute should"
                 Before = None
-                Executable =  fun _ -> Success
-                After = None 
+                Executable = fun _ ->                
+                    let test = 
+                        {
+                            Name = "run a test and return its result"
+                            Path = Some "A test engine when running tests should"
+                            Before = None
+                            Executable =  fun _ -> Success
+                            After = None 
+                        }
+
+                    [test] 
+                    |> justExicute
+                    |> shoulbBeEqualToResultsOf [{Successful = [test]; Failed = []}]
+                    
+                After = None
             }
-
-        [test] 
-        |> justExicute
-        |> shoulbBeEqualToResultsOf [{Successful = [test]; Failed = []}]
-
 
 
 module NeedsToRun = 
     let tests = 
         [
-            ``A test engine when running tests should``.``run a test and return its result``
+            ``Thingstead Test Engine``.``justExicute should``.``run a test and return its result``
         ]

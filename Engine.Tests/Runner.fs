@@ -15,7 +15,7 @@ module Runner =
             System.String.Join ("\n", items)
 
         try
-            let result = test ()
+            let result = Map.empty<string, string list> |>  test.Executable
             match result with
             | Success -> 0
             | Failure failureType ->

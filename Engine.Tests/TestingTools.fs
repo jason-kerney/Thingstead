@@ -87,7 +87,9 @@ module TestingTools =
         successfulMatch && failedMatch
 
     let failTest expected actual = 
-        failwith (sprintf "expected <%A> got <%A>" expected actual)
+        sprintf "expected <%A> got <%A>" expected actual
+        |> ExpectationFailure
+        |> Failure
 
     let shouldBeEqualTo expected actual = 
         if expected = actual then Success
@@ -96,12 +98,12 @@ module TestingTools =
     let shouldBeEqualToTestOf (expected: Test) (actual: Test) =
         
         if actual |> testIsEqualTo expected 
-        then ()
+        then Success
         else failTest expected actual
 
     let shoulbBeEqualToResultOf expected actual =
         if actual |> resultIsEqualTo expected
-        then ()
+        then Success
         else failTest expected actual
 
     let shoulbBeEqualToResultsOf expected actual = 
@@ -112,5 +114,5 @@ module TestingTools =
             |> List.reduce (&&)
 
         if result
-        then ()
+        then Success
         else failTest expected actual

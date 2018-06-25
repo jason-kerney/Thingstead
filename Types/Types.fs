@@ -39,7 +39,7 @@ type Test =
         Path: string option
         Before: (Environment -> Result<Environment, PrePostFailureType>) option
         Executable: Environment -> TestResult
-        After: (Environment -> Result<Environment, PrePostFailureType>) option
+        After: (Environment -> Result<unit, PrePostFailureType>) option
     }
     
 
