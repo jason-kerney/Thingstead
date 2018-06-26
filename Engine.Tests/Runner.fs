@@ -1,9 +1,6 @@
 namespace Thingstead.Engine.Tests
 
-open Thingstead.Engine.Tests
 open Thingstead.Types
-
-  
 
 module Runner =
     let joinPathToName name path =

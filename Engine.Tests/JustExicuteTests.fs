@@ -4,9 +4,7 @@ open Thingstead.Engine
 open Thingstead.Types
 open Thingstead.Engine.Tests.TestingTools
 
-module ``Thingstead Test Engine`` =
-
-    module ``'justExicute' should`` = 
+module NeedsToRun = 
         let path = Some "Thingstead Test Engine 'justExicute' should"
 
         let template = 
@@ -14,46 +12,67 @@ module ``Thingstead Test Engine`` =
                 Path = path 
             }
 
-        let ``run a test and return its result`` =
-            {template with
-                Name = "run a test and return its result"
-                Executable = fun _ ->                
-                    let test = 
-                        { template with
-                            Name = "run a test and return its result"
-                            Executable =  fun _ -> Success
-                        }
+        let tests = 
+            [
+                {template with
+                    Name = "run a test and return its result"
+                    Executable = fun _ ->                
+                        let test = 
+                            { template with
+                                Name = "run a test and return its result"
+                                Executable =  fun _ -> Success
+                            }
 
-                    [test] 
-                    |> justExicute
-                    |> shoulbBeEqualToResultsOf [{Successful = [test]; Failed = []}]
-            }
-            
+                        [test] 
+                        |> justExicute
+                        |> shoulbBeEqualToResultsOf [{Successful = [test]; Failed = []}]
+                }
 
-        let ``run a failing test and return its result`` = 
-            { template with
-                Name = "run a failing test and return its result"
-                Executable = fun _ ->
-                    let failure = 
-                        "Something does not equal"
-                        |> ExpectationFailure
+                { template with
+                    Name = "run a failing test and return its result"
+                    Executable = fun _ ->
+                        let failure = 
+                            "Something does not equal"
+                            |> ExpectationFailure
 
-                    let test = 
-                        { template with
-                            Name = "run a test and return its result"
-                            Executable =  fun _ -> 
-                                failure
-                                |> Failure
-                        }
+                        let test = 
+                            { template with
+                                Name = "run a test and return its result"
+                                Executable =  fun _ -> 
+                                    failure
+                                    |> Failure
+                            }
 
-                    [test] 
-                    |> justExicute
-                    |> shoulbBeEqualToResultsOf [{Successful = []; Failed = [(test, failure)]}]
-            }
+                        [test] 
+                        |> justExicute
+                        |> shoulbBeEqualToResultsOf [{Successful = []; Failed = [(test, failure)]}]
+                }
 
-module NeedsToRun = 
-    let tests = 
-        [
-            ``Thingstead Test Engine``.``'justExicute' should``.``run a test and return its result``
-            ``Thingstead Test Engine``.``'justExicute' should``.``run a failing test and return its result``
-        ]
+                {template with
+                    Name = "run a successfultest and a failing test and give results"
+                    Executable = (fun _ -> 
+                        let passingTest = 
+                            { template with
+                                Name = "run a test and return its result"
+                                Executable =  fun _ -> Success
+                            }
+
+                        let failure = 
+                            "Something does not equal"
+                            |> ExpectationFailure
+
+                        let failingTest = 
+                            { template with
+                                Name = "run a test and return its result"
+                                Executable =  fun _ -> 
+                                    failure
+                                    |> Failure
+                            }
+
+                        [failingTest; passingTest]
+                        |> justExicute
+                        |> shoulbBeEqualToResultsOf 
+                            [{Successful = [passingTest]; Failed = [(failingTest, failure)]}]
+                    )
+                }
+            ]
