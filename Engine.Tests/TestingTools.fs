@@ -16,7 +16,7 @@ module TestingTools =
             EquatablePath: string option
             EquatableBefore: EquatableObject<(Environment -> Result<Environment, PrePostFailureType>) option>
             EquatableExecutable: EquatableObject<Environment -> TestResult>
-            EquatableAfter: EquatableObject<(Environment -> Result<Environment, PrePostFailureType>) option>
+            EquatableAfter: EquatableObject<(Environment -> Result<unit, PrePostFailureType>) option>
         }
 
     type  EquatableExecutionResults = 

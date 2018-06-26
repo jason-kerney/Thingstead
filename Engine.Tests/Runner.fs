@@ -6,11 +6,23 @@ open Thingstead.Types
   
 
 module Runner =
-    let printFailureMessage message =
+    let joinPathToName name path =
+        let start = 
+            match path with
+            | None -> ""
+            | Some p -> p
+
+        sprintf "%s %s" start name
+
+    let printFailureMessage name path message =
         printfn "\t###################################"
-        printfn "%s" message
+        printfn "\tTest: %s" (joinPathToName name path)
+        printfn "\t%s" message
         printfn "\t###################################"
+
     let runTest test = 
+        let printFailure = printFailureMessage (test.Name) (test.Path)
+
         let join (items: array<string>) = 
             System.String.Join ("\n", items)
 
@@ -21,8 +33,9 @@ module Runner =
             | Failure failureType ->
                 match failureType with
                 | ExpectationFailure message ->
-                    printFailureMessage message
-                | _ -> printFailureMessage (sprintf "%A" failureType)
+                    printFailure message
+                | _ -> 
+                    printFailure (sprintf "%A" failureType)
 
                 1
 
@@ -33,7 +46,7 @@ module Runner =
                 |> Array.map (fun s -> sprintf "\t%s" s)
                 |> join
                 
-            printFailureMessage message
+            printFailure message
             
             1 
 

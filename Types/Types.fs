@@ -25,6 +25,7 @@ type FailureType =
     | Intermittent
     | ExceptionFailure of System.Exception
     | ExpectationFailure of string
+    | GeneralFailure of string
     | Ignored of string
 
 type TestResult = 
