@@ -18,7 +18,15 @@ module Executer =
         let results = 
             tests
             |> List.map(fun test ->
-                let result = test.Executable environment
+                let newEnvironment = 
+                    match test.Before with
+                    | None -> environment
+                    | Some before ->
+                        let beforeResult = before environment
+                        match beforeResult with
+                        | Ok env -> env
+                        | _ -> environment
+                let result = test.Executable newEnvironment
                 test, result
             )
             |> List.groupBy(fun (_, result) ->

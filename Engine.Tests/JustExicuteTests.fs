@@ -75,4 +75,40 @@ module NeedsToRun =
                             [{Successful = [passingTest]; Failed = [(failingTest, failure)]}]
                     )
                 }
+
+                {template with
+                    Name = "run the before, before executing the test"
+                    Executable = (fun _ ->
+                        let mutable wasCalled = false
+
+                        let test = 
+                            {template with
+                                Before = Some (fun env -> 
+                                    wasCalled <- true
+                                    Ok env
+                                )
+                                Executable = (fun _ ->
+                                    wasCalled
+                                    |> shouldBeEqualTo true
+                                )
+                            }
+
+                        [test]
+                        |> justExicute
+                        |> (fun (result::_) ->
+                            match result with
+                            | { Successful = []; Failed = failures } ->
+                                match failures with
+                                | [] -> failwith "No results given"
+                                | (_, failure)::_ ->
+                                    failure
+                                    |> withComment "Before was not called"
+                                    |> Failure
+                            | { Successful = successes; Failed = _ } ->
+                                match successes with
+                                | [] -> failwith "No results given"
+                                | _ -> Success
+                        )
+                    )
+                }
             ]
