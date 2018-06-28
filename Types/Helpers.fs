@@ -7,9 +7,11 @@ module Helpers =
                 Name = "[need a name for this test]"
                 Path = None
                 Executable = fun _ ->
-                    Ignored "Not Yet Implimented" |> Failure
-                Before = None
-                After = None
+                    "Not Yet Implimented"
+                    |> Ignored
+                    |> Failure
+                Before = fun env -> Ok env
+                After = fun _ -> Ok ()
             }
 
     let ``Not Yet Implimented`` = 
@@ -20,4 +22,32 @@ module Helpers =
     let Not_Yet_Implimented = ``Not Yet Implimented``     
 
     let withComment comment failure = 
-        FailureWithComment (failure, comment)       
+        FailureWithComment (failure, comment)
+
+    let stage = 
+        {
+            BeforeStage = (fun env _ -> Ok env)
+            Steps = []
+            AfterStage = (fun _ _ -> Ok ())
+            Filter = (fun input -> 
+                    match input with
+                    | Tests tests -> tests
+                    | Results (tests, _) -> tests
+                )
+        }
+
+    let step = 
+        {
+            BeforeStep = fun env _ -> Ok env
+            Executor = fun testMethod env -> testMethod env
+            AfterStep = fun _ _ -> Ok ()
+        }
+
+    let pipeline = 
+        {
+            Name = None
+            Tests = []
+            BeforePipeline = fun env _ -> Ok env
+            Stages = []
+            AfterPipeline = fun _ _ -> Ok ()
+        }
