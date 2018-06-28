@@ -1,10 +1,8 @@
-open System.Runtime.InteropServices.ComTypes
-open System.IO
 // --------------------------------------------------------------------------------------
 // FAKE build script
 // --------------------------------------------------------------------------------------
 
-#r "./packages/FAKE/tools/FakeLib.dll"
+#r "./packages/build/FAKE/tools/FakeLib.dll"
 
 open Fake
 open System
@@ -13,7 +11,7 @@ open System
 // Build variables
 // --------------------------------------------------------------------------------------
 
-let buildDir  = "./build/" |> IO.Path.GetFullPath
+let buildDir  = "./build/"
 let appReferences = !! "/**/*.fsproj"
 let dotnetcliVersion = "2.0.2"
 let mutable dotnetExePath = "dotnet"
@@ -45,46 +43,29 @@ let runDotnet workingDir args =
 // Targets
 // --------------------------------------------------------------------------------------
 
-let clean _ =
+Target "Clean" (fun _ ->
     CleanDirs [buildDir]
-    
-Target "Clean" clean
-Target "FClean" clean
+)
 
-let installDotNetCli _ =
+Target "InstallDotNetCLI" (fun _ ->
     dotnetExePath <- DotNetCli.InstallDotNetSDK dotnetcliVersion
-Target "InstallDotNetCLI" installDotNetCli
+)
 
-let restore _ =
+Target "Restore" (fun _ ->
     appReferences
     |> Seq.iter (fun p ->
         let dir = System.IO.Path.GetDirectoryName p
         runDotnet dir "restore"
     )
+)
 
-Target "Restore" restore
-Target "FRestore" restore
-
-let build _ =
-    let currentPath = ".\\" |> IO.Path.GetFullPath
-    runDotnet currentPath ("build -o " + buildDir)
-
-Target "Build" build
-Target "FBuild" build
-
-let test _ = 
-    buildDir
-    |> DirectoryInfo
-    |> fun d -> d.GetFiles ("*.Tests.dll")
-    |> Seq.iter (fun file ->
-        let fileName = file.FullName
-        let path = fileName |> IO.Path.GetDirectoryName
-        printfn "running: %s" fileName
-        runDotnet path fileName
+Target "Build" (fun _ ->
+    appReferences
+    |> Seq.iter (fun p ->
+        let dir = System.IO.Path.GetDirectoryName p
+        runDotnet dir "build"
     )
-
-Target "Test" test
-Target "FTest" test
+)
 
 // --------------------------------------------------------------------------------------
 // Build order
@@ -94,10 +75,5 @@ Target "FTest" test
   ==> "InstallDotNetCLI"
   ==> "Restore"
   ==> "Build"
-  ==> "Test"
 
-"FClean"
-  ==> "FRestore"
-  ==> "FBuild"
-  ==> "FTest"
-RunTargetOrDefault "FTest"
+RunTargetOrDefault "Build"
