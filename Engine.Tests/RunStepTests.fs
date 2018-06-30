@@ -12,11 +12,12 @@ module NeedsToRun =
                 Path = path 
             }
 
+        let testedWith = applyToTemplate template
+
         let tests = 
             [
-                { template with
-                    Name = "Pass a given test to the provided step"
-                    TestMethod = (fun _ -> 
+                "Pass a given test to the provided step"
+                |> testedWith (fun _ -> 
                         let mutable result = 
                             "No Result Collected"
                             |> GeneralFailure
@@ -46,11 +47,9 @@ module NeedsToRun =
 
                         result
                     )
-                }
 
-                { template with
-                    Name = "Pass a given environment to the provided step"
-                    TestMethod = (fun _ -> 
+                "Pass a given environment to the provided step"
+                |> testedWith (fun _ -> 
                         let mutable result = 
                             "No Result Collected"
                             |> GeneralFailure
@@ -75,11 +74,9 @@ module NeedsToRun =
 
                         result
                     )
-                }
 
-                { template with
-                    Name = "Run all tests with the provided step"
-                    TestMethod = (fun _ ->
+                "Run all tests with the provided step"
+                |> testedWith (fun _ ->
                         let mutable count = 0
 
                         let buildTestMethod result : Environment -> TestResult = 
@@ -112,11 +109,9 @@ module NeedsToRun =
                         count
                         |> shouldBeEqualTo tests.Length
                     )
-                }
 
-                { template with
-                    Name = "Run all tests, even with exceptions, with the provided step"
-                    TestMethod = (fun _ ->
+                "Run all tests, even with exceptions, with the provided step"
+                |> testedWith (fun _ ->
                         let mutable count = 0
 
                         let buildTestMethod getResult : Environment -> TestResult = 
@@ -149,11 +144,9 @@ module NeedsToRun =
                         count
                         |> shouldBeEqualTo tests.Length
                     )
-                }
 
-                { template with
-                    Name = "Run all tests with the provided step and return the results"
-                    TestMethod = (fun _ ->
+                "Run all tests with the provided step and return the results"
+                |> testedWith (fun _ ->
                         let buildTestMethod getResult : Environment -> TestResult = 
                             (fun _ -> 
                                 getResult ()
@@ -200,5 +193,4 @@ module NeedsToRun =
                             "Test 3", "This is a failure" |> GeneralFailure |> Failure
                         ]
                     )
-                }
             ]
