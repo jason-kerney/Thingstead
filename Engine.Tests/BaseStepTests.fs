@@ -7,26 +7,25 @@ open Thingstead.Engine.Tests.TestingTools
 module NeedsToRun = 
         let private baseStepPath = Some "Thingstead Test Engine 'BaseStep' should"
 
-        let private baseStepTestTemplate = 
+        let private template = 
             { testTemplate with
                 Path = baseStepPath
-            }        
+            }
+
+        let testedWith = applyToTemplate template
         
         let tests = 
             [
-                { baseStepTestTemplate with
-                    Name = "that runs successfull test and returns the result"
-                    TestMethod = (fun _ -> 
+                "that runs successfull test and returns the result"
+                |> testedWith (fun _ -> 
                         let { Executor = executor; BeforeStep = _; AfterStep = _ } = baseStep
 
                         executor emptyEnvironment (fun _ -> Success)
                         |> shouldBeEqualTo Success
                     )
-                }
 
-                { baseStepTestTemplate with
-                    Name = "that runs a failed test and returns the result"
-                    TestMethod = (fun _ -> 
+                "that runs a failed test and returns the result"
+                |> testedWith (fun _ -> 
                         let expected = 
                             "this is a test failure"
                             |> GeneralFailure
@@ -37,11 +36,9 @@ module NeedsToRun =
                         executor emptyEnvironment (fun _ -> expected)
                         |> shouldBeEqualTo expected
                     )
-                }
 
-                { baseStepTestTemplate with
-                    Name = "whos before step method is a pass through"
-                    TestMethod = (fun _ -> 
+                "whos before step method is a pass through"
+                |> testedWith (fun _ -> 
                         let { Executor = _; BeforeStep = beforeStep; AfterStep = _ } = baseStep
 
                         let testEnvironment = 
@@ -50,11 +47,9 @@ module NeedsToRun =
                         beforeStep testEnvironment testTemplate
                         |> shouldBeEqualTo (Ok testEnvironment)
                     )
-                }
-
-                { baseStepTestTemplate with
-                    Name = "whos after step method is a pass through"
-                    TestMethod = (fun _ -> 
+                
+                "whos after step method is a pass through"
+                |> testedWith (fun _ -> 
                         let { Executor = _; BeforeStep = _; AfterStep = afterStep } = baseStep
 
                         let testEnvironment = 
@@ -63,6 +58,5 @@ module NeedsToRun =
                         afterStep testEnvironment testTemplate
                         |> shouldBeEqualTo (Ok ())
                     )
-                }
             ]
             

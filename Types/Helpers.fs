@@ -15,6 +15,12 @@ module Helpers =
                 After = fun _ -> Ok ()
             }
 
+    let applyToTemplate template testMethod name = 
+        { template with
+            Name = name
+            TestMethod = testMethod
+        }
+
     let ``Not Yet Implimented`` = 
         "Not Yet Implimented"
         |> Ignored
