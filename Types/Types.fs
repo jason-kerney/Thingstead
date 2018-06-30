@@ -3,7 +3,7 @@ namespace Thingstead.Types
 type PrePostFailureType =
     | PrePostExceptionFailure of System.Exception
     | PrePostFailure of obj
-    | PrePostSimpleFailure
+    | PrePostSimpleFailure of string
 
 type EquatableObject<'T> (item:'T) = 
     member __.Item

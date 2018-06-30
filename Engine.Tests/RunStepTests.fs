@@ -226,4 +226,32 @@ module NeedsToRun =
                         |> shouldBeEqualTo true
                         |> withMessage "Did not call the before on the tests"
                     )
+
+                "Passes the environment given to it to the before"
+                |> testedWith (fun _ ->
+                        let testEnvironment = 
+                            emptyEnvironment.Add ("Hello", ["World"; "this"; "is"; "an"; "evironment"])
+
+                        let mutable result =
+                            "No results collected"
+                            |> GeneralFailure
+                            |> Failure
+
+                        let test = 
+                            { testTemplate with
+                                Before = (fun env ->
+                                    result <-
+                                        env
+                                        |> shouldBeEqualTo testEnvironment
+                                    
+                                    Ok env
+                                )
+                            }
+
+                        runStep [test] testEnvironment baseStep
+                        |> ignore
+
+                        result
+                        |> shouldBeEqualTo Success
+                    )
             ]
