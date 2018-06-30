@@ -139,27 +139,31 @@ module NeedsToRun =
                 }
 
                 { template with
-                    Name = "Run all successful tests with the provided step"
+                    Name = "Run all tests with the provided step"
                     TestMethod = (fun _ ->
                         let mutable count = 0
 
-                        let testMethod = 
+                        let buildTestMethod result : Environment -> TestResult = 
                             (fun _ -> 
-                                    count <- count + 1
-                                    Success
+                                count <- count + 1
+                                result
                             )
+
+                        let successfulTestMethod = buildTestMethod Success
+                        let failureTestMethod = buildTestMethod ("This is a failure" |> GeneralFailure |> Failure)
+
                         let tests = [
                             { testTemplate with
                                 Name = "Test 1"
-                                TestMethod = testMethod
+                                TestMethod = failureTestMethod
                             }
                             { testTemplate with
                                 Name = "Test 2"
-                                TestMethod = testMethod
+                                TestMethod = successfulTestMethod
                             }
                             { testTemplate with
                                 Name = "Test 3"
-                                TestMethod = testMethod
+                                TestMethod = successfulTestMethod
                             }
                         ]
 
