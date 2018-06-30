@@ -39,7 +39,7 @@ type Test =
         Name: string
         Path: string option
         Before: Environment -> Result<Environment, PrePostFailureType>
-        Executable: Environment -> TestResult
+        TestMethod: Environment -> TestResult
         After: Environment -> Result<unit, PrePostFailureType>
     }
     
@@ -52,7 +52,7 @@ type ExecutionResults =
 type Step = 
     {
         BeforeStep: Environment -> Test -> Result<Environment, PrePostFailureType>
-        Executor: (Environment -> TestResult) -> Environment -> TestResult
+        Executor: Environment -> (Environment -> TestResult) -> TestResult
         AfterStep: Environment -> Test -> Result<unit, PrePostFailureType>
     }
     

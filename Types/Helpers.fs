@@ -2,11 +2,12 @@ namespace Thingstead.Types
 
 [<AutoOpen>]
 module Helpers = 
+    let emptyEnvironment : Environment = Map.empty<string, string list>
     let testTemplate = 
             {
                 Name = "[need a name for this test]"
                 Path = None
-                Executable = fun _ ->
+                TestMethod = fun _ ->
                     "Not Yet Implimented"
                     |> Ignored
                     |> Failure
@@ -34,13 +35,6 @@ module Helpers =
                     | Tests tests -> tests
                     | Results (tests, _) -> tests
                 )
-        }
-
-    let step = 
-        {
-            BeforeStep = fun env _ -> Ok env
-            Executor = fun testMethod env -> testMethod env
-            AfterStep = fun _ _ -> Ok ()
         }
 
     let pipeline = 

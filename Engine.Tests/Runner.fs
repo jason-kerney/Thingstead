@@ -17,14 +17,14 @@ module Runner =
         printfn "\t%s" message
         printfn "\t###################################"
 
-    let runTest test = 
+    let runTest (test : Test) = 
         let printFailure = printFailureMessage (test.Name) (test.Path)
 
         let join (items: array<string>) = 
             System.String.Join ("\n", items)
 
         try
-            let result = Map.empty<string, string list> |>  test.Executable
+            let result = Map.empty<string, string list> |>  test.TestMethod
             match result with
             | Success -> 0
             | Failure failureType ->
