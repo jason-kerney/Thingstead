@@ -5,76 +5,15 @@ open Thingstead.Types
 open Thingstead.Engine.Tests.TestingTools
 
 module NeedsToRun = 
-        let private pathString = "Thingstead Test Engine 'Steps' should"
-        let private path = Some pathString
-        let private baseStepPath = Some (sprintf "%s %s" pathString "Provide a base step")
+        let private path = Some "Thingstead Test Engine 'runStep' should"
 
         let private template = 
             { testTemplate with
                 Path = path 
             }
-        let private baseStepTestTemplate = 
-            { testTemplate with
-                Path = baseStepPath
-            }        
-
-        let private basePathTests = 
-            [
-                { baseStepTestTemplate with
-                    Name = "that runs successfull test and returns the result"
-                    TestMethod = (fun _ -> 
-                        let { Executor = executor; BeforeStep = _; AfterStep = _ } = baseStep
-
-                        executor emptyEnvironment (fun _ -> Success)
-                        |> shouldBeEqualTo Success
-                    )
-                }
-
-                { baseStepTestTemplate with
-                    Name = "that runs a failed test and returns the result"
-                    TestMethod = (fun _ -> 
-                        let expected = 
-                            "this is a test failure"
-                            |> GeneralFailure
-                            |> Failure
-
-                        let { Executor = executor; BeforeStep = _; AfterStep = _ } = baseStep
-
-                        executor emptyEnvironment (fun _ -> expected)
-                        |> shouldBeEqualTo expected
-                    )
-                }
-
-                { baseStepTestTemplate with
-                    Name = "whos before step method is a pass through"
-                    TestMethod = (fun _ -> 
-                        let { Executor = _; BeforeStep = beforeStep; AfterStep = _ } = baseStep
-
-                        let testEnvironment = 
-                            emptyEnvironment.Add ("Hello", ["World"; "this"; "is"; "an"; "evironment"])
-
-                        beforeStep testEnvironment testTemplate
-                        |> shouldBeEqualTo (Ok testEnvironment)
-                    )
-                }
-
-                { baseStepTestTemplate with
-                    Name = "whos after step method is a pass through"
-                    TestMethod = (fun _ -> 
-                        let { Executor = _; BeforeStep = _; AfterStep = afterStep } = baseStep
-
-                        let testEnvironment = 
-                            emptyEnvironment.Add ("Hello", ["World"; "this"; "is"; "an"; "evironment"])
-
-                        afterStep testEnvironment testTemplate
-                        |> shouldBeEqualTo (Ok ())
-                    )
-                }
-            ]
 
         let tests = 
-            basePathTests
-            |> List.append [
+            [
                 { template with
                     Name = "Pass a given test to the provided step"
                     TestMethod = (fun _ -> 
