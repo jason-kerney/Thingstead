@@ -51,10 +51,10 @@ module Runner =
     let main _ =
         let tests = 
             BaseSteps.NeedsToRun.tests
-            |> List.append Basic.NeedsToRun.tests
+            |> List.append RunStep.NeedsToRun.tests
 
         let failedCount =
-            Basic.NeedsToRun.tests
+            tests
             |> List.sumBy runTest
 
         let total = tests |> List.length

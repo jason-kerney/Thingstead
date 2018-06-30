@@ -1,4 +1,4 @@
-namespace Thingstead.Engine.Tests.Basic
+namespace Thingstead.Engine.Tests.RunStep
 
 open Thingstead.Engine.Steps
 open Thingstead.Types
