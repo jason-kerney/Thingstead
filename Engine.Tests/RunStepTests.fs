@@ -254,4 +254,65 @@ module NeedsToRun =
                         result
                         |> shouldBeEqualTo Success
                     )
+
+                "Passes the environment returned from the Before to the test"
+                |> testedWith (fun _ ->
+                        let testEnvironment = 
+                            emptyEnvironment.Add ("Hello", ["World"; "this"; "is"; "an"; "evironment"])
+
+                        let test = 
+                            { testTemplate with
+                                Before = (fun _ -> Ok testEnvironment)
+                                TestMethod = (fun env ->
+                                    env
+                                    |> shouldBeEqualTo testEnvironment
+                                )
+                            }
+
+                        runStep [test] emptyEnvironment baseStep
+                        |> List.head
+                        |> fun (_, result) -> result
+                    )
+
+                "Not call the test if the before fails"
+                |> testedWith (fun _ ->
+                        let mutable called = false
+                        let test = 
+                            { testTemplate with
+                                Before = (fun _ -> "Before Failed" |> PrePostSimpleFailure |> Error)
+                                TestMethod = (fun _ ->
+                                    called <- true
+                                    "This should never happen"
+                                    |> GeneralFailure
+                                    |> Failure
+                                )
+                            }
+
+                        runStep [test] emptyEnvironment baseStep
+                        |> ignore
+
+                        called
+                        |> shouldBeEqualTo false
+                        |> withComment "Test method should not have been called"
+                    )
+
+                "return a Before Failure if the before fails"
+                |> testedWith (fun _ ->
+                        let mutable called = false
+                        let test = 
+                            { testTemplate with
+                                Before = (fun _ -> "Before Failed" |> PrePostSimpleFailure |> Error)
+                                TestMethod = (fun _ ->
+                                    called <- true
+                                    "This should never happen"
+                                    |> GeneralFailure
+                                    |> Failure
+                                )
+                            }
+
+                        runStep [test] emptyEnvironment baseStep
+                        |> List.head
+                        |> fun (_, result) -> result
+                        |> shouldBeEqualTo ("Before Failed" |> PrePostSimpleFailure |> BeforeFailure |> Failure)
+                    )
             ]

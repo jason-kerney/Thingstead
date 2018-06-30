@@ -17,11 +17,14 @@ module Steps =
         | e -> e |> ExceptionFailure |> Failure
 
     let private runTest environment (step: Step) (test: Test) =
-        test.Before environment |> ignore
+        let preResult = test.Before environment
 
-        test.TestMethod
-        |> executeTests (step.Executor) environment
-
+        match preResult with
+        | Ok resultEnv -> 
+            test.TestMethod
+            |> executeTests (step.Executor) resultEnv
+        | Error result -> 
+            result |> BeforeFailure |> Failure
 
     let runStep (tests : Test list) environment (step : Step) =
         let testExecutor = runTest environment step

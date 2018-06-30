@@ -86,11 +86,6 @@ module TestingTools =
 
         successfulMatch && failedMatch
 
-    let withMessage message result =
-        match result with
-        | Failure f -> FailureWithComment (f, message) |> Failure
-        | r -> r
-
     let failTest expected actual = 
         sprintf "expected <%A> got <%A>" expected actual
         |> ExpectationFailure

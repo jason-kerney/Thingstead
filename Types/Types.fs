@@ -19,7 +19,7 @@ type EquatableObject<'T> (item:'T) =
         | _ -> false                    
 
 type FailureType =
-    | BeforFailure of PrePostFailureType
+    | BeforeFailure of PrePostFailureType
     | AfterFailure of PrePostFailureType
     | FailureWithComment of FailureType * string
     | Intermittent
