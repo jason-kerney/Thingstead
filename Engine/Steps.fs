@@ -10,14 +10,21 @@ module Steps =
             AfterStep = fun _ _ -> Ok ()
         }
 
-    let private runTest testRunner (environment: Environment) (testMethod: Environment -> TestResult) =
+    let private executeTests testRunner (environment: Environment) (testMethod: Environment -> TestResult) =
         try
             testRunner environment testMethod
         with
-        | e -> e |> ExceptionFailure |> Failure        
+        | e -> e |> ExceptionFailure |> Failure
+
+    let private runTest environment (step: Step) (test: Test) =
+        test.Before environment |> ignore
+
+        test.TestMethod
+        |> executeTests (step.Executor) environment
+
 
     let runStep (tests : Test list) environment (step : Step) =
-        let testRunner = runTest (step.Executor) environment
+        let testExecutor = runTest environment step
         tests
-        |> List.map (fun t -> t, t.TestMethod |> testRunner)
+        |> List.map (fun t -> t, t |> testExecutor)
         

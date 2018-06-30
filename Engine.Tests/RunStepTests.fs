@@ -193,4 +193,37 @@ module NeedsToRun =
                             "Test 3", "This is a failure" |> GeneralFailure |> Failure
                         ]
                     )
+
+                "Runs the before of each test, just before running that test method"
+                |> testedWith (fun _ ->
+                        let mutable beforeA = false
+                        let mutable beforeB = false
+                        let mutable beforeC = false
+
+                        let buildTest (wasCalled: bool ref) name = 
+                            { testTemplate with
+                                Name = name
+                                Before = (fun env -> 
+                                    wasCalled := true
+                                    Ok env
+                                )
+                                TestMethod = (fun _ ->
+                                    !wasCalled
+                                    |> shouldBeEqualTo true
+                                )
+                            }
+
+
+                        let tests = [
+                            buildTest (ref beforeA) "Test A"
+                            buildTest (ref beforeB) "Test B"
+                            buildTest (ref beforeC) "Test C"
+                        ]
+
+                        runStep tests emptyEnvironment baseStep
+                        |> List.map (fun (_, result) -> result = Success)
+                        |> List.reduce (&&)
+                        |> shouldBeEqualTo true
+                        |> withMessage "Did not call the before on the tests"
+                    )
             ]
