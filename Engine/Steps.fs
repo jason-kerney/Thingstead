@@ -1,7 +1,6 @@
 namespace Thingstead.Engine
 
 open Thingstead.Types
-open System
 
 module Steps = 
     let baseStep =
@@ -11,8 +10,14 @@ module Steps =
             AfterStep = fun _ _ -> Ok ()
         }
 
+    let private runTest testRunner (environment: Environment) (testMethod: Environment -> TestResult) =
+        try
+            testRunner environment testMethod
+        with
+        | e -> e |> ExceptionFailure |> Failure        
+
     let runStep (tests : Test list) environment (step : Step) =
-        let testRunner = step.Executor environment
+        let testRunner = runTest (step.Executor) environment
         tests
-        |> List.map (fun t -> t.TestMethod |> testRunner)
+        |> List.map (fun t -> t, t.TestMethod |> testRunner)
         

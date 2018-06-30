@@ -174,4 +174,92 @@ module NeedsToRun =
                         |> shouldBeEqualTo tests.Length
                     )
                 }
+
+                { template with
+                    Name = "Run all tests, even with exceptions, with the provided step"
+                    TestMethod = (fun _ ->
+                        let mutable count = 0
+
+                        let buildTestMethod getResult : Environment -> TestResult = 
+                            (fun _ -> 
+                                count <- count + 1
+                                getResult ()
+                            )
+
+                        let successfulTestMethod = buildTestMethod (fun () -> Success)
+                        let failureTestMethod = buildTestMethod (fun () -> failwith "This is an exception")
+
+                        let tests = [
+                            { testTemplate with
+                                Name = "Test 1"
+                                TestMethod = failureTestMethod
+                            }
+                            { testTemplate with
+                                Name = "Test 2"
+                                TestMethod = successfulTestMethod
+                            }
+                            { testTemplate with
+                                Name = "Test 3"
+                                TestMethod = successfulTestMethod
+                            }
+                        ]
+
+                        runStep tests emptyEnvironment baseStep
+                        |> ignore
+
+                        count
+                        |> shouldBeEqualTo tests.Length
+                    )
+                }
+
+                { template with
+                    Name = "Run all tests with the provided step and return the results"
+                    TestMethod = (fun _ ->
+                        let buildTestMethod getResult : Environment -> TestResult = 
+                            (fun _ -> 
+                                getResult ()
+                            )
+
+                        let successfulTestMethod = buildTestMethod (fun () -> Success)
+                        let throwingTestMethod = buildTestMethod (fun () -> failwith "This is an exception")
+                        let failingTestMethod = buildTestMethod (fun () -> "This is a failure" |> GeneralFailure |> Failure)
+
+                        let tests = [
+                            { testTemplate with
+                                Name = "Test 1"
+                                TestMethod = throwingTestMethod
+                            }
+                            { testTemplate with
+                                Name = "Test 2"
+                                TestMethod = successfulTestMethod
+                            }
+                            { testTemplate with
+                                Name = "Test 3"
+                                TestMethod = failingTestMethod
+                            }
+                        ]
+
+                        let results = 
+                            runStep tests emptyEnvironment baseStep
+                            |> List.map (fun (test, result) ->
+                                let result = 
+                                    match result with
+                                    | Failure (ExceptionFailure e) ->
+                                        e.Message
+                                        |> sprintf "ExceptionFailure <%s>"
+                                        |> GeneralFailure
+                                        |> Failure
+                                    | other -> other
+
+                                test.Name, result
+                            )
+
+                        results
+                        |> shouldBeEqualTo [
+                            "Test 1", "ExceptionFailure <This is an exception>" |> GeneralFailure |> Failure
+                            "Test 2", Success
+                            "Test 3", "This is a failure" |> GeneralFailure |> Failure
+                        ]
+                    )
+                }
             ]
