@@ -39,6 +39,28 @@ module Helpers =
 
     let withFailMessage message = withFailComment message    
 
+    let combine (resultB) (resultA) =
+        match resultA, resultB with
+        | Error (BeforeFailure before), Error (AfterFailure after)
+        | Error (AfterFailure after), Error (BeforeFailure before) ->
+            MultiFailure (before |> BeforeFailure, after |> AfterFailure)
+            |> Error
+        | Error (BeforeFailure before), _
+        | _, Error (BeforeFailure before) ->
+            before
+            |> BeforeFailure
+            |> Error
+        | Error (AfterFailure after), _
+        | _, Error (AfterFailure after) ->
+            after
+            |> AfterFailure
+            |> Error
+        | Error error, Ok _
+        | Ok _, Error error ->
+            error
+            |> Error
+        | _ -> resultA
+
     let stage = 
         {
             BeforeStage = (fun env _ -> Ok env)

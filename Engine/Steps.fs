@@ -23,47 +23,51 @@ module Steps =
     let private runAsBookend (environment: Environment) f =
         handleUnsafeTestAction f environment (PrePostExceptionFailure >> Error)
 
-    let private runTest environment (step: Step) (test: Test) =
-        let preResult = test.Before |> runAsBookend environment
-        
-        let after = fun environment result () ->
-            let afterResult = test.After |> runAsBookend environment
-
-            match result, afterResult with
-            | _, Ok () -> result
-            | Error (BeforeFailure reason), Error postError ->
-                let afterFailure =
-                    postError
+    let bookEndProcess (environment: Environment) before (action: Environment -> TestResult) after = 
+        let doIt (prevResult: Result<Environment, FailureType>) =
+            match prevResult with
+            | Ok env ->
+                match action env with
+                | Ok _ -> Ok env
+                | Error result -> Error result
+            | _ -> prevResult
+            
+        let doAfter prevResult =
+            let a env = 
+                match after |> runAsBookend env with
+                | Ok _ -> Ok ()
+                | Error error ->
+                    error
                     |> AfterFailure
+                    |> Error
+                    
+            match prevResult with
+            | Ok env ->
+                a env
+            | Error error ->
+                a environment
+                |> combine (Error error)
 
-                let beforeFailure = 
-                    reason
-                    |> BeforeFailure
-
-                (beforeFailure, afterFailure)
-                |> MultiFailure
+        let doBefore env =
+            match before |> runAsBookend env with
+            | Ok env -> Ok env
+            | Error error -> 
+                error
+                |> BeforeFailure
                 |> Error
 
-            | _, Error postError ->
-                postError
-                |> AfterFailure
-                |> Error
+        environment
+        |> doBefore
+        |> doIt
+        |> doAfter
 
+
+    let private runTest environment (step: Step) (test: Test) =
+        let testFunction = (fun env -> 
+            test.TestMethod |> executeTests (step.Executor) env
+        )
         
-        let result =
-            match preResult with
-            | Ok resultEnv -> 
-                test.TestMethod
-                |> executeTests (step.Executor) resultEnv
-                |> after resultEnv
-            | Error result -> 
-                result 
-                |> BeforeFailure 
-                |> Error
-                |> after environment
-
-
-        result ()
+        bookEndProcess environment (test.Before) testFunction (test.After)
 
     let runStep (tests : Test list) environment (step : Step) =
         let testExecutor = runTest environment step
