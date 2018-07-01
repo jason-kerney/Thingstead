@@ -24,11 +24,11 @@ module NeedsToRun =
                         let mutable result = 
                             "No Result Collected"
                             |> GeneralFailure
-                            |> Failure
+                            |> Error
 
                         let test = 
                             {testTemplate with
-                                TestMethod = fun _ -> Success
+                                TestMethod = fun _ -> (Ok ())
                             }
 
                         let step = 
@@ -56,7 +56,7 @@ module NeedsToRun =
                         let mutable result = 
                             "No Result Collected"
                             |> GeneralFailure
-                            |> Failure
+                            |> Error
 
                         let testEnvironment = 
                             emptyEnvironment.Add ("Hello", ["World"; "this"; "is"; "an"; "evironment"])
@@ -88,8 +88,8 @@ module NeedsToRun =
                                 result
                             )
 
-                        let successfulTestMethod = buildTestMethod Success
-                        let failureTestMethod = buildTestMethod ("This is a failure" |> GeneralFailure |> Failure)
+                        let successfulTestMethod = buildTestMethod (Ok ())
+                        let failureTestMethod = buildTestMethod ("This is a Error" |> GeneralFailure |> Error)
 
                         let tests = [
                             { testTemplate with
@@ -123,7 +123,7 @@ module NeedsToRun =
                                 getResult ()
                             )
 
-                        let successfulTestMethod = buildTestMethod (fun () -> Success)
+                        let successfulTestMethod = buildTestMethod (fun () -> (Ok ()))
                         let failureTestMethod = buildTestMethod (fun () -> failwith "This is an exception")
 
                         let tests = [
@@ -155,9 +155,9 @@ module NeedsToRun =
                                 getResult ()
                             )
 
-                        let successfulTestMethod = buildTestMethod (fun () -> Success)
+                        let successfulTestMethod = buildTestMethod (fun () -> (Ok ()))
                         let throwingTestMethod = buildTestMethod (fun () -> failwith "This is an exception")
-                        let failingTestMethod = buildTestMethod (fun () -> "This is a failure" |> GeneralFailure |> Failure)
+                        let failingTestMethod = buildTestMethod (fun () -> "This is a Error" |> GeneralFailure |> Error)
 
                         let tests = [
                             { testTemplate with
@@ -179,11 +179,11 @@ module NeedsToRun =
                             |> List.map (fun (test, result) ->
                                 let result = 
                                     match result with
-                                    | Failure (ExceptionFailure e) ->
+                                    | Error (ExceptionFailure e) ->
                                         e.Message
                                         |> sprintf "ExceptionFailure <%s>"
                                         |> GeneralFailure
-                                        |> Failure
+                                        |> Error
                                     | other -> other
 
                                 test.Name, result
@@ -191,9 +191,9 @@ module NeedsToRun =
 
                         results
                         |> shouldBeEqualTo [
-                            "Test 1", "ExceptionFailure <This is an exception>" |> GeneralFailure |> Failure
-                            "Test 2", Success
-                            "Test 3", "This is a failure" |> GeneralFailure |> Failure
+                            "Test 1", "ExceptionFailure <This is an exception>" |> GeneralFailure |> Error
+                            "Test 2", (Ok ())
+                            "Test 3", "This is a Error" |> GeneralFailure |> Error
                         ]
                     )
             ]
@@ -227,7 +227,7 @@ module NeedsToRun =
                         ]
 
                         runStep tests emptyEnvironment baseStep
-                        |> List.map (fun (_, result) -> result = Success)
+                        |> List.map (fun (_, result) -> result = (Ok ()))
                         |> List.reduce (&&)
                         |> shouldBeEqualTo true
                         |> withFailMessage "Did not call the before on the tests"
@@ -241,7 +241,7 @@ module NeedsToRun =
                         let mutable result =
                             "No results collected"
                             |> GeneralFailure
-                            |> Failure
+                            |> Error
 
                         let test = 
                             { testTemplate with
@@ -258,7 +258,7 @@ module NeedsToRun =
                         |> ignore
 
                         result
-                        |> shouldBeEqualTo Success
+                        |> shouldBeEqualTo (Ok ())
                     )
 
                 "Passes the environment returned from the Before to the test"
@@ -290,7 +290,7 @@ module NeedsToRun =
                                     called <- true
                                     "This should never happen"
                                     |> GeneralFailure
-                                    |> Failure
+                                    |> Error
                                 )
                             }
 
@@ -302,40 +302,40 @@ module NeedsToRun =
                         |> withFailComment "Test method should not have been called"
                     )
 
-                "return a Before Failure if the before fails"
+                "return a Before Error if the before fails"
                 |> testedWith (fun _ ->
                         let test = 
                             { testTemplate with
                                 Before = fun _ -> "Before Failed" |> PrePostSimpleFailure |> Error
-                                TestMethod = fun _ -> Success
+                                TestMethod = fun _ -> (Ok ())
                             }
 
                         runStep [test] emptyEnvironment baseStep
                         |> List.head
                         |> fun (_, result) -> result
-                        |> shouldBeEqualTo ("Before Failed" |> PrePostSimpleFailure |> BeforeFailure |> Failure)
+                        |> shouldBeEqualTo ("Before Failed" |> PrePostSimpleFailure |> BeforeFailure |> Error)
                     )
 
-                "return a Before failure if the before throws an exception"
+                "return a Before Error if the before throws an exception"
                 |> testedWith (fun _ ->
                         let test = 
                             { testTemplate with
                                 Before = (fun _ -> failwith "Before BOOM")
-                                TestMethod = fun _ -> Success
+                                TestMethod = fun _ -> (Ok ())
                             }
 
                         runStep [test] emptyEnvironment baseStep
                         |> List.head
                         |> fun (_, result) -> 
                             match result with
-                            | Failure (BeforeFailure (PrePostExceptionFailure e)) ->
+                            | Error (BeforeFailure (PrePostExceptionFailure e)) ->
                                 e.Message
                                 |> sprintf "PrePostExceptionFailure <%s>"
                                 |> GeneralFailure
-                                |> Failure
+                                |> Error
                             | result -> result
 
-                        |> shouldBeEqualTo ("PrePostExceptionFailure <Before BOOM>" |> GeneralFailure |> Failure)
+                        |> shouldBeEqualTo ("PrePostExceptionFailure <Before BOOM>" |> GeneralFailure |> Error)
                     )
             ]
             |> List.append [
@@ -360,7 +360,7 @@ module NeedsToRun =
                                 )
                                 TestMethod = (fun _ ->
                                     markCalled ()
-                                    Success
+                                    (Ok ())
                                 )
                             }
 
@@ -388,7 +388,7 @@ module NeedsToRun =
                         let mutable result =
                             "No results collected"
                             |> GeneralFailure
-                            |> Failure
+                            |> Error
 
                         let test = 
                             { testTemplate with
@@ -405,7 +405,7 @@ module NeedsToRun =
                         |> ignore
 
                         result
-                        |> shouldBeEqualTo Success
+                        |> shouldBeEqualTo (Ok ())
                     )
 
                 "Passes the environment returned from the Before to the After"
@@ -413,7 +413,7 @@ module NeedsToRun =
                         let mutable result = 
                             "No Results collect"
                             |> GeneralFailure
-                            |> Failure
+                            |> Error
                             
                         let testEnvironment = 
                             emptyEnvironment.Add ("Hello", ["World"; "this"; "is"; "an"; "evironment"])
@@ -421,7 +421,7 @@ module NeedsToRun =
                         let test = 
                             { testTemplate with
                                 Before = (fun _ -> Ok testEnvironment)
-                                TestMethod = (fun _ -> Success)
+                                TestMethod = (fun _ -> (Ok ()))
                                 After = (fun env ->
                                     result <-
                                         env
@@ -443,7 +443,7 @@ module NeedsToRun =
                         let test = 
                             { testTemplate with
                                 Before = fun _ -> "Before Failed" |> PrePostSimpleFailure |> Error
-                                TestMethod = fun _ -> Success
+                                TestMethod = fun _ -> (Ok ())
                                 After = (fun _ ->
                                     called <- true
                                     Ok ()
@@ -463,7 +463,7 @@ module NeedsToRun =
                         let mutable result = 
                             "No results collected"
                             |> GeneralFailure
-                            |> Failure
+                            |> Error
 
                         let testEnvironment = 
                             emptyEnvironment.Add ("Hello", ["World"; "this"; "is"; "an"; "evironment"])
@@ -471,7 +471,7 @@ module NeedsToRun =
                         let test = 
                             { testTemplate with
                                 Before = fun _ -> "Before Failed" |> PrePostSimpleFailure |> Error
-                                TestMethod = fun _ -> Success
+                                TestMethod = fun _ -> (Ok ())
                                 After = (fun env ->
                                     result <-
                                         env
@@ -487,39 +487,39 @@ module NeedsToRun =
                         result
                     )
 
-                "return an After Failure if the After fails"
+                "return an After Error if the After fails"
                 |> testedWith (fun _ ->
                         let test = 
                             { testTemplate with
                                 After = fun _ -> "After Failed" |> PrePostSimpleFailure |> Error
-                                TestMethod = fun _ -> Success
+                                TestMethod = fun _ -> (Ok ())
                             }
 
                         runStep [test] emptyEnvironment baseStep
                         |> List.head
                         |> fun (_, result) -> result
-                        |> shouldBeEqualTo ("After Failed" |> PrePostSimpleFailure |> AfterFailure |> Failure)
+                        |> shouldBeEqualTo ("After Failed" |> PrePostSimpleFailure |> AfterFailure |> Error)
                     )
 
-                "return an After failure if the After throws an exception"
+                "return an After Error if the After throws an exception"
                 |> testedWith (fun _ ->
                         let test = 
                             { testTemplate with
                                 After = (fun _ -> failwith "After BOOM")
-                                TestMethod = fun _ -> Success
+                                TestMethod = fun _ -> (Ok ())
                             }
 
                         runStep [test] emptyEnvironment baseStep
                         |> List.head
                         |> fun (_, result) -> 
                             match result with
-                            | Failure (AfterFailure (PrePostExceptionFailure e)) ->
+                            | Error (AfterFailure (PrePostExceptionFailure e)) ->
                                 e.Message
                                 |> sprintf "PrePostExceptionFailure <%s>"
                                 |> GeneralFailure
-                                |> Failure
+                                |> Error
                             | result -> result
-                        |> shouldBeEqualTo ("PrePostExceptionFailure <After BOOM>" |> GeneralFailure |> Failure)
+                        |> shouldBeEqualTo ("PrePostExceptionFailure <After BOOM>" |> GeneralFailure |> Error)
                     )
             ]
             |> List.append [
@@ -530,7 +530,7 @@ module NeedsToRun =
 
                         let expectedFailure = 
                             MultiFailure ((beforeFailure |> BeforeFailure), (afterFailure |> AfterFailure))
-                            |> Failure
+                            |> Error
                             
                         let test = 
                             { testTemplate with

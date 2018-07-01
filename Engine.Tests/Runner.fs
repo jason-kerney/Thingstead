@@ -26,8 +26,8 @@ module Runner =
         try
             let result = Map.empty<string, string list> |>  test.TestMethod
             match result with
-            | Success -> 0
-            | Failure failureType ->
+            | Ok () -> 0
+            | Error failureType ->
                 match failureType with
                 | ExpectationFailure message ->
                     message

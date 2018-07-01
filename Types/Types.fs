@@ -29,9 +29,7 @@ type FailureType =
     | GeneralFailure of string
     | Ignored of string
 
-type TestResult = 
-    | Success
-    | Failure of FailureType
+type TestResult = Result<unit, FailureType>
 
 type Environment =  Map<string, string list>
 

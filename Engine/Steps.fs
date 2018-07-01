@@ -18,7 +18,7 @@ module Steps =
 
     let private executeTests testRunner (environment: Environment) (testMethod: Environment -> TestResult) =
         let runner = fun env -> testRunner env testMethod
-        handleUnsafeTestAction runner environment (ExceptionFailure >> Failure)
+        handleUnsafeTestAction runner environment (ExceptionFailure >> Error)
 
     let private runAsBookend (environment: Environment) f =
         handleUnsafeTestAction f environment (PrePostExceptionFailure >> Error)
@@ -31,7 +31,7 @@ module Steps =
 
             match result, afterResult with
             | _, Ok () -> result
-            | Failure (BeforeFailure reason), Error postError ->
+            | Error (BeforeFailure reason), Error postError ->
                 let afterFailure =
                     postError
                     |> AfterFailure
@@ -42,12 +42,12 @@ module Steps =
 
                 (beforeFailure, afterFailure)
                 |> MultiFailure
-                |> Failure
+                |> Error
 
             | _, Error postError ->
                 postError
                 |> AfterFailure
-                |> Failure
+                |> Error
 
         
         let result =
@@ -59,7 +59,7 @@ module Steps =
             | Error result -> 
                 result 
                 |> BeforeFailure 
-                |> Failure
+                |> Error
                 |> after environment
 
 

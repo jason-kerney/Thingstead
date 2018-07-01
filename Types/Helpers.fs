@@ -2,6 +2,10 @@ namespace Thingstead.Types
 
 [<AutoOpen>]
 module Helpers = 
+    let Success : TestResult = Ok ()
+
+    let Failure failureType : TestResult = Error failureType
+
     let emptyEnvironment : Environment = Map.empty<string, string list>
     let testTemplate = 
             {
@@ -21,16 +25,16 @@ module Helpers =
             TestMethod = testMethod
         }
 
-    let ``Not Yet Implimented`` = 
+    let ``Not Yet Implimented`` : TestResult = 
         "Not Yet Implimented"
         |> Ignored
-        |> Failure
+        |> Error 
 
     let Not_Yet_Implimented = ``Not Yet Implimented``     
 
     let withFailComment comment result =
         match result with
-        | Failure f -> FailureWithComment (f, comment) |> Failure
+        | Error f -> FailureWithComment (f, comment) |> Failure
         | r -> r
 
     let withFailMessage message = withFailComment message    
