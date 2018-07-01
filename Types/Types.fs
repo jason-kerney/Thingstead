@@ -21,6 +21,7 @@ type EquatableObject<'T> (item:'T) =
 type FailureType =
     | BeforeFailure of PrePostFailureType
     | AfterFailure of PrePostFailureType
+    | MultiFailure of FailureType * FailureType
     | FailureWithComment of FailureType * string
     | Intermittent
     | ExceptionFailure of System.Exception

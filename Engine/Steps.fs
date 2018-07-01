@@ -25,15 +25,30 @@ module Steps =
 
     let private runTest environment (step: Step) (test: Test) =
         let preResult = test.Before |> runAsBookend environment
+        
         let after = fun environment result () ->
             let afterResult = test.After |> runAsBookend environment
 
-            match afterResult with
-            | Ok () -> result
-            | Error postError ->
+            match result, afterResult with
+            | _, Ok () -> result
+            | Failure (BeforeFailure reason), Error postError ->
+                let afterFailure =
+                    postError
+                    |> AfterFailure
+
+                let beforeFailure = 
+                    reason
+                    |> BeforeFailure
+
+                (beforeFailure, afterFailure)
+                |> MultiFailure
+                |> Failure
+
+            | _, Error postError ->
                 postError
                 |> AfterFailure
                 |> Failure
+
         
         let result =
             match preResult with

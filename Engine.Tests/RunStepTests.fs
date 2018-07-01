@@ -522,3 +522,25 @@ module NeedsToRun =
                         |> shouldBeEqualTo ("PrePostExceptionFailure <After BOOM>" |> GeneralFailure |> Failure)
                     )
             ]
+            |> List.append [
+                "if both Before and After Fail, they are both returned"
+                |> testedWith (fun _ -> 
+                        let beforeFailure = "Bad Before" |> PrePostSimpleFailure
+                        let afterFailure = "After is dead" |> PrePostSimpleFailure
+
+                        let expectedFailure = 
+                            MultiFailure ((beforeFailure |> BeforeFailure), (afterFailure |> AfterFailure))
+                            |> Failure
+                            
+                        let test = 
+                            { testTemplate with
+                                Before = fun _ -> beforeFailure |> Error
+                                After = fun _ -> afterFailure |> Error
+                            }
+
+                        runStep [test] emptyEnvironment baseStep
+                        |> List.head
+                        |> snd
+                        |> shouldBeEqualTo expectedFailure
+                    )
+            ]
