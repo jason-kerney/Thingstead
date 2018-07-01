@@ -28,12 +28,12 @@ module Helpers =
 
     let Not_Yet_Implimented = ``Not Yet Implimented``     
 
-    let withComment comment result =
+    let withFailComment comment result =
         match result with
         | Failure f -> FailureWithComment (f, comment) |> Failure
         | r -> r
 
-    let withMessage message = withComment message    
+    let withFailMessage message = withFailComment message    
 
     let stage = 
         {

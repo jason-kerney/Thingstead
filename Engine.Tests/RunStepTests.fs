@@ -3,6 +3,7 @@ namespace Thingstead.Engine.Tests.RunStep
 open Thingstead.Engine.Steps
 open Thingstead.Types
 open Thingstead.Engine.Tests.TestingTools
+open Thingstead.Engine.Types
 
 module NeedsToRun = 
         let private path = Some "Thingstead Test Engine 'runStep' should"
@@ -16,6 +17,8 @@ module NeedsToRun =
 
         let tests = 
             [
+                // Running Tests
+
                 "Pass a given test to the provided step"
                 |> testedWith (fun _ -> 
                         let mutable result = 
@@ -193,8 +196,11 @@ module NeedsToRun =
                             "Test 3", "This is a failure" |> GeneralFailure |> Failure
                         ]
                     )
+            ]
+            |> List.append [
+                // Handling the Before Tests
 
-                "Runs the before of each test, just before running that test method"
+                "Runs the Before of each test, just before running that test method"
                 |> testedWith (fun _ ->
                         let mutable beforeA = false
                         let mutable beforeB = false
@@ -224,10 +230,10 @@ module NeedsToRun =
                         |> List.map (fun (_, result) -> result = Success)
                         |> List.reduce (&&)
                         |> shouldBeEqualTo true
-                        |> withMessage "Did not call the before on the tests"
+                        |> withFailMessage "Did not call the before on the tests"
                     )
 
-                "Passes the environment given to it to the before"
+                "Passes the environment given to it to the Before"
                 |> testedWith (fun _ ->
                         let testEnvironment = 
                             emptyEnvironment.Add ("Hello", ["World"; "this"; "is"; "an"; "evironment"])
@@ -293,7 +299,7 @@ module NeedsToRun =
 
                         called
                         |> shouldBeEqualTo false
-                        |> withComment "Test method should not have been called"
+                        |> withFailComment "Test method should not have been called"
                     )
 
                 "return a Before Failure if the before fails"
@@ -330,5 +336,189 @@ module NeedsToRun =
                             | result -> result
 
                         |> shouldBeEqualTo ("PrePostExceptionFailure <Before BOOM>" |> GeneralFailure |> Failure)
+                    )
+            ]
+            |> List.append [
+                // Handling the After test
+
+                "Runs the After of each test, just before running that test method"
+                |> testedWith (fun _ ->
+                        let mutable afterA = false
+                        let mutable resultA = false
+                        let mutable afterB = false
+                        let mutable resultB = false
+                        let mutable afterC = false
+                        let mutable resultC = false
+
+                        let buildTest (markCalled: unit -> unit) (getCalled : unit -> bool) (markResult : bool -> unit) name = 
+                            { testTemplate with
+                                Name = name
+                                After = (fun _ -> 
+
+                                    markResult (getCalled ())
+                                    Ok ()
+                                )
+                                TestMethod = (fun _ ->
+                                    markCalled ()
+                                    Success
+                                )
+                            }
+
+                        let tests = [
+                            buildTest (fun () -> afterA <- true) (fun () -> afterA) (fun called -> resultA <- called) "Test A"
+                            buildTest (fun () -> afterB <- true) (fun () -> afterB) (fun called -> resultB <- called) "Test B"
+                            buildTest (fun () -> afterC <- true) (fun () -> afterC) (fun called -> resultC <- called) "Test C"
+                        ]
+
+                        runStep tests emptyEnvironment baseStep
+                        |> ignore
+
+                        resultA
+                        |> (&&) resultB
+                        |> (&&) resultC
+                        |> shouldBeEqualTo true
+                        |> withFailComment "the After was not called"
+                    )
+
+                "Passes the environment given to it to the After"
+                |> testedWith (fun _ ->
+                        let testEnvironment = 
+                            emptyEnvironment.Add ("Hello", ["World"; "this"; "is"; "an"; "evironment"])
+
+                        let mutable result =
+                            "No results collected"
+                            |> GeneralFailure
+                            |> Failure
+
+                        let test = 
+                            { testTemplate with
+                                After = (fun env ->
+                                    result <-
+                                        env
+                                        |> shouldBeEqualTo testEnvironment
+                                    
+                                    Ok ()
+                                )
+                            }
+
+                        runStep [test] testEnvironment baseStep
+                        |> ignore
+
+                        result
+                        |> shouldBeEqualTo Success
+                    )
+
+                "Passes the environment returned from the Before to the After"
+                |> testedWith (fun _ ->
+                        let mutable result = 
+                            "No Results collect"
+                            |> GeneralFailure
+                            |> Failure
+                            
+                        let testEnvironment = 
+                            emptyEnvironment.Add ("Hello", ["World"; "this"; "is"; "an"; "evironment"])
+
+                        let test = 
+                            { testTemplate with
+                                Before = (fun _ -> Ok testEnvironment)
+                                TestMethod = (fun _ -> Success)
+                                After = (fun env ->
+                                    result <-
+                                        env
+                                        |> shouldBeEqualTo testEnvironment
+
+                                    Ok ()
+                                )
+                            }
+
+                        runStep [test] emptyEnvironment baseStep
+                        |> ignore
+
+                        result
+                    )
+
+                "Calls the after even if the before fails"
+                |> testedWith (fun _ ->
+                        let mutable called = false
+                        let test = 
+                            { testTemplate with
+                                Before = fun _ -> "Before Failed" |> PrePostSimpleFailure |> Error
+                                TestMethod = fun _ -> Success
+                                After = (fun _ ->
+                                    called <- true
+                                    Ok ()
+                                )
+                            }
+
+                        runStep [test] emptyEnvironment baseStep
+                        |> ignore
+
+                        called
+                        |> shouldBeEqualTo true
+                        |> withFailComment "Test After should have been called"
+                    )
+
+                "Calls the after with intial environment if before fails"
+                |> testedWith (fun _ ->
+                        let mutable result = 
+                            "No results collected"
+                            |> GeneralFailure
+                            |> Failure
+
+                        let testEnvironment = 
+                            emptyEnvironment.Add ("Hello", ["World"; "this"; "is"; "an"; "evironment"])
+
+                        let test = 
+                            { testTemplate with
+                                Before = fun _ -> "Before Failed" |> PrePostSimpleFailure |> Error
+                                TestMethod = fun _ -> Success
+                                After = (fun env ->
+                                    result <-
+                                        env
+                                        |> shouldBeEqualTo testEnvironment
+
+                                    Ok ()
+                                )
+                            }
+
+                        runStep [test] testEnvironment baseStep
+                        |> ignore
+
+                        result
+                    )
+
+                "return an After Failure if the After fails"
+                |> testedWith (fun _ ->
+                        let test = 
+                            { testTemplate with
+                                After = fun _ -> "After Failed" |> PrePostSimpleFailure |> Error
+                                TestMethod = fun _ -> Success
+                            }
+
+                        runStep [test] emptyEnvironment baseStep
+                        |> List.head
+                        |> fun (_, result) -> result
+                        |> shouldBeEqualTo ("After Failed" |> PrePostSimpleFailure |> AfterFailure |> Failure)
+                    )
+
+                "return an After failure if the After throws an exception"
+                |> testedWith (fun _ ->
+                        let test = 
+                            { testTemplate with
+                                After = (fun _ -> failwith "After BOOM")
+                                TestMethod = fun _ -> Success
+                            }
+
+                        runStep [test] emptyEnvironment baseStep
+                        |> List.head
+                        |> fun (_, result) -> 
+                            match result with
+                            | Failure (AfterFailure (PrePostExceptionFailure e)) ->
+                                e.Message
+                                |> sprintf "PrePostExceptionFailure <%s>"
+                                |> GeneralFailure
+                                |> Failure
+                            | result -> result
+                        |> shouldBeEqualTo ("PrePostExceptionFailure <After BOOM>" |> GeneralFailure |> Failure)
                     )
             ]

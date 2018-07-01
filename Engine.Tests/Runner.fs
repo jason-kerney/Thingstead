@@ -32,6 +32,7 @@ module Runner =
                 | ExpectationFailure message ->
                     message
                     |> printFailure
+                | Ignored m -> printfn "\n\tIgnored %s <%s>" (joinPathToName test.Name test.Path) m
                 | _ -> 
                     failureType
                     |> sprintf "%A"
