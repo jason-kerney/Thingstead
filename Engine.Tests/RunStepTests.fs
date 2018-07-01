@@ -279,7 +279,7 @@ module NeedsToRun =
                         let mutable called = false
                         let test = 
                             { testTemplate with
-                                Before = (fun _ -> "Before Failed" |> PrePostSimpleFailure |> Error)
+                                Before = fun _ -> "Before Failed" |> PrePostSimpleFailure |> Error
                                 TestMethod = (fun _ ->
                                     called <- true
                                     "This should never happen"
@@ -298,21 +298,37 @@ module NeedsToRun =
 
                 "return a Before Failure if the before fails"
                 |> testedWith (fun _ ->
-                        let mutable called = false
                         let test = 
                             { testTemplate with
-                                Before = (fun _ -> "Before Failed" |> PrePostSimpleFailure |> Error)
-                                TestMethod = (fun _ ->
-                                    called <- true
-                                    "This should never happen"
-                                    |> GeneralFailure
-                                    |> Failure
-                                )
+                                Before = fun _ -> "Before Failed" |> PrePostSimpleFailure |> Error
+                                TestMethod = fun _ -> Success
                             }
 
                         runStep [test] emptyEnvironment baseStep
                         |> List.head
                         |> fun (_, result) -> result
                         |> shouldBeEqualTo ("Before Failed" |> PrePostSimpleFailure |> BeforeFailure |> Failure)
+                    )
+
+                "return a Before failure if the before throws an exception"
+                |> testedWith (fun _ ->
+                        let test = 
+                            { testTemplate with
+                                Before = (fun _ -> failwith "Before BOOM")
+                                TestMethod = fun _ -> Success
+                            }
+
+                        runStep [test] emptyEnvironment baseStep
+                        |> List.head
+                        |> fun (_, result) -> 
+                            match result with
+                            | Failure (BeforeFailure (PrePostExceptionFailure e)) ->
+                                e.Message
+                                |> sprintf "PrePostExceptionFailure <%s>"
+                                |> GeneralFailure
+                                |> Failure
+                            | result -> result
+
+                        |> shouldBeEqualTo ("PrePostExceptionFailure <Before BOOM>" |> GeneralFailure |> Failure)
                     )
             ]

@@ -10,14 +10,21 @@ module Steps =
             AfterStep = fun _ _ -> Ok ()
         }
 
-    let private executeTests testRunner (environment: Environment) (testMethod: Environment -> TestResult) =
+    let private handleUnsafeTestAction unsafeAction (environment: Environment) exceptionHandler =
         try
-            testRunner environment testMethod
+            unsafeAction environment
         with
-        | e -> e |> ExceptionFailure |> Failure
+        | e -> e |> exceptionHandler
+
+    let private executeTests testRunner (environment: Environment) (testMethod: Environment -> TestResult) =
+        let runner = fun env -> testRunner env testMethod
+        handleUnsafeTestAction runner environment (ExceptionFailure >> Failure)
+
+    let private runAsBookend (environment: Environment) f =
+        handleUnsafeTestAction f environment (PrePostExceptionFailure >> Error)
 
     let private runTest environment (step: Step) (test: Test) =
-        let preResult = test.Before environment
+        let preResult = test.Before |> runAsBookend environment
 
         match preResult with
         | Ok resultEnv -> 

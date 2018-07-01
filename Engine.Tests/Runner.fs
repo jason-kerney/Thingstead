@@ -30,9 +30,12 @@ module Runner =
             | Failure failureType ->
                 match failureType with
                 | ExpectationFailure message ->
-                    printFailure message
+                    message
+                    |> printFailure
                 | _ -> 
-                    printFailure (sprintf "%A" failureType)
+                    failureType
+                    |> sprintf "%A"
+                    |> printFailure
 
                 1
 
@@ -40,8 +43,9 @@ module Runner =
         | e -> 
             let message = 
                 e.Message.Split([|'\n'; '\r'|], System.StringSplitOptions.RemoveEmptyEntries)
-                |> Array.map (fun s -> sprintf "\t%s" s)
+                |> Array.map (sprintf "\t%s")
                 |> join
+                |> sprintf "Exception:\n%s"
                 
             printFailure message
             
