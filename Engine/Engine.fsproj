@@ -9,6 +9,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Types.fs" />
+    <Compile Include="Steps.fs" />
     <Compile Include="Engine.fs" />
     <None Include="Script.fsx" />
   </ItemGroup>

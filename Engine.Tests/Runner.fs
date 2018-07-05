@@ -17,22 +17,26 @@ module Runner =
         printfn "\t%s" message
         printfn "\t###################################"
 
-    let runTest test = 
+    let runTest (test : Test) = 
         let printFailure = printFailureMessage (test.Name) (test.Path)
 
         let join (items: array<string>) = 
             System.String.Join ("\n", items)
 
         try
-            let result = Map.empty<string, string list> |>  test.Executable
+            let result = Map.empty<string, string list> |>  test.TestMethod
             match result with
             | Success -> 0
             | Failure failureType ->
                 match failureType with
                 | ExpectationFailure message ->
-                    printFailure message
+                    message
+                    |> printFailure
+                | Ignored m -> printfn "\n\tIgnored %s <%s>" (joinPathToName test.Name test.Path) m
                 | _ -> 
-                    printFailure (sprintf "%A" failureType)
+                    failureType
+                    |> sprintf "%A"
+                    |> printFailure
 
                 1
 
@@ -40,8 +44,9 @@ module Runner =
         | e -> 
             let message = 
                 e.Message.Split([|'\n'; '\r'|], System.StringSplitOptions.RemoveEmptyEntries)
-                |> Array.map (fun s -> sprintf "\t%s" s)
+                |> Array.map (sprintf "\t%s")
                 |> join
+                |> sprintf "Exception:\n%s"
                 
             printFailure message
             
@@ -50,10 +55,11 @@ module Runner =
     [<EntryPoint>]
     let main _ =
         let tests = 
-            Basic.NeedsToRun.tests
+            BaseSteps.NeedsToRun.tests
+            |> List.append RunStep.NeedsToRun.tests
 
         let failedCount =
-            Basic.NeedsToRun.tests
+            tests
             |> List.sumBy runTest
 
         let total = tests |> List.length

@@ -14,9 +14,9 @@ module TestingTools =
         {
             EquatableName: string
             EquatablePath: string option
-            EquatableBefore: EquatableObject<(Environment -> Result<Environment, PrePostFailureType>) option>
+            EquatableBefore: EquatableObject<Environment -> Result<Environment, PrePostFailureType>>
             EquatableExecutable: EquatableObject<Environment -> TestResult>
-            EquatableAfter: EquatableObject<(Environment -> Result<unit, PrePostFailureType>) option>
+            EquatableAfter: EquatableObject<Environment -> Result<unit, PrePostFailureType>>
         }
 
     type  EquatableExecutionResults = 
@@ -30,7 +30,7 @@ module TestingTools =
             EquatableName = test.Name
             EquatablePath = test.Path
             EquatableBefore = EquatableObject (test.Before)
-            EquatableExecutable = EquatableObject (test.Executable)
+            EquatableExecutable = EquatableObject (test.TestMethod)
             EquatableAfter = EquatableObject (test.After)
         }
 
