@@ -2,6 +2,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net461</TargetFramework>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.fsproj">
@@ -13,7 +14,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TestingTools.fs" />
-    <Compile Include="JustExicuteTests.fs" />
+    <Compile Include="BaseStepTests.fs" />
+    <Compile Include="RunStepTests.fs" />
     <Compile Include="Runner.fs" />
     <None Include="App.config" />
   </ItemGroup>
