@@ -2,7 +2,7 @@ namespace Thingstead.Types
 
 [<AutoOpen>]
 module Helpers = 
-    let emptyEnvironment : Environment = Map.empty<string, string list>
+    let emptyEnvironment : TestingEnvironment = Map.empty<string, string list>
 
     let successFulTest : TestResult = Success ()
     
@@ -37,24 +37,3 @@ module Helpers =
         | r -> r
 
     let withFailMessage message = withFailComment message
-
-    let stage = 
-        {
-            BeforeStage = (fun env _ -> Success env)
-            Steps = []
-            AfterStage = (fun _ _ -> Success ())
-            Filter = (fun input -> 
-                    match input with
-                    | Tests tests -> tests
-                    | Results (tests, _) -> tests
-                )
-        }
-
-    let pipeline = 
-        {
-            Name = None
-            Tests = []
-            BeforePipeline = fun env _ -> Success env
-            Stages = []
-            AfterPipeline = fun _ _ -> Success ()
-        }
