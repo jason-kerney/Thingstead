@@ -98,7 +98,7 @@ module NeedsToRun =
 
                         let tests = buildTest (ref beforeA) "Test A"
 
-                        runTestWith emptyEnvironment (baseStep.Executor) tests
+                        runTestWith emptyEnvironment defaultTestExecutor tests
                         |> (fun (result) -> result = (Ok ()))
                         |> shouldBeEqualTo true
                         |> withFailMessage "Did not call the before on the tests"
@@ -125,7 +125,7 @@ module NeedsToRun =
                                 )
                             }
 
-                        runTestWith testEnvironment (baseStep.Executor) test
+                        runTestWith testEnvironment defaultTestExecutor test
                         |> ignore
 
                         result
@@ -146,7 +146,7 @@ module NeedsToRun =
                                 )
                             }
 
-                        runTestWith emptyEnvironment (baseStep.Executor) test
+                        runTestWith emptyEnvironment defaultTestExecutor test
                     )
 
                 "Not call the test if the before fails"
@@ -163,7 +163,7 @@ module NeedsToRun =
                                 )
                             }
 
-                        runTestWith emptyEnvironment (baseStep.Executor) test
+                        runTestWith emptyEnvironment defaultTestExecutor test
                         |> ignore
 
                         called
@@ -179,7 +179,7 @@ module NeedsToRun =
                                 TestMethod = fun _ -> (Ok ())
                             }
 
-                        runTestWith emptyEnvironment baseStep.Executor test
+                        runTestWith emptyEnvironment defaultTestExecutor test
                         |> shouldBeEqualTo ("Before Failed" |> PrePostSimpleFailure |> BeforeFailure |> Error)
                     )
 
@@ -191,7 +191,7 @@ module NeedsToRun =
                                 TestMethod = fun _ -> (Ok ())
                             }
 
-                        runTestWith emptyEnvironment (baseStep.Executor) test
+                        runTestWith emptyEnvironment defaultTestExecutor test
                         |> fun (result) -> 
                             match result with
                             | Error (BeforeFailure (PrePostExceptionFailure e)) ->
@@ -233,7 +233,7 @@ module NeedsToRun =
                                 (fun called -> resultA <- called) 
                                 "Test A"
 
-                        runTestWith emptyEnvironment (baseStep.Executor) test
+                        runTestWith emptyEnvironment defaultTestExecutor test
                         |> ignore
 
                         resultA
@@ -262,7 +262,7 @@ module NeedsToRun =
                                 )
                             }
 
-                        runTestWith testEnvironment (baseStep.Executor) test
+                        runTestWith testEnvironment defaultTestExecutor test
                         |> ignore
 
                         result
@@ -292,7 +292,7 @@ module NeedsToRun =
                                 )
                             }
 
-                        runTestWith emptyEnvironment (baseStep.Executor) test
+                        runTestWith emptyEnvironment defaultTestExecutor test
                         |> ignore
 
                         result
@@ -311,7 +311,7 @@ module NeedsToRun =
                                 )
                             }
 
-                        runTestWith emptyEnvironment (baseStep.Executor) test
+                        runTestWith emptyEnvironment defaultTestExecutor test
                         |> ignore
 
                         called
@@ -342,7 +342,7 @@ module NeedsToRun =
                                 )
                             }
 
-                        runTestWith testEnvironment (baseStep.Executor) test
+                        runTestWith testEnvironment defaultTestExecutor test
                         |> ignore
 
                         result
@@ -356,7 +356,7 @@ module NeedsToRun =
                                 TestMethod = fun _ -> (Ok ())
                             }
 
-                        runTestWith emptyEnvironment (baseStep.Executor) test
+                        runTestWith emptyEnvironment defaultTestExecutor test
                         |> shouldBeEqualTo 
                             (
                                 "After Failed" 
@@ -374,7 +374,7 @@ module NeedsToRun =
                                 TestMethod = fun _ -> (Ok ())
                             }
 
-                        runTestWith emptyEnvironment (baseStep.Executor) test
+                        runTestWith emptyEnvironment defaultTestExecutor test
                         |> fun (result) -> 
                             match result with
                             | Error (AfterFailure (PrePostExceptionFailure e)) ->
@@ -402,7 +402,7 @@ module NeedsToRun =
                                 After = fun _ -> afterFailure |> Error
                             }
 
-                        runTestWith emptyEnvironment (baseStep.Executor) test
+                        runTestWith emptyEnvironment defaultTestExecutor test
                         |> shouldBeEqualTo expectedFailure
                     )
             ]
