@@ -16,58 +16,54 @@ module NeedsToRun =
 
         let tests = 
             [
-                { template with
-                    Name = "Run a single passing test and return its result"
-                    TestMethod = 
-                        (fun _ ->
-                            let input = 
-                                Initial [
-                                    { testTemplate with
-                                        TestMethod = fun _ -> successFulTest
-                                    }
-                                ]
-
-                            let result = runTestsStepProccess emptyEnvironment input
-
-                            match result with
-                            | Success tests ->
-                                tests
-                                |> List.head
-                                |> snd<Test, TestResult>
-                                |> isSuccess
-                                |> shouldBeEqualTo true
-                                |> withFailComment "Test was not successful"
-                            | _ -> "Tests failed" |> asTestFailure
-                        )
-                }
-
-                { template with
-                    Name = "Run a single passing test and return the test as part of the result"
-                    TestMethod = 
-                        (fun _ ->
-                            let test = 
+                "Run a single passing test and return its result"
+                |> testedWith 
+                    (fun _ ->
+                        let input = 
+                            Initial [
                                 { testTemplate with
                                     TestMethod = fun _ -> successFulTest
                                 }
+                            ]
 
-                            let expected = test.ToString ()
+                        let result = runTestsStepProccess emptyEnvironment input
 
-                            let input = 
-                                Initial [
-                                    test
-                                ]
+                        match result with
+                        | Success tests ->
+                            tests
+                            |> List.head
+                            |> snd<Test, TestResult>
+                            |> isSuccess
+                            |> shouldBeEqualTo true
+                            |> withFailComment "Test was not successful"
+                        | _ -> "Tests failed" |> asTestFailure
+                    )
 
-                            let result = runTestsStepProccess emptyEnvironment input
+                "Run a single passing test and return the test as part of the result"
+                |> testedWith 
+                    (fun _ ->
+                        let test = 
+                            { testTemplate with
+                                TestMethod = fun _ -> successFulTest
+                            }
 
-                            match result with
-                            | Success tests ->
-                                tests
-                                |> List.head
-                                |> fst<Test, TestResult>
-                                |> fun tst -> tst.ToString ()
-                                |> shouldBeEqualTo expected
-                                |> withFailComment "Test was not returned"
-                            | _ -> "Tests failed" |> asTestFailure
-                        )
-                }
+                        let expected = test.ToString ()
+
+                        let input = 
+                            Initial [
+                                test
+                            ]
+
+                        let result = runTestsStepProccess emptyEnvironment input
+
+                        match result with
+                        | Success tests ->
+                            tests
+                            |> List.head
+                            |> fst<Test, TestResult>
+                            |> fun tst -> tst.ToString ()
+                            |> shouldBeEqualTo expected
+                            |> withFailComment "Test was not returned"
+                        | _ -> "Tests failed" |> asTestFailure
+                    )
             ]
