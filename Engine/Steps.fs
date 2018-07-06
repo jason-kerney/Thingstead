@@ -7,9 +7,9 @@ open Thingstead.Types
 module Steps = 
     let runTestsStepProccess (environment: TestingEnvironment) (input: StepInput) : EngineResult<(Test * TestResult) list, (Test * TestResult) list> =
         match input with
-        | Initial (test::_ as tests) -> 
+        | Initial tests -> 
             tests
-            |> List.map (fun _ -> test, Success ())
+            |> List.map (fun test -> test, Success ())
             |> Success
 
         | _ -> Failure []

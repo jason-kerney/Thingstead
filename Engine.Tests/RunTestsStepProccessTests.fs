@@ -100,4 +100,41 @@ module NeedsToRun =
                             |> withFailComment "unexpected test failure"
                         | _ -> "Tests failed" |> asTestFailure
                     )
+
+                "Run a multiple successful tests and returns the tests as part of the result"
+                |> testedWith 
+                    (fun _ ->
+                        let tests = [
+                            { testTemplate with
+                                Name = "1"
+                                TestMethod = fun _ -> successFulTest
+                            }
+
+                            { testTemplate with
+                                Name = "2"
+                                TestMethod = fun _ -> successFulTest
+                            }
+
+                            { testTemplate with
+                                Name = "3"
+                                TestMethod = fun _ -> successFulTest
+                            }
+                        ]
+
+                        let input = 
+                            Initial tests
+
+                        let expected = tests |> List.map (fun test -> test.ToString ()) |> List.sort
+
+                        let result = runTestsStepProccess emptyEnvironment input
+
+                        match result with
+                        | Success tests ->
+                            tests
+                            |> List.map (fun result -> result |> fst<Test, TestResult> |> fun test -> test.ToString ())
+                            |> List.sort
+                            |> shouldBeEqualTo expected
+                            |> withFailComment "did not recieve expected tests"
+                        | _ -> "Tests failed" |> asTestFailure
+                    )
             ]
