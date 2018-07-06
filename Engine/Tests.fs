@@ -66,3 +66,5 @@ module Tests =
         
         bookEndProcess environment (test.Before) testFunction (test.After)
         
+    let runTestWithDefaultExecutor environment test =
+        test |> runTestWith environment defaultTestExecutor

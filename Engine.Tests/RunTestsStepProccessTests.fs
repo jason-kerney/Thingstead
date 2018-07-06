@@ -16,6 +16,11 @@ module NeedsToRun =
 
         let tests = 
             [
+                // runTestWith
+                "Gives the tests to the test runner" 
+                |> testedWith (fun _ -> ``Not Yet Implimented``)
+            ] |> List.append [
+                // runTestsStepProccess
                 "Run a single passing test and return its result"
                 |> testedWith 
                     (fun _ ->
