@@ -55,7 +55,7 @@ module Runner =
     [<EntryPoint>]
     let main _ =
         let tests = 
-            BaseTestExecutor.NeedsToRun.tests
+            DefaultTestExecutor.NeedsToRun.tests
             |> List.append RunTestWith.NeedsToRun.tests
 
         let failedCount =

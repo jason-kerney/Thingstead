@@ -1,11 +1,11 @@
-namespace Thingstead.Engine.Tests.BaseTestExecutor
+namespace Thingstead.Engine.Tests.DefaultTestExecutor
 
 open Thingstead.Engine.Tests
 open Thingstead.Types
 open Thingstead.Engine.Tests.TestingTools
 
 module NeedsToRun = 
-        let private baseStepPath = Some "Thingstead Test Engine 'baseTestExecutor' should"
+        let private baseStepPath = Some "Thingstead Test Engine 'defaultTestExecutor' should"
 
         let private template = 
             { testTemplate with
@@ -18,7 +18,7 @@ module NeedsToRun =
             [
                 "that runs successfull test and returns the result"
                 |> testedWith (fun _ -> 
-                        baseTestExecutor emptyEnvironment (fun _ -> Success)
+                        defaultTestExecutor emptyEnvironment (fun _ -> Success)
                         |> shouldBeEqualTo Success
                     )
 
@@ -29,7 +29,7 @@ module NeedsToRun =
                             |> GeneralFailure
                             |> Failure
 
-                        baseTestExecutor emptyEnvironment (fun _ -> expected)
+                        defaultTestExecutor emptyEnvironment (fun _ -> expected)
                         |> shouldBeEqualTo expected
                     )
             ]
