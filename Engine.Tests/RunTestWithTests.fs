@@ -1,4 +1,4 @@
-namespace Thingstead.Engine.Tests.RunStep
+namespace Thingstead.Engine.Tests.RunTestWith
 
 open Thingstead.Engine.Tests
 open Thingstead.Engine.Steps
@@ -402,7 +402,7 @@ module NeedsToRun =
                                 After = fun _ -> afterFailure |> Error
                             }
 
-                        runTestWith emptyEnvironment baseStep test
+                        runTestWith emptyEnvironment (baseStep.Executor) test
                         |> shouldBeEqualTo expectedFailure
                     )
             ]

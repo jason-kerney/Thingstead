@@ -56,7 +56,7 @@ module Runner =
     let main _ =
         let tests = 
             BaseSteps.NeedsToRun.tests
-            |> List.append RunStep.NeedsToRun.tests
+            |> List.append RunTestWith.NeedsToRun.tests
 
         let failedCount =
             tests

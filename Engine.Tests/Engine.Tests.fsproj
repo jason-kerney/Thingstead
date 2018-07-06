@@ -15,7 +15,7 @@
   <ItemGroup>
     <Compile Include="TestingTools.fs" />
     <Compile Include="BaseStepTests.fs" />
-    <Compile Include="RunStepTests.fs" />
+    <Compile Include="RunTestWithTests.fs" />
     <Compile Include="Runner.fs" />
     <None Include="App.config" />
   </ItemGroup>
