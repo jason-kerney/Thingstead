@@ -3,7 +3,8 @@ namespace Thingstead.Engine
 open Thingstead.Types
 
 module Tests = 
-    let defaultTestExecutor = fun (env: Environment) testMethod -> testMethod env
+    let defaultTestExecutor (env: Environment) testMethod : TestResult =
+        testMethod env
 
     let private handleUnsafeTestAction unsafeAction (environment: Environment) exceptionHandler =
         try
