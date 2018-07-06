@@ -1,9 +1,10 @@
 namespace Thingstead.Engine.Tests.RunStep
 
+open Thingstead.Engine.Tests
 open Thingstead.Engine.Steps
-open Thingstead.Types
 open Thingstead.Engine.Tests.TestingTools
 open Thingstead.Engine.Types
+open Thingstead.Types
 
 module NeedsToRun = 
         let private path = Some "Thingstead Test Engine 'runStep' should"
@@ -31,21 +32,19 @@ module NeedsToRun =
                                 TestMethod = fun _ -> (Ok ())
                             }
 
-                        let step = 
-                            { baseStep with
-                                Executor = (fun _ givenTestMethod ->
-                                    let expectedTestMethod = test.TestMethod.ToString ()
-                                    let resultTestMethod = givenTestMethod.ToString ()
+                        let executor = 
+                            (fun _ givenTestMethod ->
+                                let expectedTestMethod = test.TestMethod.ToString ()
+                                let resultTestMethod = givenTestMethod.ToString ()
 
-                                    result <-
-                                        expectedTestMethod
-                                        |> shouldBeEqualTo resultTestMethod
+                                result <-
+                                    expectedTestMethod
+                                    |> shouldBeEqualTo resultTestMethod
 
-                                    result
-                                )
-                            }
+                                result
+                            )
 
-                        runStep [test] emptyEnvironment step
+                        runTestWith emptyEnvironment executor test
                         |> ignore
 
                         result
@@ -62,139 +61,18 @@ module NeedsToRun =
                             emptyEnvironment.Add ("Hello", ["World"; "this"; "is"; "an"; "evironment"])
 
                         let step = 
-                            {baseStep with
-                                Executor = (fun givenEnvironment _ ->
-                                    result <-
-                                        givenEnvironment
-                                        |> shouldBeEqualTo testEnvironment
+                            (fun givenEnvironment _ ->
+                                result <-
+                                    givenEnvironment
+                                    |> shouldBeEqualTo testEnvironment
 
-                                    result
-                                )
-                            }
-
-                        runStep [template] testEnvironment step
-                        |> ignore
-
-                        result
-                    )
-
-                "Run all tests with the provided step"
-                |> testedWith (fun _ ->
-                        let mutable count = 0
-
-                        let buildTestMethod result : Environment -> TestResult = 
-                            (fun _ -> 
-                                count <- count + 1
                                 result
                             )
 
-                        let successfulTestMethod = buildTestMethod (Ok ())
-                        let failureTestMethod = buildTestMethod ("This is a Error" |> GeneralFailure |> Error)
-
-                        let tests = [
-                            { testTemplate with
-                                Name = "Test 1"
-                                TestMethod = failureTestMethod
-                            }
-                            { testTemplate with
-                                Name = "Test 2"
-                                TestMethod = successfulTestMethod
-                            }
-                            { testTemplate with
-                                Name = "Test 3"
-                                TestMethod = successfulTestMethod
-                            }
-                        ]
-
-                        runStep tests emptyEnvironment baseStep
+                        runTestWith testEnvironment step template
                         |> ignore
 
-                        count
-                        |> shouldBeEqualTo tests.Length
-                    )
-
-                "Run all tests, even with exceptions, with the provided step"
-                |> testedWith (fun _ ->
-                        let mutable count = 0
-
-                        let buildTestMethod getResult : Environment -> TestResult = 
-                            (fun _ -> 
-                                count <- count + 1
-                                getResult ()
-                            )
-
-                        let successfulTestMethod = buildTestMethod (fun () -> (Ok ()))
-                        let failureTestMethod = buildTestMethod (fun () -> failwith "This is an exception")
-
-                        let tests = [
-                            { testTemplate with
-                                Name = "Test 1"
-                                TestMethod = failureTestMethod
-                            }
-                            { testTemplate with
-                                Name = "Test 2"
-                                TestMethod = successfulTestMethod
-                            }
-                            { testTemplate with
-                                Name = "Test 3"
-                                TestMethod = successfulTestMethod
-                            }
-                        ]
-
-                        runStep tests emptyEnvironment baseStep
-                        |> ignore
-
-                        count
-                        |> shouldBeEqualTo tests.Length
-                    )
-
-                "Run all tests with the provided step and return the results"
-                |> testedWith (fun _ ->
-                        let buildTestMethod getResult : Environment -> TestResult = 
-                            (fun _ -> 
-                                getResult ()
-                            )
-
-                        let successfulTestMethod = buildTestMethod (fun () -> (Ok ()))
-                        let throwingTestMethod = buildTestMethod (fun () -> failwith "This is an exception")
-                        let failingTestMethod = buildTestMethod (fun () -> "This is a Error" |> GeneralFailure |> Error)
-
-                        let tests = [
-                            { testTemplate with
-                                Name = "Test 1"
-                                TestMethod = throwingTestMethod
-                            }
-                            { testTemplate with
-                                Name = "Test 2"
-                                TestMethod = successfulTestMethod
-                            }
-                            { testTemplate with
-                                Name = "Test 3"
-                                TestMethod = failingTestMethod
-                            }
-                        ]
-
-                        let results = 
-                            runStep tests emptyEnvironment baseStep
-                            |> List.map (fun (test, result) ->
-                                let result = 
-                                    match result with
-                                    | Error (ExceptionFailure e) ->
-                                        e.Message
-                                        |> sprintf "ExceptionFailure <%s>"
-                                        |> GeneralFailure
-                                        |> Error
-                                    | other -> other
-
-                                test.Name, result
-                            )
-
-                        results
-                        |> shouldBeEqualTo [
-                            "Test 1", "ExceptionFailure <This is an exception>" |> GeneralFailure |> Error
-                            "Test 2", (Ok ())
-                            "Test 3", "This is a Error" |> GeneralFailure |> Error
-                        ]
+                        result
                     )
             ]
             |> List.append [
@@ -203,8 +81,6 @@ module NeedsToRun =
                 "Runs the Before of each test, just before running that test method"
                 |> testedWith (fun _ ->
                         let mutable beforeA = false
-                        let mutable beforeB = false
-                        let mutable beforeC = false
 
                         let buildTest (wasCalled: bool ref) name = 
                             { testTemplate with
@@ -220,15 +96,10 @@ module NeedsToRun =
                             }
 
 
-                        let tests = [
-                            buildTest (ref beforeA) "Test A"
-                            buildTest (ref beforeB) "Test B"
-                            buildTest (ref beforeC) "Test C"
-                        ]
+                        let tests = buildTest (ref beforeA) "Test A"
 
-                        runStep tests emptyEnvironment baseStep
-                        |> List.map (fun (_, result) -> result = (Ok ()))
-                        |> List.reduce (&&)
+                        runTestWith emptyEnvironment (baseStep.Executor) tests
+                        |> (fun (result) -> result = (Ok ()))
                         |> shouldBeEqualTo true
                         |> withFailMessage "Did not call the before on the tests"
                     )
@@ -254,7 +125,7 @@ module NeedsToRun =
                                 )
                             }
 
-                        runStep [test] testEnvironment baseStep
+                        runTestWith testEnvironment (baseStep.Executor) test
                         |> ignore
 
                         result
@@ -275,9 +146,7 @@ module NeedsToRun =
                                 )
                             }
 
-                        runStep [test] emptyEnvironment baseStep
-                        |> List.head
-                        |> fun (_, result) -> result
+                        runTestWith emptyEnvironment (baseStep.Executor) test
                     )
 
                 "Not call the test if the before fails"
@@ -294,7 +163,7 @@ module NeedsToRun =
                                 )
                             }
 
-                        runStep [test] emptyEnvironment baseStep
+                        runTestWith emptyEnvironment (baseStep.Executor) test
                         |> ignore
 
                         called
@@ -310,9 +179,7 @@ module NeedsToRun =
                                 TestMethod = fun _ -> (Ok ())
                             }
 
-                        runStep [test] emptyEnvironment baseStep
-                        |> List.head
-                        |> fun (_, result) -> result
+                        runTestWith emptyEnvironment baseStep.Executor test
                         |> shouldBeEqualTo ("Before Failed" |> PrePostSimpleFailure |> BeforeFailure |> Error)
                     )
 
@@ -324,9 +191,8 @@ module NeedsToRun =
                                 TestMethod = fun _ -> (Ok ())
                             }
 
-                        runStep [test] emptyEnvironment baseStep
-                        |> List.head
-                        |> fun (_, result) -> 
+                        runTestWith emptyEnvironment (baseStep.Executor) test
+                        |> fun (result) -> 
                             match result with
                             | Error (BeforeFailure (PrePostExceptionFailure e)) ->
                                 e.Message
@@ -345,10 +211,6 @@ module NeedsToRun =
                 |> testedWith (fun _ ->
                         let mutable afterA = false
                         let mutable resultA = false
-                        let mutable afterB = false
-                        let mutable resultB = false
-                        let mutable afterC = false
-                        let mutable resultC = false
 
                         let buildTest (markCalled: unit -> unit) (getCalled : unit -> bool) (markResult : bool -> unit) name = 
                             { testTemplate with
@@ -364,18 +226,17 @@ module NeedsToRun =
                                 )
                             }
 
-                        let tests = [
-                            buildTest (fun () -> afterA <- true) (fun () -> afterA) (fun called -> resultA <- called) "Test A"
-                            buildTest (fun () -> afterB <- true) (fun () -> afterB) (fun called -> resultB <- called) "Test B"
-                            buildTest (fun () -> afterC <- true) (fun () -> afterC) (fun called -> resultC <- called) "Test C"
-                        ]
+                        let test = 
+                            buildTest 
+                                (fun () -> afterA <- true) 
+                                (fun () -> afterA) 
+                                (fun called -> resultA <- called) 
+                                "Test A"
 
-                        runStep tests emptyEnvironment baseStep
+                        runTestWith emptyEnvironment (baseStep.Executor) test
                         |> ignore
 
                         resultA
-                        |> (&&) resultB
-                        |> (&&) resultC
                         |> shouldBeEqualTo true
                         |> withFailComment "the After was not called"
                     )
@@ -401,7 +262,7 @@ module NeedsToRun =
                                 )
                             }
 
-                        runStep [test] testEnvironment baseStep
+                        runTestWith testEnvironment (baseStep.Executor) test
                         |> ignore
 
                         result
@@ -431,7 +292,7 @@ module NeedsToRun =
                                 )
                             }
 
-                        runStep [test] emptyEnvironment baseStep
+                        runTestWith emptyEnvironment (baseStep.Executor) test
                         |> ignore
 
                         result
@@ -450,7 +311,7 @@ module NeedsToRun =
                                 )
                             }
 
-                        runStep [test] emptyEnvironment baseStep
+                        runTestWith emptyEnvironment (baseStep.Executor) test
                         |> ignore
 
                         called
@@ -481,7 +342,7 @@ module NeedsToRun =
                                 )
                             }
 
-                        runStep [test] testEnvironment baseStep
+                        runTestWith testEnvironment (baseStep.Executor) test
                         |> ignore
 
                         result
@@ -495,10 +356,14 @@ module NeedsToRun =
                                 TestMethod = fun _ -> (Ok ())
                             }
 
-                        runStep [test] emptyEnvironment baseStep
-                        |> List.head
-                        |> fun (_, result) -> result
-                        |> shouldBeEqualTo ("After Failed" |> PrePostSimpleFailure |> AfterFailure |> Error)
+                        runTestWith emptyEnvironment (baseStep.Executor) test
+                        |> shouldBeEqualTo 
+                            (
+                                "After Failed" 
+                                |> PrePostSimpleFailure 
+                                |> AfterFailure 
+                                |> Error
+                            )
                     )
 
                 "return an After Error if the After throws an exception"
@@ -509,9 +374,8 @@ module NeedsToRun =
                                 TestMethod = fun _ -> (Ok ())
                             }
 
-                        runStep [test] emptyEnvironment baseStep
-                        |> List.head
-                        |> fun (_, result) -> 
+                        runTestWith emptyEnvironment (baseStep.Executor) test
+                        |> fun (result) -> 
                             match result with
                             | Error (AfterFailure (PrePostExceptionFailure e)) ->
                                 e.Message
@@ -538,9 +402,7 @@ module NeedsToRun =
                                 After = fun _ -> afterFailure |> Error
                             }
 
-                        runStep [test] emptyEnvironment baseStep
-                        |> List.head
-                        |> snd
+                        runTestWith emptyEnvironment baseStep test
                         |> shouldBeEqualTo expectedFailure
                     )
             ]
