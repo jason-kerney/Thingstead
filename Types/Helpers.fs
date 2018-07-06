@@ -36,29 +36,7 @@ module Helpers =
         | Failure f -> FailureWithComment (f, comment) |> Failure
         | r -> r
 
-    let withFailMessage message = withFailComment message    
-
-    let combine (resultB) (resultA) =
-        match resultA, resultB with
-        | Failure (BeforeFailure before), Failure (AfterFailure after)
-        | Failure (AfterFailure after), Failure (BeforeFailure before) ->
-            MultiFailure (before |> BeforeFailure, after |> AfterFailure)
-            |> Failure
-        | Failure (BeforeFailure before), _
-        | _, Failure (BeforeFailure before) ->
-            before
-            |> BeforeFailure
-            |> Failure
-        | Failure (AfterFailure after), _
-        | _, Failure (AfterFailure after) ->
-            after
-            |> AfterFailure
-            |> Failure
-        | Failure error, Success _
-        | Success _, Failure error ->
-            error
-            |> Failure
-        | _ -> resultA
+    let withFailMessage message = withFailComment message
 
     let stage = 
         {

@@ -1,6 +1,7 @@
 namespace Thingstead.Engine
 
 open Thingstead.Types
+open Thingstead.Engine.Types
 
 module Tests = 
     let defaultTestExecutor (env: Environment) testMethod : TestResult =
