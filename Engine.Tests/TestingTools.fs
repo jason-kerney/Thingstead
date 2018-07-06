@@ -14,9 +14,9 @@ module TestingTools =
         {
             EquatableName: string
             EquatablePath: string option
-            EquatableBefore: EquatableObject<Environment -> Result<Environment, PrePostFailureType>>
-            EquatableExecutable: EquatableObject<Environment -> TestResult>
-            EquatableAfter: EquatableObject<Environment -> Result<unit, PrePostFailureType>>
+            EquatableBefore: EquatableObject<TestingEnvironment -> EngineResult<TestingEnvironment, PrePostFailureType>>
+            EquatableExecutable: EquatableObject<TestingEnvironment -> TestResult>
+            EquatableAfter: EquatableObject<TestingEnvironment -> EngineResult<unit, PrePostFailureType>>
         }
 
     type  EquatableExecutionResults = 
@@ -92,18 +92,18 @@ module TestingTools =
         |> Failure
 
     let shouldBeEqualTo expected actual = 
-        if expected = actual then Success
+        if expected = actual then Success ()
         else failTest expected actual
 
     let shouldBeEqualToTestOf (expected: Test) (actual: Test) =
         
         if actual |> testIsEqualTo expected 
-        then Success
+        then Success ()
         else failTest expected actual
 
     let shoulbBeEqualToResultOf expected actual =
         if actual |> resultIsEqualTo expected
-        then Success
+        then Success ()
         else failTest expected actual
 
     let shoulbBeEqualToResultsOf expected actual = 
@@ -114,5 +114,5 @@ module TestingTools =
             |> List.reduce (&&)
 
         if result
-        then Success
+        then Success ()
         else failTest expected actual

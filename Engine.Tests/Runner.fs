@@ -23,40 +23,31 @@ module Runner =
         let join (items: array<string>) = 
             System.String.Join ("\n", items)
 
-        try
-            let result = Map.empty<string, string list> |>  test.TestMethod
-            match result with
-            | Success -> 0
-            | Failure failureType ->
-                match failureType with
-                | ExpectationFailure message ->
-                    message
-                    |> printFailure
-                | Ignored m -> printfn "\n\tIgnored %s <%s>" (joinPathToName test.Name test.Path) m
-                | _ -> 
-                    failureType
-                    |> sprintf "%A"
-                    |> printFailure
+        // let testMethod = defaultTestExecutor emptyEnvironment
 
-                1
+        let result = test |> runTestWith emptyEnvironment defaultTestExecutor
 
-        with
-        | e -> 
-            let message = 
-                e.Message.Split([|'\n'; '\r'|], System.StringSplitOptions.RemoveEmptyEntries)
-                |> Array.map (sprintf "\t%s")
-                |> join
-                |> sprintf "Exception:\n%s"
-                
-            printFailure message
-            
-            1 
+        match result with
+        | Success () -> 0
+        | Failure failureType ->
+            match failureType with
+            | ExpectationFailure message ->
+                message
+                |> printFailure
+            | Ignored m -> printfn "\n\tIgnored %s <%s>" (joinPathToName test.Name test.Path) m
+            | _ -> 
+                failureType
+                |> sprintf "%A"
+                |> printFailure
+
+            1
 
     [<EntryPoint>]
     let main _ =
         let tests = 
-            BaseSteps.NeedsToRun.tests
-            |> List.append RunStep.NeedsToRun.tests
+            DefaultTestExecutor.NeedsToRun.tests
+            |> List.append RunTestWith.NeedsToRun.tests
+            |> List.append RunTestsStepProccessTests.NeedsToRun.tests
 
         let failedCount =
             tests

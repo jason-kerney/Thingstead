@@ -2,7 +2,10 @@ namespace Thingstead.Types
 
 [<AutoOpen>]
 module Helpers = 
-    let emptyEnvironment : Environment = Map.empty<string, string list>
+    let emptyEnvironment : TestingEnvironment = Map.empty<string, string list>
+
+    let successFulTest : TestResult = Success ()
+    
     let testTemplate = 
             {
                 Name = "[need a name for this test]"
@@ -11,8 +14,8 @@ module Helpers =
                     "Not Yet Implimented"
                     |> Ignored
                     |> Failure
-                Before = fun env -> Ok env
-                After = fun _ -> Ok ()
+                Before = fun env -> Success env
+                After = fun _ -> Success ()
             }
 
     let applyToTemplate template testMethod name = 
@@ -21,10 +24,10 @@ module Helpers =
             TestMethod = testMethod
         }
 
-    let ``Not Yet Implimented`` = 
+    let ``Not Yet Implimented`` : TestResult = 
         "Not Yet Implimented"
         |> Ignored
-        |> Failure
+        |> Failure 
 
     let Not_Yet_Implimented = ``Not Yet Implimented``     
 
@@ -33,25 +36,4 @@ module Helpers =
         | Failure f -> FailureWithComment (f, comment) |> Failure
         | r -> r
 
-    let withFailMessage message = withFailComment message    
-
-    let stage = 
-        {
-            BeforeStage = (fun env _ -> Ok env)
-            Steps = []
-            AfterStage = (fun _ _ -> Ok ())
-            Filter = (fun input -> 
-                    match input with
-                    | Tests tests -> tests
-                    | Results (tests, _) -> tests
-                )
-        }
-
-    let pipeline = 
-        {
-            Name = None
-            Tests = []
-            BeforePipeline = fun env _ -> Ok env
-            Stages = []
-            AfterPipeline = fun _ _ -> Ok ()
-        }
+    let withFailMessage message = withFailComment message
