@@ -18,3 +18,14 @@ module TestingTools =
     let shouldBeEqualTo expected actual = 
         if expected = actual then Success ()
         else failTest expected actual
+
+    let isSuccess = function
+        | Success _ -> true
+        | Failure _ -> false
+
+    let isFailure<'a, 'b> = isSuccess<'a, 'b> >> not
+
+    let asTestFailure comment : TestResult =
+        comment
+        |> GeneralFailure
+        |> Failure
