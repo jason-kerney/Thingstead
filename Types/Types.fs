@@ -29,7 +29,11 @@ type FailureType =
     | GeneralFailure of string
     | Ignored of string
 
-type TestResult = Result<unit, FailureType>
+type EngineResult<'SuccessType, 'FailureType> =
+    | Success of 'SuccessType
+    | Failure of 'FailureType
+
+type TestResult = EngineResult<unit, FailureType>
 
 type Environment =  Map<string, string list>
 
@@ -37,9 +41,9 @@ type Test =
     {
         Name: string
         Path: string option
-        Before: Environment -> Result<Environment, PrePostFailureType>
+        Before: Environment -> EngineResult<Environment, PrePostFailureType>
         TestMethod: Environment -> TestResult
-        After: Environment -> Result<unit, PrePostFailureType>
+        After: Environment -> EngineResult<unit, PrePostFailureType>
     }
     
 type ExecutionResults = 
@@ -50,9 +54,9 @@ type ExecutionResults =
 
 type Step = 
     {
-        BeforeStep: Environment -> Test -> Result<Environment, PrePostFailureType>
+        BeforeStep: Environment -> Test -> EngineResult<Environment, PrePostFailureType>
         Executor: Environment -> (Environment -> TestResult) -> TestResult
-        AfterStep: Environment -> Test -> Result<unit, PrePostFailureType>
+        AfterStep: Environment -> Test -> EngineResult<unit, PrePostFailureType>
     }
     
 type StageInput =
@@ -62,16 +66,16 @@ type StageInput =
 type Stage = 
     {
         Filter: StageInput -> Test list
-        BeforeStage: Environment -> Test list -> Result<Environment, PrePostFailureType>
+        BeforeStage: Environment -> Test list -> EngineResult<Environment, PrePostFailureType>
         Steps: Step list
-        AfterStage: Environment -> Test list -> Result<unit, PrePostFailureType>
+        AfterStage: Environment -> Test list -> EngineResult<unit, PrePostFailureType>
     }
 
 type Pipeline =
     {
         Name: string option
         Tests: Test list
-        BeforePipeline: Environment -> Test list -> Result<Environment, PrePostFailureType>
+        BeforePipeline: Environment -> Test list -> EngineResult<Environment, PrePostFailureType>
         Stages: Stage list
-        AfterPipeline: Environment -> Test list -> Result<unit, PrePostFailureType>
+        AfterPipeline: Environment -> Test list -> EngineResult<unit, PrePostFailureType>
     }

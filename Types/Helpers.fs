@@ -2,11 +2,10 @@ namespace Thingstead.Types
 
 [<AutoOpen>]
 module Helpers = 
-    let Success : TestResult = Ok ()
-
-    let Failure failureType : TestResult = Error failureType
-
     let emptyEnvironment : Environment = Map.empty<string, string list>
+
+    let successFulTest : TestResult = Success ()
+    
     let testTemplate = 
             {
                 Name = "[need a name for this test]"
@@ -15,8 +14,8 @@ module Helpers =
                     "Not Yet Implimented"
                     |> Ignored
                     |> Failure
-                Before = fun env -> Ok env
-                After = fun _ -> Ok ()
+                Before = fun env -> Success env
+                After = fun _ -> Success ()
             }
 
     let applyToTemplate template testMethod name = 
@@ -28,44 +27,44 @@ module Helpers =
     let ``Not Yet Implimented`` : TestResult = 
         "Not Yet Implimented"
         |> Ignored
-        |> Error 
+        |> Failure 
 
     let Not_Yet_Implimented = ``Not Yet Implimented``     
 
     let withFailComment comment result =
         match result with
-        | Error f -> FailureWithComment (f, comment) |> Failure
+        | Failure f -> FailureWithComment (f, comment) |> Failure
         | r -> r
 
     let withFailMessage message = withFailComment message    
 
     let combine (resultB) (resultA) =
         match resultA, resultB with
-        | Error (BeforeFailure before), Error (AfterFailure after)
-        | Error (AfterFailure after), Error (BeforeFailure before) ->
+        | Failure (BeforeFailure before), Failure (AfterFailure after)
+        | Failure (AfterFailure after), Failure (BeforeFailure before) ->
             MultiFailure (before |> BeforeFailure, after |> AfterFailure)
-            |> Error
-        | Error (BeforeFailure before), _
-        | _, Error (BeforeFailure before) ->
+            |> Failure
+        | Failure (BeforeFailure before), _
+        | _, Failure (BeforeFailure before) ->
             before
             |> BeforeFailure
-            |> Error
-        | Error (AfterFailure after), _
-        | _, Error (AfterFailure after) ->
+            |> Failure
+        | Failure (AfterFailure after), _
+        | _, Failure (AfterFailure after) ->
             after
             |> AfterFailure
-            |> Error
-        | Error error, Ok _
-        | Ok _, Error error ->
+            |> Failure
+        | Failure error, Success _
+        | Success _, Failure error ->
             error
-            |> Error
+            |> Failure
         | _ -> resultA
 
     let stage = 
         {
-            BeforeStage = (fun env _ -> Ok env)
+            BeforeStage = (fun env _ -> Success env)
             Steps = []
-            AfterStage = (fun _ _ -> Ok ())
+            AfterStage = (fun _ _ -> Success ())
             Filter = (fun input -> 
                     match input with
                     | Tests tests -> tests
@@ -77,7 +76,7 @@ module Helpers =
         {
             Name = None
             Tests = []
-            BeforePipeline = fun env _ -> Ok env
+            BeforePipeline = fun env _ -> Success env
             Stages = []
-            AfterPipeline = fun _ _ -> Ok ()
+            AfterPipeline = fun _ _ -> Success ()
         }

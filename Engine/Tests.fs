@@ -14,43 +14,43 @@ module Tests =
 
     let private executeTests testRunner (environment: Environment) (testMethod: Environment -> TestResult) =
         let runner = fun env -> testRunner env testMethod
-        handleUnsafeTestAction runner environment (ExceptionFailure >> Error)
+        handleUnsafeTestAction runner environment (ExceptionFailure >> Failure)
 
     let private runAsBookend (environment: Environment) f =
-        handleUnsafeTestAction f environment (PrePostExceptionFailure >> Error)
+        handleUnsafeTestAction f environment (PrePostExceptionFailure >> Failure)
 
     let bookEndProcess (environment: Environment) before (action: Environment -> TestResult) after = 
-        let doIt (prevResult: Result<Environment, FailureType>) =
+        let doIt (prevResult: EngineResult<Environment, FailureType>) =
             match prevResult with
-            | Ok env ->
+            | Success env ->
                 match action env with
-                | Ok _ -> Ok env
-                | Error result -> Error result
+                | Success _ -> Success env
+                | Failure result -> Failure result
             | _ -> prevResult
             
         let doAfter prevResult =
             let a env = 
                 match after |> runAsBookend env with
-                | Ok _ -> Ok ()
-                | Error error ->
+                | Success _ -> Success ()
+                | Failure error ->
                     error
                     |> AfterFailure
-                    |> Error
+                    |> Failure
                     
             match prevResult with
-            | Ok env ->
+            | Success env ->
                 a env
-            | Error error ->
+            | Failure error ->
                 a environment
-                |> combine (Error error)
+                |> combine (Failure error)
 
         let doBefore env =
             match before |> runAsBookend env with
-            | Ok env -> Ok env
-            | Error error -> 
+            | Success env -> Success env
+            | Failure error -> 
                 error
                 |> BeforeFailure
-                |> Error
+                |> Failure
 
         environment
         |> doBefore

@@ -28,8 +28,8 @@ module Runner =
         let result = test |> runTestWith emptyEnvironment defaultTestExecutor
 
         match result with
-        | Ok () -> 0
-        | Error failureType ->
+        | Success () -> 0
+        | Failure failureType ->
             match failureType with
             | ExpectationFailure message ->
                 message

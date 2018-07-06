@@ -18,8 +18,8 @@ module NeedsToRun =
             [
                 "that runs successfull test and returns the result"
                 |> testedWith (fun _ -> 
-                        defaultTestExecutor emptyEnvironment (fun _ -> Success)
-                        |> shouldBeEqualTo Success
+                        defaultTestExecutor emptyEnvironment (fun _ -> (Success ()))
+                        |> shouldBeEqualTo (Success ())
                     )
 
                 "that runs a failed test and returns the result"
