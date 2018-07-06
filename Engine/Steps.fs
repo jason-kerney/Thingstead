@@ -8,8 +8,13 @@ module Steps =
     let runTestsStepProccess (environment: TestingEnvironment) (input: StepInput) : EngineResult<(Test * TestResult) list, (Test * TestResult) list> =
         match input with
         | Initial tests -> 
-            tests
-            |> List.map (fun test -> test, Success ())
-            |> Success
+            let results = 
+                tests
+                |> List.map (fun test -> test, test.TestMethod emptyEnvironment)
 
-        | _ -> Failure []
+            let hasFailures =
+                results
+                |> List.exists (fun (_, result) -> match result with | Failure _ -> true | Success _ -> false)
+
+            if hasFailures then Failure results
+            else Success results
