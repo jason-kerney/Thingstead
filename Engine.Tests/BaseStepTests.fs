@@ -1,11 +1,11 @@
-namespace Thingstead.Engine.Tests.BaseSteps
+namespace Thingstead.Engine.Tests.BaseTestExecutor
 
-open Thingstead.Engine.Steps
+open Thingstead.Engine.Tests
 open Thingstead.Types
 open Thingstead.Engine.Tests.TestingTools
 
 module NeedsToRun = 
-        let private baseStepPath = Some "Thingstead Test Engine 'BaseStep' should"
+        let private baseStepPath = Some "Thingstead Test Engine 'baseTestExecutor' should"
 
         let private template = 
             { testTemplate with
@@ -18,9 +18,7 @@ module NeedsToRun =
             [
                 "that runs successfull test and returns the result"
                 |> testedWith (fun _ -> 
-                        let { Executor = executor; BeforeStep = _; AfterStep = _ } = baseStep
-
-                        executor emptyEnvironment (fun _ -> Success)
+                        baseTestExecutor emptyEnvironment (fun _ -> Success)
                         |> shouldBeEqualTo Success
                     )
 
@@ -31,32 +29,8 @@ module NeedsToRun =
                             |> GeneralFailure
                             |> Failure
 
-                        let { Executor = executor; BeforeStep = _; AfterStep = _ } = baseStep
-
-                        executor emptyEnvironment (fun _ -> expected)
+                        baseTestExecutor emptyEnvironment (fun _ -> expected)
                         |> shouldBeEqualTo expected
-                    )
-
-                "whos before step method is a pass through"
-                |> testedWith (fun _ -> 
-                        let { Executor = _; BeforeStep = beforeStep; AfterStep = _ } = baseStep
-
-                        let testEnvironment = 
-                            emptyEnvironment.Add ("Hello", ["World"; "this"; "is"; "an"; "evironment"])
-
-                        beforeStep testEnvironment testTemplate
-                        |> shouldBeEqualTo (Ok testEnvironment)
-                    )
-                
-                "whos after step method is a pass through"
-                |> testedWith (fun _ -> 
-                        let { Executor = _; BeforeStep = _; AfterStep = afterStep } = baseStep
-
-                        let testEnvironment = 
-                            emptyEnvironment.Add ("Hello", ["World"; "this"; "is"; "an"; "evironment"])
-
-                        afterStep testEnvironment testTemplate
-                        |> shouldBeEqualTo (Ok ())
                     )
             ]
             
