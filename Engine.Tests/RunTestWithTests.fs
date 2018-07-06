@@ -1,9 +1,7 @@
 namespace Thingstead.Engine.Tests.RunTestWith
 
 open Thingstead.Engine.Tests
-open Thingstead.Engine.Steps
 open Thingstead.Engine.Tests.TestingTools
-open Thingstead.Engine.Types
 open Thingstead.Types
 
 module NeedsToRun = 
