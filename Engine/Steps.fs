@@ -5,7 +5,7 @@ open Thingstead.Engine.Types
 open Thingstead.Types
 
 module Steps = 
-    let runTestsStepProccessWith (environment: TestingEnvironment) testRunner (input: StepInput) : EngineResult<(Test * TestResult) list, (Test * TestResult) list> =
+    let runStepProccessWith (environment: TestingEnvironment) testRunner (input: StepInput) : EngineResult<(Test * TestResult) list, (Test * TestResult) list> =
         match input with
         | Initial tests -> 
             let results = 
@@ -20,4 +20,4 @@ module Steps =
             else Success results
 
     let runTestsStepProccess (environment: TestingEnvironment) (input: StepInput) : EngineResult<(Test * TestResult) list, (Test * TestResult) list> =
-        input |> runTestsStepProccessWith environment runTestWithDefaultExecutor
+        input |> runStepProccessWith environment runTestWithDefaultExecutor

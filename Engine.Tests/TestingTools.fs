@@ -3,6 +3,8 @@ namespace Thingstead.Engine.Tests
 open Thingstead.Types
 
 module TestingTools = 
+    let toString thing  = thing.ToString ()
+    
     let teePrint message value = 
         printfn "%s" message
         value

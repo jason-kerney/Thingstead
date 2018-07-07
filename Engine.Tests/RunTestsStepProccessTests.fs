@@ -16,10 +16,43 @@ module NeedsToRun =
 
         let tests = 
             [
-                // runTestWith
+                // runStepProccessWith
                 "Gives the tests to the test runner" 
-                |> testedWith (fun _ -> ``Not Yet Implimented``)
-            ] |> List.append [
+                |> testedWith 
+                    (fun _ -> 
+                        let mutable result : string list = [] 
+
+                        let tests = 
+                            [
+                                { testTemplate with
+                                    Name = "1"
+                                    TestMethod = fun _ -> successFulTest
+                                }
+
+                                { testTemplate with
+                                    Name = "2"
+                                    TestMethod = fun _ -> successFulTest
+                                }
+                            ]
+
+                        let input = 
+                            Initial tests
+
+                        let expected = tests |> List.map toString |> List.sort
+
+                        let runner (_: TestingEnvironment) test = 
+                                result <- (test |> toString) :: result
+                                Success ()
+
+                        runStepProccessWith emptyEnvironment runner input
+                        |> ignore
+
+                        result
+                        |> List.sort
+                        |> shouldBeEqualTo expected
+                    )
+            ] 
+            |> List.append [
                 // runTestsStepProccess
                 "Run a single passing test and return its result"
                 |> testedWith 
