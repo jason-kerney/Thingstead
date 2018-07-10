@@ -176,7 +176,7 @@ module NeedsToRun =
                         | _ -> "Tests failed" |> asTestFailure
                     )
 
-                "Run a multiple tests and returns the tests the results"
+                "Run multiple tests and returns the tests the results"
                 |> testedWith 
                     (fun _ ->
                         let tests = [
