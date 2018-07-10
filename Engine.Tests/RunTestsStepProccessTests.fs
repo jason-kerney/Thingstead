@@ -215,4 +215,27 @@ module NeedsToRun =
                             |> List.sort
                             |> shouldBeEqualTo expected
                     )
+
+                "Not run when give a failed input"
+                |> testedWith (fun _ -> 
+                        let mutable called = false
+
+                        let test = 
+                            { testTemplate with
+                                TestMethod = (fun _ ->
+                                    called <- true
+                                    "Should not have been called"
+                                    |> asTestFailure
+                                )
+                            }
+
+                        let input = PreviousFailed [test, successFulTest]
+
+                        runTestsStepProccess emptyEnvironment input
+                        |> ignore
+
+                        called
+                        |> shouldBeEqualTo false
+                        |> withFailComment "Test method should not have executed"
+                    )
             ]

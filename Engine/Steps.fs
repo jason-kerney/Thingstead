@@ -18,6 +18,7 @@ module Steps =
 
             if hasFailures then Failure results
             else Success results
+        | PreviousFailed result -> Failure result
 
     let runTestsStepProccess (environment: TestingEnvironment) (input: StepInput) : EngineResult<(Test * TestResult) list, (Test * TestResult) list> =
         input |> runStepProccessWith environment runTestWithDefaultExecutor
