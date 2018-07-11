@@ -1,7 +1,6 @@
 namespace Thingstead.Engine
 
 open Thingstead.Engine.Tests
-open Thingstead.Engine.Types
 open Thingstead.Types
 
 module Steps = 
