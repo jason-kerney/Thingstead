@@ -48,6 +48,7 @@ module Runner =
             DefaultTestExecutor.NeedsToRun.tests
             |> List.append RunTestWith.NeedsToRun.tests
             |> List.append RunTestsStepProccessTests.NeedsToRun.tests
+            |> List.append EmptyStep.NeedsToRun.tests
 
         let failedCount =
             tests
