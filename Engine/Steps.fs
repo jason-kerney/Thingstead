@@ -42,3 +42,8 @@ module Steps =
             )
             AfterStep = fun _ -> Success ()
         }
+
+    let basicTestExecutionStep = 
+        {blankStep with
+            StepProcess = runTestsStepProccess
+        }

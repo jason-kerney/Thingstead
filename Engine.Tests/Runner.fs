@@ -28,8 +28,6 @@ module Runner =
         let join (items: array<string>) = 
             System.String.Join ("\n", items)
 
-        // let testMethod = defaultTestExecutor emptyEnvironment
-
         let result = test |> runTestWith emptyEnvironment defaultTestExecutor
 
         match result with
@@ -55,13 +53,7 @@ module Runner =
         if (map.ContainsKey key) then map.[key]
         else 0
 
-    let runTests () =
-        let tests = 
-            DefaultTestExecutor.NeedsToRun.tests
-            |> List.append RunTestWith.NeedsToRun.tests
-            |> List.append RunTestsStepProccessTests.NeedsToRun.tests
-            |> List.append EmptyStep.NeedsToRun.tests
-
+    let runTests tests =
         let resultsCounts =
             tests
             |> List.countBy runTest
@@ -85,9 +77,16 @@ module Runner =
         
     [<EntryPoint>]
     let main _ = 
-        let result = 
+        let add = List.append
+        let tests = 
+            DefaultTestExecutor.NeedsToRun.tests
+            |> add RunTestWith.NeedsToRun.tests
+            |> add RunTestsStepProccessTests.NeedsToRun.tests
+            |> add EmptyStep.NeedsToRun.tests
+
+        let result =  
             try
-                runTests ()
+                runTests tests
             with
             | e ->
                 printfn "%A" e
