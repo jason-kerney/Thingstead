@@ -14,7 +14,15 @@ module internal Process =
     let runAsBookend (environment: TestingEnvironment) f =
         handleUnsafeTestAction f environment (PrePostExceptionFailure >> Failure)
 
-    let bookEndProcess (environment: TestingEnvironment) before (action: TestingEnvironment -> TestResult) after = 
+    let bookEndProcess (environment: TestingEnvironment) before action after = 
+        let doBefore env =
+            match before |> runAsBookend env with
+            | Success env -> Success env
+            | Failure error -> 
+                error
+                |> BeforeFailure
+                |> Failure
+
         let doIt (prevResult: EngineResult<TestingEnvironment, FailureType>) =
             match prevResult with
             | Success env ->
@@ -38,14 +46,6 @@ module internal Process =
             | Failure error ->
                 a environment
                 |> combine (Failure error)
-
-        let doBefore env =
-            match before |> runAsBookend env with
-            | Success env -> Success env
-            | Failure error -> 
-                error
-                |> BeforeFailure
-                |> Failure
 
         environment
         |> doBefore
