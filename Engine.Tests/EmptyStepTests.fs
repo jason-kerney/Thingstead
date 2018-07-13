@@ -1,11 +1,8 @@
 namespace Thingstead.Engine.Tests.EmptyStep
 
-open Thingstead.Engine.Tests
 open Thingstead.Engine.Steps
 open Thingstead.Types
-open Thingstead.Engine.Tests
 open Thingstead.Engine.Tests.TestingTools
-open Thingstead.Engine
 
 module NeedsToRun = 
         let private path = Some "Thingstead Test Engine 'EmptyStep' should"
