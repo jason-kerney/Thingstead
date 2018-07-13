@@ -25,7 +25,9 @@ module TestingTools =
         | Success _ -> true
         | Failure _ -> false
 
-    let isFailure<'a, 'b> = isSuccess<'a, 'b> >> not
+    let isFailure result =
+        isSuccess result
+        |> not 
 
     let asTestFailure comment : TestResult =
         comment
