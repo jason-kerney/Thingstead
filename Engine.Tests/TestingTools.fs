@@ -31,3 +31,8 @@ module TestingTools =
         comment
         |> GeneralFailure
         |> Failure
+
+    let ignoreTest test =
+        {test with
+            TestMethod = fun _ -> "Actively Ignored" |> Ignored |> Failure
+        }
