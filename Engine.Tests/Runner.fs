@@ -2,6 +2,11 @@ namespace Thingstead.Engine.Tests
 
 open Thingstead.Types
 
+type RunResult =
+    | Passing
+    | Ignoring
+    | Failing
+
 module Runner =
     let joinPathToName name path =
         let start = 
@@ -28,43 +33,66 @@ module Runner =
         let result = test |> runTestWith emptyEnvironment defaultTestExecutor
 
         match result with
-        | Success () -> 0
+        | Success () -> Passing
         | Failure failureType ->
             match failureType with
             | ExpectationFailure message ->
                 message
                 |> printFailure
-            | Ignored m -> printfn "\n\tIgnored %s <%s>" (joinPathToName test.Name test.Path) m
+
+                Failing
+            | Ignored m -> 
+                printfn "\n\tIgnored %s <%s>" (joinPathToName test.Name test.Path) m
+                Ignoring
             | _ -> 
                 failureType
                 |> sprintf "%A"
                 |> printFailure
 
-            1
+                Failing
 
-    [<EntryPoint>]
-    let main _ =
+    let getValue key (map: Map<RunResult, int>) =
+        if (map.ContainsKey key) then map.[key]
+        else 0
+
+    let runTests () =
         let tests = 
             DefaultTestExecutor.NeedsToRun.tests
             |> List.append RunTestWith.NeedsToRun.tests
             |> List.append RunTestsStepProccessTests.NeedsToRun.tests
             |> List.append EmptyStep.NeedsToRun.tests
 
-        let failedCount =
+        let resultsCounts =
             tests
-            |> List.sumBy runTest
+            |> List.countBy runTest
+            |> Map.ofList
+        
 
         let total = tests |> List.length
-        let successfulCount = total - failedCount
+        let successfulCount = resultsCounts |> getValue Passing
+        let failedCount = resultsCounts |> getValue Failing
+        let ignoredCount = resultsCounts |> getValue Ignoring
 
         printfn ""
         printfn ""
         printfn "------------------------------------------------"
         printfn "Total Tests: %d" total
-        printfn "Passing: %d, \tFailed: %d" successfulCount failedCount
+        printfn "Passing: %d, \tFailed: %d, \tIgnored: %d" successfulCount failedCount ignoredCount
         printfn "------------------------------------------------"
 
-        System.Console.ReadKey (true) |> ignore
 
         failedCount        
         
+    [<EntryPoint>]
+    let main _ = 
+        let result = 
+            try
+                runTests ()
+            with
+            | e ->
+                printfn "%A" e
+                87
+
+        System.Console.ReadKey (true) |> ignore
+        
+        result
