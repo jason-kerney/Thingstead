@@ -37,7 +37,7 @@ module Steps =
         {
             Name = "A Blank Step"
             BeforeStep = fun environment -> Success environment
-            StepProcess = (fun _ input ->
+            StepProcess = (fun _env input ->
                 processInput (fun tests -> tests |> List.map (fun test -> test, Success ()) |> Success) input
             )
             AfterStep = fun _ -> Success ()
