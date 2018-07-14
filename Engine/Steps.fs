@@ -45,5 +45,6 @@ module Steps =
 
     let basicTestExecutionStep = 
         {blankStep with
+            Name = "Basic Test Execution Step"
             StepProcess = runTestsStepProccess
         }

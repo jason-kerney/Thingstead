@@ -83,6 +83,7 @@ module Runner =
             |> add RunTestWith.NeedsToRun.tests
             |> add RunTestsStepProccessTests.NeedsToRun.tests
             |> add EmptyStep.NeedsToRun.tests
+            |> add StepRunner.NeedsToRun.tests
 
         let result =  
             try

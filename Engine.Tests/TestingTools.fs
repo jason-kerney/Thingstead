@@ -38,3 +38,9 @@ module TestingTools =
         {test with
             TestMethod = fun _ -> "Actively Ignored" |> Ignored |> Failure
         }
+
+    let getStepTests = function
+        | Initial tests -> tests
+        | PreviousSucceeded result
+        | PreviousFailed result ->
+            result |> List.map fst

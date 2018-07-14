@@ -18,6 +18,7 @@
     <Compile Include="RunTestWithTests.fs" />
     <Compile Include="RunTestsStepProccessTests.fs" />
     <Compile Include="EmptyStepTests.fs" />
+    <Compile Include="StepRunnerTests.fs" />
     <Compile Include="Runner.fs" />
     <None Include="App.config" />
   </ItemGroup>
