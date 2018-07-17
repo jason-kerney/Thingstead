@@ -35,7 +35,7 @@ type EngineResult<'SuccessType, 'FailureType> =
 
 type TestResult = EngineResult<unit, FailureType>
 
-type TestingEnvironment =  Map<string, string list>
+type TestingEnvironment =  Map<string, obj>
 
 type Test = 
     {
