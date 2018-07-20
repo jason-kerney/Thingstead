@@ -32,8 +32,8 @@ module internal Process =
             | _ -> prevResult
             
         let doAfter prevResult =
-            let a env = 
-                let newEnvironment = env.Add ("Result", obj(prevResult))
+            let a (env: TestingEnvironment) = 
+                let newEnvironment = env.Add ("Result", prevResult :> obj)
                 match after |> runAsBookend env with
                 | Success _ -> Success ()
                 | Failure error ->
