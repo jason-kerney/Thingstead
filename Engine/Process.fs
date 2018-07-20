@@ -33,6 +33,7 @@ module internal Process =
             
         let doAfter prevResult =
             let a env = 
+                let newEnvironment = env.Add ("Result", obj(prevResult))
                 match after |> runAsBookend env with
                 | Success _ -> Success ()
                 | Failure error ->
