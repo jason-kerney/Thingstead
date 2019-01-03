@@ -68,6 +68,13 @@
 <member name="P:Microsoft.FSharp.Collections.FSharpMap`2.Count">
  <summary>The number of bindings in the map.</summary>
 </member>
+<member name="M:Microsoft.FSharp.Collections.FSharpMap`2.TryGetValue(`0,Microsoft.FSharp.Core.byref{`1,Microsoft.FSharp.Core.ByRefKinds.InOut})">
+ <summary>Lookup an element in the map, assigning to <c>value</c> if the element is in the domain 
+ of the map and returning <c>false</c> if not.</summary>
+ <param name="key">The input key.</param>
+ <param name="value">A reference to the output value.</param>
+ <returns><c>true</c> if the value is present, <c>false</c> if not.</returns>
+</member>
 <member name="M:Microsoft.FSharp.Collections.FSharpMap`2.TryFind(`0)">
  <summary>Lookup an element in the map, returning a <c>Some</c> value if the element is in the domain 
  of the map and <c>None</c> if not.</summary>
@@ -1606,7 +1613,7 @@
  null.</exception>
 </member>
 <member name="M:Microsoft.FSharp.Collections.SeqModule.AllPairs``2(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``1})">
- <summary>Returns a new sequence that contains the cartesian product of the two input sequences.</summary>
+ <summary>Returns a new sequence that contains all pairings of elements from the first and second sequences.</summary>
  <param name="source1">The first sequence.</param>
  <param name="source2">The second sequence.</param>
  <returns>The result sequence.</returns>
@@ -2392,7 +2399,7 @@
  <returns>The resulting list.</returns>
 </member>
 <member name="M:Microsoft.FSharp.Collections.ListModule.AllPairs``2(Microsoft.FSharp.Collections.FSharpList{``0},Microsoft.FSharp.Collections.FSharpList{``1})">
- <summary>Returns a new list that contains the cartesian product of the two input lists.</summary>
+ <summary>Returns a new list that contains all pairings of elements from the first and second lists.</summary>
  <param name="list1">The first input list.</param>
  <param name="list2">The second input list.</param>
  <returns>The resulting list of pairs.</returns>
@@ -3367,7 +3374,7 @@
  <exception cref="System.ArgumentNullException">Thrown when either of the input arrays is null.</exception>
 </member>
 <member name="M:Microsoft.FSharp.Collections.ArrayModule.AllPairs``2(``0[],``1[])">
- <summary>Builds a new array that contains the cartesian product of the two input arrays.</summary>
+ <summary>Returns a new array that contains all pairings of elements from the first and second arrays.</summary>
  <param name="array1">The first input array.</param>
  <param name="array2">The second input array.</param>
  <exception cref="System.ArgumentNullException">Thrown when either of the input arrays is null.</exception>
@@ -5447,6 +5454,16 @@
  <param name="address">The input pointer.</param>
  <returns>The machine address.</returns>
 </member>
+<member name="M:Microsoft.FSharp.NativeInterop.NativePtrModule.OfVoidPtrInlined``1(Microsoft.FSharp.Core.voidptr)">
+ <summary>Returns a typed native pointer for a untyped native pointer.</summary>
+ <param name="address">The untyped pointer.</param>
+ <returns>A typed pointer.</returns>
+</member>
+<member name="M:Microsoft.FSharp.NativeInterop.NativePtrModule.ToVoidPtrInlined``1(``0*)">
+ <summary>Returns an untyped native pointer for a given typed pointer.</summary>
+ <param name="address">The pointer address.</param>
+ <returns>A typed pointer.</returns>
+</member>
 <member name="M:Microsoft.FSharp.NativeInterop.NativePtrModule.OfNativeIntInlined``1(System.IntPtr)">
  <summary>Returns a typed native pointer for a given machine address.</summary>
  <param name="address">The pointer address.</param>
@@ -5535,166 +5552,6 @@
 <member name="T:Microsoft.FSharp.Control.FSharpDelegateEvent`1">
  <summary>Event implementations for an arbitrary type of delegate.</summary>
 </member>
-<member name="P:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.DefaultTimeout(System.Int32)">
- <summary>Raises a timeout exception if a message not received in this amount of time. By default
- no timeout is used.</summary>
-</member>
-<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.remove_Error(Microsoft.FSharp.Control.FSharpHandler{System.Exception})">
- <summary>Occurs when the execution of the agent results in an exception.</summary>
-</member>
-<member name="P:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.Error">
- <summary>Occurs when the execution of the agent results in an exception.</summary>
-</member>
-<member name="P:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.DefaultTimeout">
- <summary>Raises a timeout exception if a message not received in this amount of time. By default
- no timeout is used.</summary>
-</member>
-<member name="P:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.CurrentQueueLength">
- <summary>Returns the number of unprocessed messages in the message queue of the agent.</summary>
-</member>
-<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.add_Error(Microsoft.FSharp.Control.FSharpHandler{System.Exception})">
- <summary>Occurs when the execution of the agent results in an exception.</summary>
-</member>
-<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.TryScan``1(Microsoft.FSharp.Core.FSharpFunc{`0,Microsoft.FSharp.Core.FSharpOption{Microsoft.FSharp.Control.FSharpAsync{``0}}},Microsoft.FSharp.Core.FSharpOption{System.Int32})">
- <summary>Scans for a message by looking through messages in arrival order until <c>scanner</c> 
- returns a Some value. Other messages remain in the queue.</summary>
-
- <remarks>This method is for use within the body of the agent. For each agent, at most 
- one concurrent reader may be active, so no more than one concurrent call to 
- Receive, TryReceive, Scan and/or TryScan may be active.</remarks>
- <param name="scanner">The function to return None if the message is to be skipped
- or Some if the message is to be processed and removed from the queue.</param>
- <param name="timeout">An optional timeout in milliseconds. Defaults to -1 which corresponds
- to <c>System.Threading.Timeout.Infinite</c>.</param>
- <returns>An asynchronous computation that <c>scanner</c> built off the read message.</returns>
-</member>
-<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.TryReceive(Microsoft.FSharp.Core.FSharpOption{System.Int32})">
- <summary>Waits for a message. This will consume the first message in arrival order.</summary> 
-
- <remarks>This method is for use within the body of the agent. 
-
- Returns None if a timeout is given and the timeout is exceeded.
-
- This method is for use within the body of the agent. For each agent, at most 
- one concurrent reader may be active, so no more than one concurrent call to 
- Receive, TryReceive, Scan and/or TryScan may be active.</remarks>
- <param name="timeout">An optional timeout in milliseconds. Defaults to -1 which
- corresponds to <c>System.Threading.Timeout.Infinite</c>.</param>
- <returns>An asynchronous computation that returns the received message or
- None if the timeout is exceeded.</returns>
-</member>
-<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.TryPostAndReply``1(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Control.FSharpAsyncReplyChannel{``0},`0},Microsoft.FSharp.Core.FSharpOption{System.Int32})">
- <summary>Like PostAndReply, but returns None if no reply within the timeout period.</summary>
- <param name="buildMessage">The function to incorporate the AsyncReplyChannel into
- the message to be sent.</param>
- <param name="timeout">An optional timeout parameter (in milliseconds) to wait for a reply message.
- Defaults to -1 which corresponds to <c>System.Threading.Timeout.Infinite</c>.</param>
- <returns>The reply from the agent or None if the timeout expires.</returns> 
-</member>
-<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.Start">
- <summary>Starts the agent.</summary>
-</member>
-<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.Start(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Control.FSharpMailboxProcessor{`0},Microsoft.FSharp.Control.FSharpAsync{Microsoft.FSharp.Core.Unit}},Microsoft.FSharp.Core.FSharpOption{System.Threading.CancellationToken})">
- <summary>Creates and starts an agent. The <c>body</c> function is used to generate the asynchronous 
- computation executed by the agent.</summary>
- <param name="body">The function to produce an asynchronous computation that will be executed
- as the read loop for the MailboxProcessor when Start is called.</param>
- <param name="cancellationToken">An optional cancellation token for the <c>body</c>.
- Defaults to <c>Async.DefaultCancellationToken</c>.</param>
- <returns>The created MailboxProcessor.</returns>
-</member>
-<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.Scan``1(Microsoft.FSharp.Core.FSharpFunc{`0,Microsoft.FSharp.Core.FSharpOption{Microsoft.FSharp.Control.FSharpAsync{``0}}},Microsoft.FSharp.Core.FSharpOption{System.Int32})">
- <summary>Scans for a message by looking through messages in arrival order until <c>scanner</c> 
- returns a Some value. Other messages remain in the queue.</summary>
-
- <remarks>Returns None if a timeout is given and the timeout is exceeded.
-
- This method is for use within the body of the agent. For each agent, at most 
- one concurrent reader may be active, so no more than one concurrent call to 
- Receive, TryReceive, Scan and/or TryScan may be active.</remarks>
- <param name="scanner">The function to return None if the message is to be skipped
- or Some if the message is to be processed and removed from the queue.</param>
- <param name="timeout">An optional timeout in milliseconds. Defaults to -1 which corresponds
- to <c>System.Threading.Timeout.Infinite</c>.</param>
- <returns>An asynchronous computation that <c>scanner</c> built off the read message.</returns>
- <exception cref="System.TimeoutException">Thrown when the timeout is exceeded.</exception>
-</member>
-<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.Receive(Microsoft.FSharp.Core.FSharpOption{System.Int32})">
- <summary>Waits for a message. This will consume the first message in arrival order.</summary> 
-
- <remarks>This method is for use within the body of the agent. 
-
- This method is for use within the body of the agent. For each agent, at most 
- one concurrent reader may be active, so no more than one concurrent call to 
- Receive, TryReceive, Scan and/or TryScan may be active.</remarks>
- <param name="timeout">An optional timeout in milliseconds. Defaults to -1 which corresponds
- to <c>System.Threading.Timeout.Infinite</c>.</param>
- <returns>An asynchronous computation that returns the received message.</returns>
- <exception cref="System.TimeoutException">Thrown when the timeout is exceeded.</exception>
-</member>
-<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.PostAndTryAsyncReply``1(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Control.FSharpAsyncReplyChannel{``0},`0},Microsoft.FSharp.Core.FSharpOption{System.Int32})">
- <summary>Like AsyncPostAndReply, but returns None if no reply within the timeout period.</summary>
- <param name="buildMessage">The function to incorporate the AsyncReplyChannel into
- the message to be sent.</param>
- <param name="timeout">An optional timeout parameter (in milliseconds) to wait for a reply message.
- Defaults to -1 which corresponds to <c>System.Threading.Timeout.Infinite</c>.</param>
- <returns>An asynchronous computation that will return the reply or None if the timeout expires.</returns> 
-</member>
-<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.PostAndReply``1(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Control.FSharpAsyncReplyChannel{``0},`0},Microsoft.FSharp.Core.FSharpOption{System.Int32})">
- <summary>Posts a message to an agent and await a reply on the channel, synchronously.</summary>
-
- <remarks>The message is generated by applying <c>buildMessage</c> to a new reply channel 
- to be incorporated into the message. The receiving agent must process this 
- message and invoke the Reply method on this reply channel precisely once.</remarks>
- <param name="buildMessage">The function to incorporate the AsyncReplyChannel into
- the message to be sent.</param>
- <param name="timeout">An optional timeout parameter (in milliseconds) to wait for a reply message.
- Defaults to -1 which corresponds to <c>System.Threading.Timeout.Infinite</c>.</param>
- <returns>The reply from the agent.</returns>
-</member>
-<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.PostAndAsyncReply``1(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Control.FSharpAsyncReplyChannel{``0},`0},Microsoft.FSharp.Core.FSharpOption{System.Int32})">
- <summary>Posts a message to an agent and await a reply on the channel, asynchronously.</summary> 
-
- <remarks>The message is generated by applying <c>buildMessage</c> to a new reply channel 
- to be incorporated into the message. The receiving agent must process this 
- message and invoke the Reply method on this reply channel precisely once.</remarks>
- <param name="buildMessage">The function to incorporate the AsyncReplyChannel into
- the message to be sent.</param>
- <param name="timeout">An optional timeout parameter (in milliseconds) to wait for a reply message.
- Defaults to -1 which corresponds to <c>System.Threading.Timeout.Infinite</c>.</param>
- <returns>An asynchronous computation that will wait for the reply from the agent.</returns>
-</member>
-<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.Post(`0)">
- <summary>Posts a message to the message queue of the MailboxProcessor, asynchronously.</summary>
- <param name="message">The message to post.</param>
-</member>
-<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.#ctor(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Control.FSharpMailboxProcessor{`0},Microsoft.FSharp.Control.FSharpAsync{Microsoft.FSharp.Core.Unit}},Microsoft.FSharp.Core.FSharpOption{System.Threading.CancellationToken})">
- <summary>Creates an agent. The <c>body</c> function is used to generate the asynchronous 
- computation executed by the agent. This function is not executed until 
- <c>Start</c> is called.</summary>
- <param name="body">The function to produce an asynchronous computation that will be executed
- as the read loop for the MailboxProcessor when Start is called.</param>
- <param name="cancellationToken">An optional cancellation token for the <c>body</c>.
- Defaults to <c>Async.DefaultCancellationToken</c>.</param>
- <returns>The created MailboxProcessor.</returns>
-</member>
-<member name="T:Microsoft.FSharp.Control.FSharpMailboxProcessor`1">
- <summary>A message-processing agent which executes an asynchronous computation.</summary>
-
- <remarks>The agent encapsulates a message queue that supports multiple-writers and 
- a single reader agent. Writers send messages to the agent by using the Post 
- method and its variations.
-
- The agent may wait for messages using the Receive or TryReceive methods or
- scan through all available messages using the Scan or TryScan method.</remarks>
-</member>
-<member name="M:Microsoft.FSharp.Control.FSharpAsyncReplyChannel`1.Reply(`0)">
- <summary>Sends a reply to a PostAndReply message.</summary>
- <param name="value">The value to send.</param>
-</member>
-<member name="T:Microsoft.FSharp.Control.FSharpAsyncReplyChannel`1">
- <summary>A handle to a capability to reply to a PostAndReply message.</summary>
-</member>
 <member name="M:Microsoft.FSharp.Control.FSharpAsyncBuilder.Zero">
  <summary>Creates an asynchronous computation that just returns <c>()</c>.</summary>
 
@@ -5739,6 +5596,7 @@
 
  The existence of this method permits the use of <c>try/with</c> in the 
  <c>async { ... }</c> computation expression syntax.</remarks>
+
  <param name="computation">The input computation.</param>
  <param name="catchHandler">The function to run when <c>computation</c> throws an exception.</param>
  <returns>An asynchronous computation that executes <c>computation</c> and calls <c>catchHandler</c> if an
@@ -5834,6 +5692,40 @@
 <member name="T:Microsoft.FSharp.Control.FSharpAsyncBuilder">
  <summary>The type of the <c>async</c> operator, used to build workflows for asynchronous computations.</summary>
 </member>
+<member name="P:Microsoft.FSharp.Control.AsyncActivation`1.IsCancellationRequested">
+ <summary>The F# compiler emits calls to this function to implement F# async expressions.</summary>
+
+ <returns>A value indicating asynchronous execution.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Control.AsyncActivation`1.QueueContinuationWithTrampoline(`0)">
+<summary>
+ Used by MailboxProcessor
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Control.AsyncActivation`1.OnSuccess(`0)">
+ <summary>The F# compiler emits calls to this function to implement F# async expressions.</summary>
+
+ <returns>A value indicating asynchronous execution.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Control.AsyncActivation`1.OnExceptionRaised">
+ <summary>The F# compiler emits calls to this function to implement F# async expressions.</summary>
+</member>
+<member name="M:Microsoft.FSharp.Control.AsyncActivation`1.OnCancellation">
+ <summary>The F# compiler emits calls to this function to implement F# async expressions.</summary>
+
+ <returns>A value indicating asynchronous execution.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Control.AsyncActivation`1.CallContinuation(`0)">
+<summary>
+ Used by MailboxProcessor
+</summary>
+</member>
+<member name="T:Microsoft.FSharp.Control.AsyncActivation`1">
+ <summary>The F# compiler emits references to this type to implement F# async expressions.</summary>
+</member>
+<member name="T:Microsoft.FSharp.Control.AsyncReturn">
+ <summary>The F# compiler emits references to this type to implement F# async expressions.</summary>
+</member>
 <member name="P:Microsoft.FSharp.Control.FSharpAsync.DefaultCancellationToken">
  <summary>Gets the default cancellation token for executing asynchronous computations.</summary>
  <returns>The default CancellationToken.</returns>
@@ -5897,7 +5789,6 @@
  The default is used if this parameter is not provided.</param>
  <returns>A <c>System.Threading.Tasks.Task</c> that will be completed
  in the corresponding state once the computation terminates (produces the result, throws exception or gets canceled)</returns>
- </returns> 
 </member>
 <member name="M:Microsoft.FSharp.Control.FSharpAsync.StartImmediate(Microsoft.FSharp.Control.FSharpAsync{Microsoft.FSharp.Core.Unit},Microsoft.FSharp.Core.FSharpOption{System.Threading.CancellationToken})">
  <summary>Runs an asynchronous computation, starting immediately on the current operating system
@@ -5958,6 +5849,20 @@
  and not infinite.</exception>
 </member>
 <member name="M:Microsoft.FSharp.Control.FSharpAsync.RunSynchronously``1(Microsoft.FSharp.Control.FSharpAsync{``0},Microsoft.FSharp.Core.FSharpOption{System.Int32},Microsoft.FSharp.Core.FSharpOption{System.Threading.CancellationToken})">
+ <summary>Runs the asynchronous computation and await its result.</summary>
+
+ <remarks>If an exception occurs in the asynchronous computation then an exception is re-raised by this
+ function.
+        
+ If no cancellation token is provided then the default cancellation token is used.
+
+ The timeout parameter is given in milliseconds.  A value of -1 is equivalent to
+ System.Threading.Timeout.Infinite.</remarks>
+ <param name="computation">The computation to run.</param>
+ <param name="timeout">The amount of time in milliseconds to wait for the result of the
+ computation before raising a <c>System.TimeoutException</c>.  If no value is provided
+ for timeout then a default of -1 is used to correspond to System.Threading.Timeout.Infinite.
+ If a cancellable cancellationToken is provided, timeout parameter will be ignored</param>
  <param name="cancellationToken">The cancellation token to be associated with the computation.
  If one is not supplied, the default cancellation token is used.</param>
  <returns>The result of the computation.</returns>
@@ -6220,6 +6125,166 @@
  computation expressions can check the cancellation condition regularly. Synchronous 
  computations within an asynchronous computation do not automatically check this condition.</remarks> 
 </member>
+<member name="P:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.DefaultTimeout(System.Int32)">
+ <summary>Raises a timeout exception if a message not received in this amount of time. By default
+ no timeout is used.</summary>
+</member>
+<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.remove_Error(Microsoft.FSharp.Control.FSharpHandler{System.Exception})">
+ <summary>Occurs when the execution of the agent results in an exception.</summary>
+</member>
+<member name="P:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.Error">
+ <summary>Occurs when the execution of the agent results in an exception.</summary>
+</member>
+<member name="P:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.DefaultTimeout">
+ <summary>Raises a timeout exception if a message not received in this amount of time. By default
+ no timeout is used.</summary>
+</member>
+<member name="P:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.CurrentQueueLength">
+ <summary>Returns the number of unprocessed messages in the message queue of the agent.</summary>
+</member>
+<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.add_Error(Microsoft.FSharp.Control.FSharpHandler{System.Exception})">
+ <summary>Occurs when the execution of the agent results in an exception.</summary>
+</member>
+<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.TryScan``1(Microsoft.FSharp.Core.FSharpFunc{`0,Microsoft.FSharp.Core.FSharpOption{Microsoft.FSharp.Control.FSharpAsync{``0}}},Microsoft.FSharp.Core.FSharpOption{System.Int32})">
+ <summary>Scans for a message by looking through messages in arrival order until <c>scanner</c> 
+ returns a Some value. Other messages remain in the queue.</summary>
+
+ <remarks>This method is for use within the body of the agent. For each agent, at most 
+ one concurrent reader may be active, so no more than one concurrent call to 
+ Receive, TryReceive, Scan and/or TryScan may be active.</remarks>
+ <param name="scanner">The function to return None if the message is to be skipped
+ or Some if the message is to be processed and removed from the queue.</param>
+ <param name="timeout">An optional timeout in milliseconds. Defaults to -1 which corresponds
+ to <c>System.Threading.Timeout.Infinite</c>.</param>
+ <returns>An asynchronous computation that <c>scanner</c> built off the read message.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.TryReceive(Microsoft.FSharp.Core.FSharpOption{System.Int32})">
+ <summary>Waits for a message. This will consume the first message in arrival order.</summary> 
+
+ <remarks>This method is for use within the body of the agent. 
+
+ Returns None if a timeout is given and the timeout is exceeded.
+
+ This method is for use within the body of the agent. For each agent, at most 
+ one concurrent reader may be active, so no more than one concurrent call to 
+ Receive, TryReceive, Scan and/or TryScan may be active.</remarks>
+ <param name="timeout">An optional timeout in milliseconds. Defaults to -1 which
+ corresponds to <c>System.Threading.Timeout.Infinite</c>.</param>
+ <returns>An asynchronous computation that returns the received message or
+ None if the timeout is exceeded.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.TryPostAndReply``1(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Control.FSharpAsyncReplyChannel{``0},`0},Microsoft.FSharp.Core.FSharpOption{System.Int32})">
+ <summary>Like PostAndReply, but returns None if no reply within the timeout period.</summary>
+ <param name="buildMessage">The function to incorporate the AsyncReplyChannel into
+ the message to be sent.</param>
+ <param name="timeout">An optional timeout parameter (in milliseconds) to wait for a reply message.
+ Defaults to -1 which corresponds to <c>System.Threading.Timeout.Infinite</c>.</param>
+ <returns>The reply from the agent or None if the timeout expires.</returns> 
+</member>
+<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.Start">
+ <summary>Starts the agent.</summary>
+</member>
+<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.Start(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Control.FSharpMailboxProcessor{`0},Microsoft.FSharp.Control.FSharpAsync{Microsoft.FSharp.Core.Unit}},Microsoft.FSharp.Core.FSharpOption{System.Threading.CancellationToken})">
+ <summary>Creates and starts an agent. The <c>body</c> function is used to generate the asynchronous 
+ computation executed by the agent.</summary>
+ <param name="body">The function to produce an asynchronous computation that will be executed
+ as the read loop for the MailboxProcessor when Start is called.</param>
+ <param name="cancellationToken">An optional cancellation token for the <c>body</c>.
+ Defaults to <c>Async.DefaultCancellationToken</c>.</param>
+ <returns>The created MailboxProcessor.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.Scan``1(Microsoft.FSharp.Core.FSharpFunc{`0,Microsoft.FSharp.Core.FSharpOption{Microsoft.FSharp.Control.FSharpAsync{``0}}},Microsoft.FSharp.Core.FSharpOption{System.Int32})">
+ <summary>Scans for a message by looking through messages in arrival order until <c>scanner</c> 
+ returns a Some value. Other messages remain in the queue.</summary>
+
+ <remarks>Returns None if a timeout is given and the timeout is exceeded.
+
+ This method is for use within the body of the agent. For each agent, at most 
+ one concurrent reader may be active, so no more than one concurrent call to 
+ Receive, TryReceive, Scan and/or TryScan may be active.</remarks>
+ <param name="scanner">The function to return None if the message is to be skipped
+ or Some if the message is to be processed and removed from the queue.</param>
+ <param name="timeout">An optional timeout in milliseconds. Defaults to -1 which corresponds
+ to <c>System.Threading.Timeout.Infinite</c>.</param>
+ <returns>An asynchronous computation that <c>scanner</c> built off the read message.</returns>
+ <exception cref="System.TimeoutException">Thrown when the timeout is exceeded.</exception>
+</member>
+<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.Receive(Microsoft.FSharp.Core.FSharpOption{System.Int32})">
+ <summary>Waits for a message. This will consume the first message in arrival order.</summary> 
+
+ <remarks>This method is for use within the body of the agent. 
+
+ This method is for use within the body of the agent. For each agent, at most 
+ one concurrent reader may be active, so no more than one concurrent call to 
+ Receive, TryReceive, Scan and/or TryScan may be active.</remarks>
+ <param name="timeout">An optional timeout in milliseconds. Defaults to -1 which corresponds
+ to <c>System.Threading.Timeout.Infinite</c>.</param>
+ <returns>An asynchronous computation that returns the received message.</returns>
+ <exception cref="System.TimeoutException">Thrown when the timeout is exceeded.</exception>
+</member>
+<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.PostAndTryAsyncReply``1(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Control.FSharpAsyncReplyChannel{``0},`0},Microsoft.FSharp.Core.FSharpOption{System.Int32})">
+ <summary>Like AsyncPostAndReply, but returns None if no reply within the timeout period.</summary>
+ <param name="buildMessage">The function to incorporate the AsyncReplyChannel into
+ the message to be sent.</param>
+ <param name="timeout">An optional timeout parameter (in milliseconds) to wait for a reply message.
+ Defaults to -1 which corresponds to <c>System.Threading.Timeout.Infinite</c>.</param>
+ <returns>An asynchronous computation that will return the reply or None if the timeout expires.</returns> 
+</member>
+<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.PostAndReply``1(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Control.FSharpAsyncReplyChannel{``0},`0},Microsoft.FSharp.Core.FSharpOption{System.Int32})">
+ <summary>Posts a message to an agent and await a reply on the channel, synchronously.</summary>
+
+ <remarks>The message is generated by applying <c>buildMessage</c> to a new reply channel 
+ to be incorporated into the message. The receiving agent must process this 
+ message and invoke the Reply method on this reply channel precisely once.</remarks>
+ <param name="buildMessage">The function to incorporate the AsyncReplyChannel into
+ the message to be sent.</param>
+ <param name="timeout">An optional timeout parameter (in milliseconds) to wait for a reply message.
+ Defaults to -1 which corresponds to <c>System.Threading.Timeout.Infinite</c>.</param>
+ <returns>The reply from the agent.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.PostAndAsyncReply``1(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Control.FSharpAsyncReplyChannel{``0},`0},Microsoft.FSharp.Core.FSharpOption{System.Int32})">
+ <summary>Posts a message to an agent and await a reply on the channel, asynchronously.</summary> 
+
+ <remarks>The message is generated by applying <c>buildMessage</c> to a new reply channel 
+ to be incorporated into the message. The receiving agent must process this 
+ message and invoke the Reply method on this reply channel precisely once.</remarks>
+ <param name="buildMessage">The function to incorporate the AsyncReplyChannel into
+ the message to be sent.</param>
+ <param name="timeout">An optional timeout parameter (in milliseconds) to wait for a reply message.
+ Defaults to -1 which corresponds to <c>System.Threading.Timeout.Infinite</c>.</param>
+ <returns>An asynchronous computation that will wait for the reply from the agent.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.Post(`0)">
+ <summary>Posts a message to the message queue of the MailboxProcessor, asynchronously.</summary>
+ <param name="message">The message to post.</param>
+</member>
+<member name="M:Microsoft.FSharp.Control.FSharpMailboxProcessor`1.#ctor(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Control.FSharpMailboxProcessor{`0},Microsoft.FSharp.Control.FSharpAsync{Microsoft.FSharp.Core.Unit}},Microsoft.FSharp.Core.FSharpOption{System.Threading.CancellationToken})">
+ <summary>Creates an agent. The <c>body</c> function is used to generate the asynchronous 
+ computation executed by the agent. This function is not executed until 
+ <c>Start</c> is called.</summary>
+ <param name="body">The function to produce an asynchronous computation that will be executed
+ as the read loop for the MailboxProcessor when Start is called.</param>
+ <param name="cancellationToken">An optional cancellation token for the <c>body</c>.
+ Defaults to <c>Async.DefaultCancellationToken</c>.</param>
+ <returns>The created MailboxProcessor.</returns>
+</member>
+<member name="T:Microsoft.FSharp.Control.FSharpMailboxProcessor`1">
+ <summary>A message-processing agent which executes an asynchronous computation.</summary>
+
+ <remarks>The agent encapsulates a message queue that supports multiple-writers and 
+ a single reader agent. Writers send messages to the agent by using the Post 
+ method and its variations.
+
+ The agent may wait for messages using the Receive or TryReceive methods or
+ scan through all available messages using the Scan or TryScan method.</remarks>
+</member>
+<member name="M:Microsoft.FSharp.Control.FSharpAsyncReplyChannel`1.Reply(`0)">
+ <summary>Sends a reply to a PostAndReply message.</summary>
+ <param name="value">The value to send.</param>
+</member>
+<member name="T:Microsoft.FSharp.Control.FSharpAsyncReplyChannel`1">
+ <summary>A handle to a capability to reply to a PostAndReply message.</summary>
+</member>
 <member name="M:Microsoft.FSharp.Control.LazyExtensions.Force``1(System.Lazy{``0})">
  <summary>Forces the execution of this value and return its result. Same as Value. Mutual exclusion is used to 
  prevent other threads also computing the value.</summary>
@@ -6237,6 +6302,122 @@
 </member>
 <member name="T:Microsoft.FSharp.Control.LazyExtensions">
  <summary>Extensions related to Lazy values.</summary>
+</member>
+<member name="M:Microsoft.FSharp.Control.WebExtensions.AsyncDownloadFile(System.Net.WebClient,System.Uri,System.String)">
+ <summary>Returns an asynchronous computation that, when run, will wait for the download of the given URI to specified file.</summary>
+ <param name="address">The URI to retrieve.</param>
+ <param name="fileName">The filename to save download to.</param>
+ <returns>An asynchronous computation that will wait for the download of the URI to specified file.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Control.WebExtensions.AsyncDownloadData(System.Net.WebClient,System.Uri)">
+ <summary>Returns an asynchronous computation that, when run, will wait for the download of the given URI.</summary>
+ <param name="address">The URI to retrieve.</param>
+ <returns>An asynchronous computation that will wait for the download of the URI.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Control.WebExtensions.AsyncDownloadString(System.Net.WebClient,System.Uri)">
+ <summary>Returns an asynchronous computation that, when run, will wait for the download of the given URI.</summary>
+ <param name="address">The URI to retrieve.</param>
+ <returns>An asynchronous computation that will wait for the download of the URI.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Control.WebExtensions.AsyncGetResponse(System.Net.WebRequest)">
+ <summary>Returns an asynchronous computation that, when run, will wait for a response to the given WebRequest.</summary>
+ <returns>An asynchronous computation that waits for response to the <c>WebRequest</c>.</returns>
+</member>
+<member name="T:Microsoft.FSharp.Control.WebExtensions">
+ <summary>A module of extension members providing asynchronous operations for some basic Web operations.</summary>
+</member>
+<member name="M:Microsoft.FSharp.Control.CommonExtensions.SubscribeToObservable``1(System.IObservable{``0},Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Core.Unit})">
+ <summary>Connects a listener function to the observable. The listener will
+ be invoked for each observation. The listener can be removed by
+ calling Dispose on the returned IDisposable object.</summary>
+ <param name="callback">The function to be called for each observation.</param>
+ <returns>An object that will remove the listener if disposed.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Control.CommonExtensions.AddToObservable``1(System.IObservable{``0},Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Core.Unit})">
+ <summary>Permanently connects a listener function to the observable. The listener will
+ be invoked for each observation.</summary>
+ <param name="callback">The function to be called for each observation.</param>
+</member>
+<member name="M:Microsoft.FSharp.Control.CommonExtensions.AsyncWrite(System.IO.Stream,System.Byte[],Microsoft.FSharp.Core.FSharpOption{System.Int32},Microsoft.FSharp.Core.FSharpOption{System.Int32})">
+ <summary>Returns an asynchronous computation that will write the given bytes to the stream.</summary>
+ <param name="buffer">The buffer to write from.</param>
+ <param name="offset">An optional offset as a number of bytes in the stream.</param>
+ <param name="count">An optional number of bytes to write to the stream.</param>
+ <returns>An asynchronous computation that will write the given bytes to the stream.</returns>
+ <exception cref="System.ArgumentException">Thrown when the sum of offset and count is longer than
+ the buffer length.</exception>
+ <exception cref="System.ArgumentOutOfRangeException">Thrown when offset or count is negative.</exception>
+</member>
+<member name="M:Microsoft.FSharp.Control.CommonExtensions.AsyncReadBytes(System.IO.Stream,System.Int32)">
+ <summary>Returns an asynchronous computation that will read the given number of bytes from the stream.</summary>
+ <param name="count">The number of bytes to read.</param>
+ <returns>An asynchronous computation that returns the read byte[] when run.</returns> 
+</member>
+<member name="M:Microsoft.FSharp.Control.CommonExtensions.AsyncRead(System.IO.Stream,System.Byte[],Microsoft.FSharp.Core.FSharpOption{System.Int32},Microsoft.FSharp.Core.FSharpOption{System.Int32})">
+ <summary>Returns an asynchronous computation that will read from the stream into the given buffer.</summary>
+ <param name="buffer">The buffer to read into.</param>
+ <param name="offset">An optional offset as a number of bytes in the stream.</param>
+ <param name="count">An optional number of bytes to read from the stream.</param>
+ <returns>An asynchronous computation that will read from the stream into the given buffer.</returns>
+ <exception cref="System.ArgumentException">Thrown when the sum of offset and count is longer than
+ the buffer length.</exception>
+ <exception cref="System.ArgumentOutOfRangeException">Thrown when offset or count is negative.</exception>
+</member>
+<member name="T:Microsoft.FSharp.Control.CommonExtensions">
+ <summary>A module of extension members providing asynchronous operations for some basic CLI types related to concurrency and I/O.</summary>
+</member>
+<member name="M:Microsoft.FSharp.Control.AsyncPrimitives.TryWith``1(Microsoft.FSharp.Control.AsyncActivation{``0},Microsoft.FSharp.Control.FSharpAsync{``0},Microsoft.FSharp.Core.FSharpFunc{System.Exception,Microsoft.FSharp.Core.FSharpOption{Microsoft.FSharp.Control.FSharpAsync{``0}}})">
+ <summary>The F# compiler emits calls to this function to implement the <c>try/with</c> construct for F# async expressions.</summary>
+
+ <param name="ctxt">The async activation.</param>
+ <param name="computation">The computation to protect.</param>
+ <param name="catchFunction">The exception filter.</param>
+
+ <returns>A value indicating asynchronous execution.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Control.AsyncPrimitives.TryFinally``1(Microsoft.FSharp.Control.AsyncActivation{``0},Microsoft.FSharp.Control.FSharpAsync{``0},Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,Microsoft.FSharp.Core.Unit})">
+ <summary>The F# compiler emits calls to this function to implement the <c>try/finally</c> construct for F# async expressions.</summary>
+
+ <param name="ctxt">The async activation.</param>
+ <param name="computation">The computation to protect.</param>
+ <param name="finallyFunction">The finally code.</param>
+
+ <returns>A value indicating asynchronous execution.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Control.AsyncPrimitives.Bind``2(Microsoft.FSharp.Control.AsyncActivation{``0},Microsoft.FSharp.Control.FSharpAsync{``1},Microsoft.FSharp.Core.FSharpFunc{``1,Microsoft.FSharp.Control.FSharpAsync{``0}})">
+ <summary>The F# compiler emits calls to this function to implement the <c>let!</c> construct for F# async expressions.</summary>
+
+ <param name="ctxt">The async activation.</param>
+ <param name="part2">A function returning the second part of the computation.</param>
+
+ <returns>An async activation suitable for running part1 of the asynchronous execution.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Control.AsyncPrimitives.CallThenInvoke``2(Microsoft.FSharp.Control.AsyncActivation{``0},``1,Microsoft.FSharp.Core.FSharpFunc{``1,Microsoft.FSharp.Control.FSharpAsync{``0}})">
+ <summary>The F# compiler emits calls to this function to implement constructs for F# async expressions.</summary>
+
+ <param name="ctxt">The async activation.</param>
+ <param name="result">The result of the first part of the computation.</param>
+ <param name="part2">A function returning the second part of the computation.</param>
+
+ <returns>A value indicating asynchronous execution.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Control.AsyncPrimitives.Invoke``1(Microsoft.FSharp.Control.FSharpAsync{``0},Microsoft.FSharp.Control.AsyncActivation{``0})">
+ <summary>The F# compiler emits calls to this function to implement constructs for F# async expressions.</summary>
+
+ <param name="computation">The async computation.</param>
+ <param name="ctxt">The async activation.</param>
+
+ <returns>A value indicating asynchronous execution.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Control.AsyncPrimitives.MakeAsync``1(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Control.AsyncActivation{``0},Microsoft.FSharp.Control.AsyncReturn})">
+ <summary>The F# compiler emits calls to this function to implement F# async expressions.</summary>
+
+ <param name="body">The body of the async computation.</param>
+
+ <returns>The async computation.</returns>
+</member>
+<member name="T:Microsoft.FSharp.Control.AsyncPrimitives">
+ <summary>Entry points for generated code</summary>
 </member>
 <member name="M:Microsoft.FSharp.Control.EventModule.Pairwise``2(Microsoft.FSharp.Control.IEvent{``0,``1})">
  <summary>Returns a new event that triggers on the second and subsequent triggerings of the input event.
@@ -6418,69 +6599,6 @@
 </member>
 <member name="T:Microsoft.FSharp.Control.ObservableModule">
  <summary>Basic operations on first class event and other observable objects.</summary>
-</member>
-<member name="M:Microsoft.FSharp.Control.WebExtensions.AsyncDownloadFile(System.Net.WebClient,System.Uri,System.String)">
- <summary>Returns an asynchronous computation that, when run, will wait for the download of the given URI to specified file.</summary>
- <param name="address">The URI to retrieve.</param>
- <param name="fileName">The filename to save download to.</param>
- <returns>An asynchronous computation that will wait for the download of the URI to specified file.</returns>
-</member>
-<member name="M:Microsoft.FSharp.Control.WebExtensions.AsyncDownloadData(System.Net.WebClient,System.Uri)">
- <summary>Returns an asynchronous computation that, when run, will wait for the download of the given URI.</summary>
- <param name="address">The URI to retrieve.</param>
- <returns>An asynchronous computation that will wait for the download of the URI.</returns>
-</member>
-<member name="M:Microsoft.FSharp.Control.WebExtensions.AsyncDownloadString(System.Net.WebClient,System.Uri)">
- <summary>Returns an asynchronous computation that, when run, will wait for the download of the given URI.</summary>
- <param name="address">The URI to retrieve.</param>
- <returns>An asynchronous computation that will wait for the download of the URI.</returns>
-</member>
-<member name="M:Microsoft.FSharp.Control.WebExtensions.AsyncGetResponse(System.Net.WebRequest)">
- <summary>Returns an asynchronous computation that, when run, will wait for a response to the given WebRequest.</summary>
- <returns>An asynchronous computation that waits for response to the <c>WebRequest</c>.</returns>
-</member>
-<member name="T:Microsoft.FSharp.Control.WebExtensions">
- <summary>A module of extension members providing asynchronous operations for some basic Web operations.</summary>
-</member>
-<member name="M:Microsoft.FSharp.Control.CommonExtensions.SubscribeToObservable``1(System.IObservable{``0},Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Core.Unit})">
- <summary>Connects a listener function to the observable. The listener will
- be invoked for each observation. The listener can be removed by
- calling Dispose on the returned IDisposable object.</summary>
- <param name="callback">The function to be called for each observation.</param>
- <returns>An object that will remove the listener if disposed.</returns>
-</member>
-<member name="M:Microsoft.FSharp.Control.CommonExtensions.AddToObservable``1(System.IObservable{``0},Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Core.Unit})">
- <summary>Permanently connects a listener function to the observable. The listener will
- be invoked for each observation.</summary>
- <param name="callback">The function to be called for each observation.</param>
-</member>
-<member name="M:Microsoft.FSharp.Control.CommonExtensions.AsyncWrite(System.IO.Stream,System.Byte[],Microsoft.FSharp.Core.FSharpOption{System.Int32},Microsoft.FSharp.Core.FSharpOption{System.Int32})">
- <summary>Returns an asynchronous computation that will write the given bytes to the stream.</summary>
- <param name="buffer">The buffer to write from.</param>
- <param name="offset">An optional offset as a number of bytes in the stream.</param>
- <param name="count">An optional number of bytes to write to the stream.</param>
- <returns>An asynchronous computation that will write the given bytes to the stream.</returns>
- <exception cref="System.ArgumentException">Thrown when the sum of offset and count is longer than
- the buffer length.</exception>
- <exception cref="System.ArgumentOutOfRangeException">Thrown when offset or count is negative.</exception>
-</member>
-<member name="M:Microsoft.FSharp.Control.CommonExtensions.AsyncReadBytes(System.IO.Stream,System.Int32)">
- <summary>Returns an asynchronous computation that will read the given number of bytes from the stream.</summary>
- <param name="count">The number of bytes to read.</param>
- <returns>An asynchronous computation that returns the read byte[] when run.</returns> 
-</member>
-<member name="M:Microsoft.FSharp.Control.CommonExtensions.AsyncRead(System.IO.Stream,System.Byte[],Microsoft.FSharp.Core.FSharpOption{System.Int32},Microsoft.FSharp.Core.FSharpOption{System.Int32})">
- <summary>Returns an asynchronous computation that will read from the stream into the given buffer.</summary>
- <param name="buffer">The buffer to read into.</param>
- <param name="offset">An optional offset as a number of bytes in the stream.</param>
- <param name="count">An optional number of bytes to read from the stream.</param>
- <returns>An asynchronous computation that will read from the stream into the given buffer.</returns>
- <exception cref="System.ArgumentException">Thrown when the sum of offset and count is longer than
- the buffer length.</exception>
- <exception cref="System.ArgumentOutOfRangeException">Thrown when offset or count is negative.</exception>
-</member>
-<member name="T:Microsoft.FSharp.Control.CommonExtensions">
- <summary>A module of extension members providing asynchronous operations for some basic CLI types related to concurrency and I/O.</summary>
 </member>
 <member name="M:Microsoft.FSharp.Linq.QueryBuilder.Zero``2">
  <summary>
@@ -7457,6 +7575,15 @@
 <member name="T:Microsoft.FSharp.Core.ilsigptr`1">
  <summary>This type is for internal use by the F# code generator.</summary>
 </member>
+<member name="T:Microsoft.FSharp.Core.voidptr">
+ <summary>Represents an untyped unmanaged pointer in F# code.</summary>
+
+ <remarks>This type should only be used when writing F# code that interoperates
+ with native code.  Use of this type in F# code may result in
+ unverifiable code being generated.  Conversions to and from the 
+ <c>nativeint</c> type may be required. Values of this type can be generated
+ by the functions in the <c>NativeInterop.NativePtr</c> module.</remarks>
+</member>
 <member name="T:Microsoft.FSharp.Core.nativeptr`1">
  <summary>Represents an unmanaged pointer in F# code.</summary>
 
@@ -7465,9 +7592,6 @@
  unverifiable code being generated.  Conversions to and from the 
  <c>nativeint</c> type may be required. Values of this type can be generated
  by the functions in the <c>NativeInterop.NativePtr</c> module.</remarks>
-</member>
-<member name="T:Microsoft.FSharp.Core.byref`1">
- <summary>Represents a managed pointer in F# code.</summary>
 </member>
 <member name="T:Microsoft.FSharp.Core.array`1">
  <summary>Single dimensional, zero-based arrays, written <c>int[]</c>, <c>string[]</c> etc.</summary>
@@ -7701,6 +7825,31 @@
 <member name="T:Microsoft.FSharp.Core.FSharpResult`2">
  <summary>Helper type for error handling without exceptions.</summary>
 </member>
+<member name="T:Microsoft.FSharp.Core.voption`1">
+ <summary>The type of optional values, represented as structs.</summary>
+
+ <remarks>Use the constructors <c>ValueSome</c> and <c>ValueNone</c> to create values of this type.
+ Use the values in the <c>ValueOption</c> module to manipulate values of this type,
+ or pattern match against the values directly.</remarks>
+</member>
+<member name="T:Microsoft.FSharp.Core.FSharpValueOption`1.ValueSome">
+ <summary>The representation of "Value of type 'T"</summary>
+ <param name="Value">The input value.</param>
+ <returns>An option representing the value.</returns>
+</member>
+<member name="T:Microsoft.FSharp.Core.FSharpValueOption`1.ValueNone">
+ <summary>The representation of "No value"</summary>
+</member>
+<member name="P:Microsoft.FSharp.Core.FSharpValueOption`1.Value">
+ <summary>Get the value of a 'ValueSome' option. An InvalidOperationException is raised if the option is 'ValueNone'.</summary>
+</member>
+<member name="T:Microsoft.FSharp.Core.FSharpValueOption`1">
+ <summary>The type of optional values, represented as structs.</summary>
+
+ <remarks>Use the constructors <c>ValueSome</c> and <c>ValueNone</c> to create values of this type.
+ Use the values in the <c>ValueOption</c> module to manipulate values of this type,
+ or pattern match against the values directly.</remarks>
+</member>
 <member name="T:Microsoft.FSharp.Core.option`1">
  <summary>The type of optional values. When used from other CLI languages the
  empty option is the <c>null</c> value. </summary>
@@ -7776,12 +7925,12 @@
 </member>
 <member name="M:Microsoft.FSharp.Core.FuncConvert.ToFSharpFunc``2(System.Converter{``0,``1})">
  <summary>Convert the given Converter delegate object to an F# function value</summary>
- <param name="converter">The input Converter.</param>
+ <param name="converter">The input Converter delegate.</param>
  <returns>The F# function.</returns>
 </member>
 <member name="M:Microsoft.FSharp.Core.FuncConvert.ToFSharpFunc``1(System.Action{``0})">
  <summary>Convert the given Action delegate object to an F# function value</summary>
- <param name="action">The input action.</param>
+ <param name="action">The input Action delegate.</param>
  <returns>The F# function.</returns>
 </member>
 <member name="M:Microsoft.FSharp.Core.FuncConvert.FuncFromTupled``6(Microsoft.FSharp.Core.FSharpFunc{System.Tuple{``0,``1,``2,``3,``4},``5})">
@@ -7803,6 +7952,66 @@
  <summary>A utility function to convert function values from tupled to curried form</summary>
  <param name="func">The input tupled function.</param>
  <returns>The output curried function.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Core.FuncConvert.FromFunc``6(System.Func{``0,``1,``2,``3,``4,``5})">
+ <summary>Convert the given Func delegate object to an F# function value</summary>
+ <param name="func">The input Func delegate.</param>
+ <returns>The F# function.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Core.FuncConvert.FromFunc``5(System.Func{``0,``1,``2,``3,``4})">
+ <summary>Convert the given Func delegate object to an F# function value</summary>
+ <param name="func">The input Func delegate.</param>
+ <returns>The F# function.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Core.FuncConvert.FromFunc``4(System.Func{``0,``1,``2,``3})">
+ <summary>Convert the given Func delegate object to an F# function value</summary>
+ <param name="func">The input Func delegate.</param>
+ <returns>The F# function.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Core.FuncConvert.FromFunc``3(System.Func{``0,``1,``2})">
+ <summary>Convert the given Func delegate object to an F# function value</summary>
+ <param name="func">The input Func delegate.</param>
+ <returns>The F#funcfunction.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Core.FuncConvert.FromFunc``2(System.Func{``0,``1})">
+ <summary>Convert the given Func delegate object to an F# function value</summary>
+ <param name="func">The input Func delegate.</param>
+ <returns>The F# function.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Core.FuncConvert.FromFunc``1(System.Func{``0})">
+ <summary>Convert the given Func delegate object to an F# function value</summary>
+ <param name="func">The input Func delegate.</param>
+ <returns>The F# function.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Core.FuncConvert.FromAction``5(System.Action{``0,``1,``2,``3,``4})">
+ <summary>Convert the given Action delegate object to an F# function value</summary>
+ <param name="func">The input Action delegate.</param>
+ <returns>The F# function.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Core.FuncConvert.FromAction``4(System.Action{``0,``1,``2,``3})">
+ <summary>Convert the given Action delegate object to an F# function value</summary>
+ <param name="func">The input Action delegate.</param>
+ <returns>The F# function.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Core.FuncConvert.FromAction``3(System.Action{``0,``1,``2})">
+ <summary>Convert the given Action delegate object to an F# function value</summary>
+ <param name="func">The input Action delegate.</param>
+ <returns>The F# function.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Core.FuncConvert.FromAction``2(System.Action{``0,``1})">
+ <summary>Convert the given Action delegate object to an F# function value</summary>
+ <param name="func">The input Action delegate.</param>
+ <returns>The F#funcfunction.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Core.FuncConvert.FromAction``1(System.Action{``0})">
+ <summary>Convert the given Action delegate object to an F# function value</summary>
+ <param name="func">The input Action delegate.</param>
+ <returns>The F# function.</returns>
+</member>
+<member name="M:Microsoft.FSharp.Core.FuncConvert.FromAction(System.Action)">
+ <summary>Convert the given Action delegate object to an F# function value</summary>
+ <param name="func">The input Action delegate.</param>
+ <returns>The F# function.</returns>
 </member>
 <member name="T:Microsoft.FSharp.Core.FuncConvert">
  <summary>Helper functions for converting F# first class function values to and from CLI representations
@@ -7872,8 +8081,8 @@
  <returns>An F# function of the same type.</returns>
 </member>
 <member name="M:Microsoft.FSharp.Core.FSharpFunc`2.#ctor">
- <summary>Construct an instance of an F# first class function value </summary>
- <returns>The created F# function.</returns>
+ <summary>Construct an instance of an F# first class function value </summary> 
+ <returns>The created F# function.</returns> 
 </member>
 <member name="T:Microsoft.FSharp.Core.FSharpFunc`2">
  <summary>The CLI type used to represent F# function values. This type is not
@@ -7989,6 +8198,18 @@
 </member>
 <member name="T:Microsoft.FSharp.Core.FSharpChoice`2">
  <summary>Helper types for active patterns with 2 choices.</summary>
+</member>
+<member name="T:Microsoft.FSharp.Core.outref`1">
+ <summary>Represents a out-argument managed pointer in F# code. This type should only be used with F# 4.5+.</summary>
+</member>
+<member name="T:Microsoft.FSharp.Core.inref`1">
+ <summary>Represents a in-argument or readonly managed pointer in F# code. This type should only be used with F# 4.5+.</summary>
+</member>
+<member name="T:Microsoft.FSharp.Core.byref`1">
+ <summary>Represents a managed pointer in F# code. For F# 4.5+ this is considered equivalent to <c>byref&lt;'T, ByRefKinds.InOut&gt;</c></summary>
+</member>
+<member name="T:Microsoft.FSharp.Core.byref`2">
+ <summary>Represents a managed pointer in F# code.</summary>
 </member>
 <member name="T:Microsoft.FSharp.Core.int64`1">
  <summary>The type of 64-bit signed integer numbers, annotated with a unit of measure. The unit
@@ -9629,6 +9850,12 @@
 <member name="M:Microsoft.FSharp.Core.Operators.op_Concatenate(System.String,System.String)">
  <summary>Concatenate two strings. The operator '+' may also be used.</summary>
 </member>
+<member name="M:Microsoft.FSharp.Core.Operators.DefaultValueArg``1(Microsoft.FSharp.Core.FSharpValueOption{``0},``0)">
+ <summary>Used to specify a default value for an optional argument in the implementation of a function</summary>
+ <param name="arg">A value option representing the argument.</param>
+ <param name="defaultValue">The default value of the argument.</param>
+ <returns>The argument value. If it is None, the defaultValue is returned.</returns>
+</member>
 <member name="M:Microsoft.FSharp.Core.Operators.DefaultArg``1(Microsoft.FSharp.Core.FSharpOption{``0},``0)">
  <summary>Used to specify a default value for an optional argument in the implementation of a function</summary>
  <param name="arg">An option representing the argument.</param>
@@ -10803,6 +11030,26 @@
 <member name="T:Microsoft.FSharp.Core.LanguagePrimitives">
  <summary>Language primitives associated with the F# language</summary>
 </member>
+<member name="T:Microsoft.FSharp.Core.ByRefKinds.InOut">
+<summary>
+ Represents a byref that can be both read and written
+</summary>
+</member>
+<member name="T:Microsoft.FSharp.Core.ByRefKinds.In">
+<summary>
+ Represents a byref that can be read
+</summary>
+</member>
+<member name="T:Microsoft.FSharp.Core.ByRefKinds.Out">
+<summary>
+ Represents a byref that can be written
+</summary>
+</member>
+<member name="T:Microsoft.FSharp.Core.ByRefKinds">
+<summary>
+ Represents the types of byrefs in F# 4.5+
+</summary>
+</member>
 <member name="M:Microsoft.FSharp.Core.OptionModule.ToObj``1(Microsoft.FSharp.Core.FSharpOption{``0})">
  <summary>Convert an option to a potentially null value.</summary>
  <param name="value">The input value.</param>
@@ -11323,7 +11570,7 @@
 
  <returns>A new enumerator for the sequence.</returns>
 </member>
-<member name="M:Microsoft.FSharp.Core.CompilerServices.GeneratedSequenceBase`1.GenerateNext(System.Collections.Generic.IEnumerable{`0}@)">
+<member name="M:Microsoft.FSharp.Core.CompilerServices.GeneratedSequenceBase`1.GenerateNext(Microsoft.FSharp.Core.byref{System.Collections.Generic.IEnumerable{`0},Microsoft.FSharp.Core.ByRefKinds.InOut})">
  <summary>The F# compiler emits implementations of this type for compiled sequence expressions.</summary>
 
  <param name="result">A reference to the sequence.</param>
@@ -11641,6 +11888,9 @@
 </member>
 <member name="M:Microsoft.FSharp.Core.ExtraTopLevelOperators.CreateArray2D``2(System.Collections.Generic.IEnumerable{``0})">
  <summary>Builds a 2D array from a sequence of sequences of elements.</summary>
+</member>
+<member name="M:Microsoft.FSharp.Core.ExtraTopLevelOperators.CreateReadOnlyDictionary``2(System.Collections.Generic.IEnumerable{System.Tuple{``0,``1}})">
+ <summary>Builds a read-only lookup table from a sequence of key/value pairs. The key objects are indexed using generic hashing and equality.</summary>
 </member>
 <member name="M:Microsoft.FSharp.Core.ExtraTopLevelOperators.CreateDictionary``2(System.Collections.Generic.IEnumerable{System.Tuple{``0,``1}})">
  <summary>Builds a read-only lookup table from a sequence of key/value pairs. The key objects are indexed using generic hashing and equality.</summary>

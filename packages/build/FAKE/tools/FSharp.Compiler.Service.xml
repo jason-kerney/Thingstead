@@ -8,6 +8,12 @@
  (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:31)
 </summary>
 </member>
+<member name="M:FSComp.SR.writeToReadOnlyByref">
+<summary>
+ The byref pointer is readonly, so this write is not permitted.
+ (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:1429)
+</summary>
+</member>
 <member name="M:FSComp.SR.valueIsNotAccessible(System.String)">
 <summary>
  The value &apos;%s&apos; is not accessible from this code location
@@ -1796,6 +1802,12 @@
  (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:1197)
 </summary>
 </member>
+<member name="M:FSComp.SR.tcIsReadOnlyNotStruct">
+<summary>
+ A type annotated with IsReadOnly must also be a struct. Consider adding the [&lt;Struct&gt;] attribute to the type.
+ (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:1437)
+</summary>
+</member>
 <member name="M:FSComp.SR.tcInvalidUseOfTypeName">
 <summary>
  Invalid use of a type name
@@ -2840,6 +2852,18 @@
  (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:1096)
 </summary>
 </member>
+<member name="M:FSComp.SR.tcByrefReturnImplicitlyDereferenced">
+<summary>
+ A byref pointer returned by a function or method is implicitly dereferenced as of F# 4.5. To acquire the return value as a pointer, use the address-of operator, e.g. &apos;&amp;f(x)&apos; or &apos;&amp;obj.Method(arg1, arg2)&apos;.
+ (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:1431)
+</summary>
+</member>
+<member name="M:FSComp.SR.tcByRefLikeNotStruct">
+<summary>
+ A type annotated with IsByRefLike must also be a struct. Consider adding the [&lt;Struct&gt;] attribute to the type.
+ (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:1432)
+</summary>
+</member>
 <member name="M:FSComp.SR.tcBindingCannotBeUseAndRec">
 <summary>
  A binding cannot be marked both &apos;use&apos; and &apos;rec&apos;
@@ -3008,6 +3032,12 @@
  (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:86)
 </summary>
 </member>
+<member name="M:FSComp.SR.tastValueMustBeLocal">
+<summary>
+ A value defined in a module must be mutable in order to take its address, e.g. &apos;let mutable x = ...&apos;
+ (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:1436)
+</summary>
+</member>
 <member name="M:FSComp.SR.tastValueHasBeenCopied">
 <summary>
  The value has been copied to ensure the original is not mutated by this operation or because the copy is implicit when returning a struct from a member and another member is then accessed
@@ -3158,6 +3188,12 @@
  (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:80)
 </summary>
 </member>
+<member name="M:FSComp.SR.tastCantTakeAddressOfExpression">
+<summary>
+ Cannot take the address of the value returned from the expression. Assign the returned value to a let-bound value before taking the address.
+ (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:1442)
+</summary>
+</member>
 <member name="M:FSComp.SR.tastActivePatternsLimitedToSeven">
 <summary>
  Active patterns cannot return more than 7 possibilities
@@ -3197,6 +3233,12 @@
 <summary>
  Recursive class hierarchy in type &apos;%s&apos;
  (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:937)
+</summary>
+</member>
+<member name="M:FSComp.SR.readOnlyAttributeOnStructWithMutableField">
+<summary>
+ A ReadOnly attribute has been applied to a struct type with a mutable field.
+ (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:1430)
 </summary>
 </member>
 <member name="M:FSComp.SR.ppparsUnexpectedToken(System.String)">
@@ -4844,7 +4886,7 @@
 </member>
 <member name="M:FSComp.SR.missingElseBranch(System.String)">
 <summary>
- The &apos;if&apos; expression is missing an &apos;else&apos; branch. The &apos;then&apos; branch has type &apos;%s&apos;. Because &apos;if&apos; is an expression, and not a statement, add an &apos;else&apos; branch which returns a value of the same type.
+ This &apos;if&apos; expression is missing an &apos;else&apos; branch. Because &apos;if&apos; is an expression, and not a statement, add an &apos;else&apos; branch which also returns a value of type &apos;%s&apos;.
  (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:22)
 </summary>
 </member>
@@ -4886,7 +4928,7 @@
 </member>
 <member name="M:FSComp.SR.listElementHasWrongType(System.String,System.String)">
 <summary>
- All elements of a list constructor expression must have the same type. This expression was expected to have type &apos;%s&apos;, but here has type &apos;%s&apos;.
+ All elements of a list must be of the same type as the first element, which here is &apos;%s&apos;. This element has type &apos;%s&apos;.
  (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:20)
 </summary>
 </member>
@@ -6175,7 +6217,7 @@
 </member>
 <member name="M:FSComp.SR.followingPatternMatchClauseHasWrongType(System.String,System.String)">
 <summary>
- All branches of a pattern match expression must return values of the same type. The first branch returned a value of type &apos;%s&apos;, but this branch returned a value of type &apos;%s&apos;.
+ All branches of a pattern match expression must return values of the same type as the first branch, which here is &apos;%s&apos;. This branch returns a value of type &apos;%s&apos;.
  (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:25)
 </summary>
 </member>
@@ -6565,7 +6607,7 @@
 </member>
 <member name="M:FSComp.SR.elseBranchHasWrongType(System.String,System.String)">
 <summary>
- All branches of an &apos;if&apos; expression must have the same type. This expression was expected to have type &apos;%s&apos;, but here has type &apos;%s&apos;.
+ All branches of an &apos;if&apos; expression must return values of the same type as the first branch, which here is &apos;%s&apos;. This branch returns a value of type &apos;%s&apos;.
  (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:24)
 </summary>
 </member>
@@ -7217,6 +7259,12 @@
  (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:240)
 </summary>
 </member>
+<member name="M:FSComp.SR.chkStructsMayNotReturnAddressesOfContents">
+<summary>
+ Struct members cannot return the address of fields of the struct by reference
+ (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:1438)
+</summary>
+</member>
 <member name="M:FSComp.SR.chkSplicingOnlyInQuotations">
 <summary>
  Expression-splicing operators may only be used within quotations
@@ -7259,6 +7307,30 @@
  (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:249)
 </summary>
 </member>
+<member name="M:FSComp.SR.chkNoWriteToLimitedSpan(System.String)">
+<summary>
+ This value can&apos;t be assigned because the target &apos;%s&apos; may refer to non-stack-local memory, while the expression being assigned is assessed to potentially refer to stack-local memory. This is to help prevent pointers to stack-bound memory escaping their scope.
+ (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:1435)
+</summary>
+</member>
+<member name="M:FSComp.SR.chkNoSpanLikeVariable(System.String)">
+<summary>
+ The Span or IsByRefLike variable &apos;%s&apos; cannot be used at this point. This is to ensure the address of the local value does not escape its scope.
+ (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:1440)
+</summary>
+</member>
+<member name="M:FSComp.SR.chkNoSpanLikeValueFromExpression">
+<summary>
+ A Span or IsByRefLike value returned from the expression cannot be used at ths point. This is to ensure the address of the local value does not escape its scope.
+ (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:1441)
+</summary>
+</member>
+<member name="M:FSComp.SR.chkNoReturnOfLimitedSpan">
+<summary>
+ The Span or IsByRefLike expression cannot be returned from this function or method, because it is composed using elements that may escape their scope.
+ (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:1434)
+</summary>
+</member>
 <member name="M:FSComp.SR.chkNoReflectedDefinitionOnStructMember">
 <summary>
  ReflectedDefinitionAttribute may not be applied to an instance member on a struct type, because the instance member takes an implicit &apos;this&apos; byref parameter
@@ -7289,10 +7361,10 @@
  (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:1257)
 </summary>
 </member>
-<member name="M:FSComp.SR.chkNoByrefReturnOfLocal(System.String)">
+<member name="M:FSComp.SR.chkNoByrefLikeFunctionCall">
 <summary>
- The address of the variable &apos;%s&apos; cannot be used at this point. A method or function may not return the address of this local value.
- (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:1334)
+ The function or method call cannot be used at this point, because one argument that is a byref of a non-stack-local Span or IsByRefLike type is used with another argument that is a stack-local Span or IsByRefLike type. This is to ensure the address of the local value does not escape its scope.
+ (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:1439)
 </summary>
 </member>
 <member name="M:FSComp.SR.chkNoByrefInTypeAbbrev">
@@ -7311,6 +7383,18 @@
 <summary>
  A byref typed value would be stored here. Top-level let-bound byref values are not permitted.
  (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:259)
+</summary>
+</member>
+<member name="M:FSComp.SR.chkNoByrefAddressOfValueFromExpression">
+<summary>
+ The address of a value returned from the expression cannot be used at this point. This is to ensure the address of the local value does not escape its scope.
+ (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:1433)
+</summary>
+</member>
+<member name="M:FSComp.SR.chkNoByrefAddressOfLocal(System.String)">
+<summary>
+ The address of the variable &apos;%s&apos; or a related expression cannot be used at this point. This is to ensure the address of the local value does not escape its scope.
+ (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:1334)
 </summary>
 </member>
 <member name="M:FSComp.SR.chkNoAddressStaticFieldAtThisPoint(System.String)">
@@ -7909,7 +7993,7 @@
 </member>
 <member name="M:FSComp.SR.arrayElementHasWrongType(System.String,System.String)">
 <summary>
- All elements of an array constructor expression must have the same type. This expression was expected to have type &apos;%s&apos;, but here has type &apos;%s&apos;.
+ All elements of an array must be of the same type as the first element, which here is &apos;%s&apos;. This element has type &apos;%s&apos;.
  (Originally from C:\projects\fsharp-compiler-service\src\fsharp\FSComp.txt:21)
 </summary>
 </member>
@@ -13243,6 +13327,11 @@ Emit comparison instructions.
  F# syntax: expr.[expr,...,expr]
 </summary>
 </member>
+<member name="T:Microsoft.FSharp.Compiler.Ast.SynExpr.Set">
+<summary>
+ F# syntax: expr &lt;- expr
+</summary>
+</member>
 <member name="T:Microsoft.FSharp.Compiler.Ast.SynExpr.DotSet">
 <summary>
  F# syntax: expr.ident...ident &lt;- expr
@@ -14577,7 +14666,7 @@ Emit comparison instructions.
  TImplFile(qualifiedNameOfFile,pragmas,implementationExpressionWithSignature,hasExplicitEntryPoint,isScript)
 </summary>
 </member>
-<member name="M:Microsoft.FSharp.Compiler.Tast.ModuleOrNamespaceBinding.ToString">
+<member name="P:Microsoft.FSharp.Compiler.Tast.ModuleOrNamespaceBinding.DebugText">
 <summary>
  This is the body of the module/namespace 
 </summary>
@@ -14703,7 +14792,7 @@ Emit comparison instructions.
 </member>
 <member name="T:Microsoft.FSharp.Compiler.Tast.LValueOperation.LSet">
 <summary>
- In C syntax this is:  localv = e     , note == *(&amp;localv) = e == LGetAddr; LByrefSet
+ In C syntax this is:  localv = e     , note == *(&amp;localv) = e == LAddrOf; LByrefSet
 </summary>
 </member>
 <member name="T:Microsoft.FSharp.Compiler.Tast.LValueOperation.LByrefGet">
@@ -14711,7 +14800,7 @@ Emit comparison instructions.
  In C syntax this is: *localv_ptr        
 </summary>
 </member>
-<member name="T:Microsoft.FSharp.Compiler.Tast.LValueOperation.LGetAddr">
+<member name="T:Microsoft.FSharp.Compiler.Tast.LValueOperation.LAddrOf">
 <summary>
  In C syntax this is: &amp;localv            
 </summary>
@@ -16045,6 +16134,16 @@ Emit comparison instructions.
  Get the type parameters for an entity that is a type declaration, otherwise return the empty list.
 </summary>
 </member>
+<member name="P:Microsoft.FSharp.Compiler.Tast.EntityRef.TryIsReadOnly">
+<summary>
+ The on-demand analysis about whether the entity has the IsByRefLike attribute
+</summary>
+</member>
+<member name="P:Microsoft.FSharp.Compiler.Tast.EntityRef.TryIsByRefLike">
+<summary>
+ The on-demand analysis about whether the entity has the IsByRefLike attribute
+</summary>
+</member>
 <member name="P:Microsoft.FSharp.Compiler.Tast.EntityRef.TryDeref">
 <summary>
  Dereference the TyconRef to a Tycon option.
@@ -16418,6 +16517,16 @@ Emit comparison instructions.
  Lazy because it may read metadata, must provide a context &quot;range&quot; in case error occurs reading metadata.
 </summary>
 </member>
+<member name="M:Microsoft.FSharp.Compiler.Tast.EntityRef.SetIsReadOnly(System.Boolean)">
+<summary>
+ Set the on-demand analysis about whether the entity has the IsReadOnly attribute or is otherwise determined to be a readonly struct
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.Tast.EntityRef.SetIsByRefLike(System.Boolean)">
+<summary>
+ Set the on-demand analysis about whether the entity has the IsByRefLike attribute
+</summary>
+</member>
 <member name="M:Microsoft.FSharp.Compiler.Tast.EntityRef.GetUnionCaseByName(System.String)">
 <summary>
  Get a union case of a type by name
@@ -16498,7 +16607,7 @@ Emit comparison instructions.
  A reference to the entity containing the value or member. This will always be a non-local reference
 </summary>
 </member>
-<member name="P:Microsoft.FSharp.Compiler.Tast.NonLocalValOrMemberRef.Display">
+<member name="P:Microsoft.FSharp.Compiler.Tast.NonLocalValOrMemberRef.DebugText">
 <summary>
  For debugging
 </summary>
@@ -17011,10 +17120,10 @@ Get the signature for the value&apos;s XML documentation
 </member>
 <member name="T:Microsoft.FSharp.Compiler.Tast.TraitConstraintSln.ILMethSln">
 <summary>
- ILMethSln(typ, extOpt, ilMethodRef, minst)
+ ILMethSln(ty, extOpt, ilMethodRef, minst)
 
  Indicates a trait is solved by a .NET method.
-    typ         -- the type and its instantiation
+    ty         -- the type and its instantiation
     extOpt      -- information about an extension member, if any
     ilMethodRef -- the method that solves the trait constraint
     minst       -- the generic method instantiation 
@@ -17032,10 +17141,10 @@ Get the signature for the value&apos;s XML documentation
 </member>
 <member name="T:Microsoft.FSharp.Compiler.Tast.TraitConstraintSln.FSMethSln">
 <summary>
- FSMethSln(typ, vref, minst)
+ FSMethSln(ty, vref, minst)
 
  Indicates a trait is solved by an F# method.
-    typ   -- the type and its instantiation
+    ty   -- the type and its instantiation
     vref  -- the method that solves the trait constraint
     minst -- the generic method instantiation 
 </summary>
@@ -17227,6 +17336,11 @@ Get the signature for the value&apos;s XML documentation
  Indicates if the type variable is compiler generated, i.e. is an implicit type inference variable 
 </summary>
 </member>
+<member name="P:Microsoft.FSharp.Compiler.Tast.Typar.IsCompatFlex">
+<summary>
+ Indicates that whether this type parameter is a compat-flex type parameter (i.e. where &quot;expr :&gt; tp&quot; only emits an optional warning)
+</summary>
+</member>
 <member name="P:Microsoft.FSharp.Compiler.Tast.Typar.Id">
 <summary>
  The identifier for a type parameter definition
@@ -17275,6 +17389,11 @@ Get the signature for the value&apos;s XML documentation
 <member name="M:Microsoft.FSharp.Compiler.Tast.Typar.SetRigidity(Microsoft.FSharp.Compiler.Tast.TyparRigidity)">
 <summary>
  Sets the rigidity of a type variable
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.Tast.Typar.SetIsCompatFlex(System.Boolean)">
+<summary>
+ Set whether this type parameter is a compat-flex type parameter (i.e. where &quot;expr :&gt; tp&quot; only emits an optional warning)
 </summary>
 </member>
 <member name="M:Microsoft.FSharp.Compiler.Tast.Typar.SetIdent(Microsoft.FSharp.Compiler.Ast.Ident)">
@@ -17358,7 +17477,7 @@ Get the signature for the value&apos;s XML documentation
  A set of static methods for constructing types.
 </summary>
 </member>
-<member name="F:Microsoft.FSharp.Compiler.Tast.ModuleOrNamespaceType.entities@1676">
+<member name="F:Microsoft.FSharp.Compiler.Tast.ModuleOrNamespaceType.entities@1777">
 <summary>
  Mutation used during compilation of FSharp.Core.dll
 </summary>
@@ -18085,6 +18204,16 @@ Get the signature for the value&apos;s XML documentation
  Get the type parameters for an entity that is a type declaration, otherwise return the empty list.
 </summary>
 </member>
+<member name="P:Microsoft.FSharp.Compiler.Tast.Entity.TryIsReadOnly">
+<summary>
+ These two bits represents the on-demand analysis about whether the entity has the IsReadOnly attribute or is otherwise determined to be a readonly struct
+</summary>
+</member>
+<member name="P:Microsoft.FSharp.Compiler.Tast.Entity.TryIsByRefLike">
+<summary>
+ The on-demand analysis about whether the entity has the IsByRefLike attribute
+</summary>
+</member>
 <member name="P:Microsoft.FSharp.Compiler.Tast.Entity.TrueInstanceFieldsAsList">
 <summary>
  Get a list of all instance fields for F#-defined record, struct and class fields in this type definition,
@@ -18457,6 +18586,16 @@ Get the signature for the value&apos;s XML documentation
  Sets the structness of a record or union type definition
 </summary>
 </member>
+<member name="M:Microsoft.FSharp.Compiler.Tast.Entity.SetIsReadOnly(System.Boolean)">
+<summary>
+ Set the on-demand analysis about whether the entity has the IsReadOnly attribute or is otherwise determined to be a readonly struct
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.Tast.Entity.SetIsByRefLike(System.Boolean)">
+<summary>
+ Set the on-demand analysis about whether the entity has the IsByRefLike attribute
+</summary>
+</member>
 <member name="M:Microsoft.FSharp.Compiler.Tast.Entity.SetAttribs(Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Compiler.Tast.Attrib})">
 <summary>
  Set the custom attributes on an F# type definition.
@@ -18569,6 +18708,16 @@ Get the signature for the value&apos;s XML documentation
  Indicates that a module is compiled to a class with the &quot;Module&quot; suffix added. 
 </summary>
 </member>
+<member name="P:Microsoft.FSharp.Compiler.Tast.EntityFlags.TryIsReadOnly">
+<summary>
+ These two bits represents the on-demand analysis about whether the entity has the IsReadOnly attribute or is otherwise determined to be a readonly struct
+</summary>
+</member>
+<member name="P:Microsoft.FSharp.Compiler.Tast.EntityFlags.TryIsByRefLike">
+<summary>
+ These two bits represents the on-demand analysis about whether the entity has the IsByRefLike attribute
+</summary>
+</member>
 <member name="P:Microsoft.FSharp.Compiler.Tast.EntityFlags.ReservedBitForPickleFormatTyconReprFlag">
 <summary>
  This bit is reserved for us in the pickle format, see pickle.fs, it&apos;s being listed here to stop it ever being used for anything else
@@ -18592,6 +18741,16 @@ Get the signature for the value&apos;s XML documentation
 <member name="P:Microsoft.FSharp.Compiler.Tast.EntityFlags.IsModuleOrNamespace">
 <summary>
  Indicates the Entity is actually a module or namespace, not a type definition
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.Tast.EntityFlags.WithIsReadOnly(System.Boolean)">
+<summary>
+ Adjust the on-demand analysis about whether the entity has the IsReadOnly attribute or is otherwise determined to be a readonly struct
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.Tast.EntityFlags.WithIsByRefLike(System.Boolean)">
+<summary>
+ Adjust the on-demand analysis about whether the entity has the IsByRefLike attribute
 </summary>
 </member>
 <member name="T:Microsoft.FSharp.Compiler.Tast.EntityFlags">
@@ -18628,6 +18787,11 @@ Get the signature for the value&apos;s XML documentation
 <member name="P:Microsoft.FSharp.Compiler.Tast.TyparFlags.IsCompilerGenerated">
 <summary>
  Indicates if the type variable is compiler generated, i.e. is an implicit type inference variable 
+</summary>
+</member>
+<member name="P:Microsoft.FSharp.Compiler.Tast.TyparFlags.IsCompatFlex">
+<summary>
+ Indicates that whether this type parameter is a compat-flex type parameter (i.e. where &quot;expr :&gt; tp&quot; only emits an optional warning)
 </summary>
 </member>
 <member name="P:Microsoft.FSharp.Compiler.Tast.TyparFlags.EqualityConditionalOn">
@@ -18923,6 +19087,31 @@ Get the signature for the value&apos;s XML documentation
  Are we assuming all code gen is for F# interactive, with no static linking 
 </summary>
 </member>
+<member name="P:Microsoft.FSharp.Compiler.TcGlobals.BuiltinAttribInfo.DebugText">
+<summary>
+ For debugging
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.TcGlobals.BuiltinAttribInfo.ToString">
+<summary>
+ For debugging
+</summary>
+</member>
+<member name="P:Microsoft.FSharp.Compiler.TcGlobals.IntrinsicValRef.DebugText">
+<summary>
+ For debugging
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.TcGlobals.IntrinsicValRef.ToString">
+<summary>
+ For debugging
+</summary>
+</member>
+<member name="T:Microsoft.FSharp.Compiler.TcGlobals.IntrinsicValRef">
+<summary>
+ Represents an intrinsic value from FSharp.Core known to the compiler
+</summary>
+</member>
 <member name="T:Microsoft.FSharp.Compiler.TcGlobals">
 <summary>
  Defines the global environment for all type checking.
@@ -18977,6 +19166,11 @@ Get the signature for the value&apos;s XML documentation
  a set of residual types that must also satisfy the constraint
 </summary>
 </member>
+<member name="M:Microsoft.FSharp.Compiler.Tastops.isSpanLikeTy(Microsoft.FSharp.Compiler.TcGlobals.TcGlobals,Microsoft.FSharp.Compiler.Range.range,Microsoft.FSharp.Compiler.Tast.TType)">
+<summary>
+ Check if the type is a byref-like but not a byref.
+</summary>
+</member>
 <member name="M:Microsoft.FSharp.Compiler.Tastops.TryDecodeTypeProviderAssemblyAttr(Microsoft.FSharp.Compiler.AbstractIL.IL.ILGlobals,Microsoft.FSharp.Compiler.AbstractIL.IL.ILAttribute)">
 <summary>
  returns Some(assemblyName) for success
@@ -19021,7 +19215,7 @@ Get the signature for the value&apos;s XML documentation
  Get the element type of an array type
 </summary>
 </member>
-<member name="M:Microsoft.FSharp.Compiler.Tastops.mkValAddr(Microsoft.FSharp.Compiler.Range.range,Microsoft.FSharp.Compiler.Tast.ValRef)">
+<member name="M:Microsoft.FSharp.Compiler.Tastops.mkValAddr(Microsoft.FSharp.Compiler.Range.range,System.Boolean,Microsoft.FSharp.Compiler.Tast.ValRef)">
 <summary>
  &amp;localv           
 </summary>
@@ -19167,7 +19361,7 @@ Get the signature for the value&apos;s XML documentation
  the input should be the address of the expression.
 </summary>
 </member>
-<member name="M:Microsoft.FSharp.Compiler.Tastops.mkUnionCaseFieldGetAddrProvenViaExprAddr(Microsoft.FSharp.Compiler.Tast.Expr,Microsoft.FSharp.Compiler.Tast.UnionCaseRef,Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Compiler.Tast.TType},System.Int32,Microsoft.FSharp.Compiler.Range.range)">
+<member name="M:Microsoft.FSharp.Compiler.Tastops.mkUnionCaseFieldGetAddrProvenViaExprAddr(System.Boolean,Microsoft.FSharp.Compiler.Tast.Expr,Microsoft.FSharp.Compiler.Tast.UnionCaseRef,Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Compiler.Tast.TType},System.Int32,Microsoft.FSharp.Compiler.Range.range)">
 <summary>
  Build a &apos;TOp.UnionCaseFieldGetAddr&apos; expression for a field of a union when we&apos;ve already determined the value to be a particular union case. For ref-unions,
  the input expression has &apos;TType_ucase&apos;, which is an F# compiler internal &quot;type&quot; corresponding to the union case. For struct-unions,
@@ -19194,6 +19388,76 @@ Get the signature for the value&apos;s XML documentation
 <member name="M:Microsoft.FSharp.Compiler.Tastops.exprForVal(Microsoft.FSharp.Compiler.Range.range,Microsoft.FSharp.Compiler.Tast.Val)">
 <summary>
  Note: try to use exprForValRef or the expression returned from mkLocal instead of this. 
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.Tastops.valsOfBinds(Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Compiler.Tast.Binding})">
+<summary>
+ Get the values for a set of bindings
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.Tastops.stripExpr(Microsoft.FSharp.Compiler.Tast.Expr)">
+<summary>
+ Ignore &apos;Expr.Link&apos; in an expression
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.Tastops.ensureCcuHasModuleOrNamespaceAtPath(Microsoft.FSharp.Compiler.Tast.CcuThunk,Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Compiler.Ast.Ident},Microsoft.FSharp.Compiler.Tast.CompilationPath,Microsoft.FSharp.Compiler.Ast.XmlDoc)">
+<summary>
+ Module publication, used while compiling fslib.
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.Tastops.mkLambdaTy(Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Compiler.Tast.Typar},Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Compiler.Tast.TType},Microsoft.FSharp.Compiler.Tast.TType)">
+<summary>
+ Get the curried type corresponding to a lambda 
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.Tastops.mkMultiLambdaTy(Microsoft.FSharp.Compiler.Range.range,Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Compiler.Tast.Val},Microsoft.FSharp.Compiler.Tast.TType)">
+<summary>
+ Get the curried type corresponding to a lambda 
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.Tastops.typeOfLambdaArg(Microsoft.FSharp.Compiler.Range.range,Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Compiler.Tast.Val})">
+<summary>
+ Get the natural type of a single argument amongst a set of curried arguments
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.Tastops.mkIteratedFunTy(Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Compiler.Tast.TType},Microsoft.FSharp.Compiler.Tast.TType)">
+<summary>
+ Build a curried function type
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.Tastops.mkForallTyIfNeeded(Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Compiler.Tast.Typar},Microsoft.FSharp.Compiler.Tast.TType)">
+<summary>
+ Build a type-forall anonymous generic type if necessary
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.Tastops.op_MinusMinusGreater(Microsoft.FSharp.Compiler.Tast.TType,Microsoft.FSharp.Compiler.Tast.TType)">
+<summary>
+ Build a function type
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.Tastops.mkFunTy(Microsoft.FSharp.Compiler.Tast.TType,Microsoft.FSharp.Compiler.Tast.TType)">
+<summary>
+ Build a function type
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.Tastops.stripTyEqnsWrtErasure(Microsoft.FSharp.Compiler.Tastops.Erasure,Microsoft.FSharp.Compiler.TcGlobals.TcGlobals,Microsoft.FSharp.Compiler.Tast.TType)">
+<summary>
+ Reduce a type to its more anonical form subject to an erasure flag, inference equations and abbreviations
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.Tastops.measureEquiv(Microsoft.FSharp.Compiler.TcGlobals.TcGlobals,Microsoft.FSharp.Compiler.Tast.Measure,Microsoft.FSharp.Compiler.Tast.Measure)">
+<summary>
+ Check the equivalence of two units-of-measure
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.Tastops.typeEquiv(Microsoft.FSharp.Compiler.TcGlobals.TcGlobals,Microsoft.FSharp.Compiler.Tast.TType,Microsoft.FSharp.Compiler.Tast.TType)">
+<summary>
+ Check the equivalence of two types 
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.Tastops.typeEquivAux(Microsoft.FSharp.Compiler.Tastops.Erasure,Microsoft.FSharp.Compiler.TcGlobals.TcGlobals,Microsoft.FSharp.Compiler.Tast.TType,Microsoft.FSharp.Compiler.Tast.TType)">
+<summary>
+ Check the equivalence of two types up to an erasure flag
 </summary>
 </member>
 <member name="T:Microsoft.FSharp.Compiler.Tastops.SimplifyTypes">
@@ -19256,7 +19520,7 @@ Get the signature for the value&apos;s XML documentation
  Deserialize a TAST description of a compilation unit
 </summary>
 </member>
-<member name="P:Microsoft.FSharp.Compiler.TastPickle.u_typ">
+<member name="P:Microsoft.FSharp.Compiler.TastPickle.u_ty">
 <summary>
  Deserialize a TAST type
 </summary>
@@ -19346,7 +19610,7 @@ Get the signature for the value&apos;s XML documentation
  Serialize a TAST description of a compilation unit
 </summary>
 </member>
-<member name="P:Microsoft.FSharp.Compiler.TastPickle.p_typ">
+<member name="P:Microsoft.FSharp.Compiler.TastPickle.p_ty">
 <summary>
  Serialize a TAST type
 </summary>
@@ -20322,6 +20586,11 @@ Get the signature for the value&apos;s XML documentation
  Get the enclosing type of the method info, using a nominal type for tuple types
 </summary>
 </member>
+<member name="M:Microsoft.FSharp.Compiler.Infos.MethInfo.ObjArgNeedsAddress(Microsoft.FSharp.Compiler.Import.ImportMap,Microsoft.FSharp.Compiler.Range.range)">
+<summary>
+ Indicates if this is an extension member (e.g. on a struct) that takes a byref arg
+</summary>
+</member>
 <member name="M:Microsoft.FSharp.Compiler.Infos.MethInfo.MethInfosUseIdenticalDefinitions(Microsoft.FSharp.Compiler.Infos.MethInfo,Microsoft.FSharp.Compiler.Infos.MethInfo)">
 <summary>
  Tests whether two method infos have the same underlying definition.
@@ -20823,8 +21092,8 @@ Get the signature for the value&apos;s XML documentation
 <summary>
  Copy constraints.  If the constraint comes from a type parameter associated
  with a type constructor then we are simply renaming type variables.  If it comes
- from a generic method in a generic class (e.g. typ.M&lt;_&gt;) then we may be both substituting the
- instantiation associated with &apos;typ&apos; as well as copying the type parameters associated with 
+ from a generic method in a generic class (e.g. ty.M&lt;_&gt;) then we may be both substituting the
+ instantiation associated with &apos;ty&apos; as well as copying the type parameters associated with 
  M and instantiating their constraints
 
  Note: this now looks identical to constraint instantiation.
@@ -21160,7 +21429,7 @@ Get the signature for the value&apos;s XML documentation
  returning errors and warnings as data
 </summary>
 </member>
-<member name="M:Microsoft.FSharp.Compiler.AttributeChecking.CheckILAttributes(Microsoft.FSharp.Compiler.TcGlobals.TcGlobals,Microsoft.FSharp.Compiler.AbstractIL.IL.ILAttributes,Microsoft.FSharp.Compiler.Range.range)">
+<member name="M:Microsoft.FSharp.Compiler.AttributeChecking.CheckILAttributes(Microsoft.FSharp.Compiler.TcGlobals.TcGlobals,System.Boolean,Microsoft.FSharp.Compiler.AbstractIL.IL.ILAttributes,Microsoft.FSharp.Compiler.Range.range)">
 <summary>
  Check IL attributes for &apos;ObsoleteAttribute&apos;, returning errors and warnings as data
 </summary>
@@ -21351,7 +21620,7 @@ Get the signature for the value&apos;s XML documentation
  (from http://msdn.microsoft.com/library/default.asp?url=/library/en-us/csref/html/vcwlkEventsTutorial.asp) 
 </summary>
 </member>
-<member name="M:Microsoft.FSharp.Compiler.InfoReader.TryDestStandardDelegateTyp(Microsoft.FSharp.Compiler.InfoReader.InfoReader,Microsoft.FSharp.Compiler.Range.range,Microsoft.FSharp.Compiler.AccessibilityLogic.AccessorDomain,Microsoft.FSharp.Compiler.Tast.TType)">
+<member name="M:Microsoft.FSharp.Compiler.InfoReader.TryDestStandardDelegateType(Microsoft.FSharp.Compiler.InfoReader.InfoReader,Microsoft.FSharp.Compiler.Range.range,Microsoft.FSharp.Compiler.AccessibilityLogic.AccessorDomain,Microsoft.FSharp.Compiler.Tast.TType)">
 <summary>
  Try and interpret a delegate type as a &quot;standard&quot; .NET delegate type associated with an event, with a &quot;sender&quot; parameter.
 </summary>
@@ -21610,7 +21879,7 @@ Get the signature for the value&apos;s XML documentation
 </member>
 <member name="M:Microsoft.FSharp.Compiler.NicePrint.PrintTypes.layoutTypeWithInfoAndPrec(Microsoft.FSharp.Compiler.Tastops.DisplayEnv,Microsoft.FSharp.Compiler.Tastops.SimplifyTypes.TypeSimplificationInfo,System.Int32,Microsoft.FSharp.Compiler.Tast.TType)">
 <summary>
- Layout a type, taking precedence into account to insert brackets where needed *)
+ Layout a type, taking precedence into account to insert brackets where needed
 </summary>
 </member>
 <member name="M:Microsoft.FSharp.Compiler.NicePrint.PrintTypes.layoutTypeAppWithInfoAndPrec(Microsoft.FSharp.Compiler.Tastops.DisplayEnv,Microsoft.FSharp.Compiler.Tastops.SimplifyTypes.TypeSimplificationInfo,Internal.Utilities.StructuredFormat.Layout,System.Int32,System.Boolean,Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Compiler.Tast.TType})">
@@ -21799,6 +22068,11 @@ Get the signature for the value&apos;s XML documentation
  An implementation of ITypecheckResultsSink to collect information during type checking
 </summary>
 </member>
+<member name="P:Microsoft.FSharp.Compiler.NameResolution.ITypecheckResultsSink.FormatStringCheckContext">
+<summary>
+ Cached line-end normalized source text and an array of line end positions, used for format string parsing
+</summary>
+</member>
 <member name="P:Microsoft.FSharp.Compiler.NameResolution.ITypecheckResultsSink.CurrentSource">
 <summary>
  Get the current source
@@ -21832,6 +22106,21 @@ Get the signature for the value&apos;s XML documentation
 <member name="T:Microsoft.FSharp.Compiler.NameResolution.ITypecheckResultsSink">
 <summary>
  An abstract type for reporting the results of name resolution and type checking
+</summary>
+</member>
+<member name="P:Microsoft.FSharp.Compiler.NameResolution.FormatStringCheckContext.LineEndPositions">
+<summary>
+ Array of line end positions
+</summary>
+</member>
+<member name="P:Microsoft.FSharp.Compiler.NameResolution.FormatStringCheckContext.NormalizedSource">
+<summary>
+ Line-end normalized source text
+</summary>
+</member>
+<member name="T:Microsoft.FSharp.Compiler.NameResolution.FormatStringCheckContext">
+<summary>
+ Line-end normalized source text and an array of line end positions, used for format string parsing
 </summary>
 </member>
 <member name="P:Microsoft.FSharp.Compiler.NameResolution.OpenDeclaration.IsOwnNamespace">
@@ -22609,16 +22898,6 @@ Get the signature for the value&apos;s XML documentation
  unassigned args
 </summary>
 </member>
-<member name="P:Microsoft.FSharp.Compiler.MethodCalls.CalledMeth`1.ReturnTypeAfterOutArgTupling">
-<summary>
- return type after tupling of out args is taken into account
-</summary>
-</member>
-<member name="P:Microsoft.FSharp.Compiler.MethodCalls.CalledMeth`1.ReturnType">
-<summary>
- return type
-</summary>
-</member>
 <member name="P:Microsoft.FSharp.Compiler.MethodCalls.CalledMeth`1.Method">
 <summary>
  the method we&apos;re attempting to call 
@@ -22642,6 +22921,16 @@ Get the signature for the value&apos;s XML documentation
 <member name="P:Microsoft.FSharp.Compiler.MethodCalls.CalledMeth`1.CalledTyArgs">
 <summary>
  the instantiation of the method we&apos;re attempting to call 
+</summary>
+</member>
+<member name="P:Microsoft.FSharp.Compiler.MethodCalls.CalledMeth`1.CalledReturnTypeAfterOutArgTupling">
+<summary>
+ return type after tupling of out args is taken into account
+</summary>
+</member>
+<member name="P:Microsoft.FSharp.Compiler.MethodCalls.CalledMeth`1.CalledReturnTypeAfterByrefDeref">
+<summary>
+ return type after implicit deference of byref returns is taken into account
 </summary>
 </member>
 <member name="P:Microsoft.FSharp.Compiler.MethodCalls.CalledMeth`1.AttributeAssignedNamedArgs">
@@ -22948,6 +23237,11 @@ Get the signature for the value&apos;s XML documentation
 <member name="M:Microsoft.FSharp.Compiler.ConstraintSolver.NewErrorType">
 <summary>
  Create an inference type variable representing an error condition when checking an expression
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.ConstraintSolver.NewByRefKindInferenceType(Microsoft.FSharp.Compiler.TcGlobals.TcGlobals,Microsoft.FSharp.Compiler.Range.range)">
+<summary>
+ Create an inference type variable for the kind of a byref pointer
 </summary>
 </member>
 <member name="M:Microsoft.FSharp.Compiler.ConstraintSolver.NewInferenceType">
@@ -23460,6 +23754,11 @@ Special cases where representation uses Lambda.
 <member name="M:Microsoft.FSharp.Compiler.CompileOps.TcConfig.GetAvailableLoadedSources">
 <summary>
  Get the loaded sources that exist and issue a warning for the ones that don&apos;t
+</summary>
+</member>
+<member name="P:Microsoft.FSharp.Compiler.CompileOps.TcConfigBuilder.internalTestSpanStackReferring">
+<summary>
+ if true - &apos;let mutable x = Span.Empty&apos;, the value &apos;x&apos; is a stack referring span. Used for internal testing purposes only until we get true stack spans.
 </summary>
 </member>
 <member name="P:Microsoft.FSharp.Compiler.CompileOps.TcConfigBuilder.tryGetMetadataSnapshot">
@@ -24330,6 +24629,11 @@ Special cases where representation uses Lambda.
  Instantiate generic type parameters in a type
 </summary>
 </member>
+<member name="M:Microsoft.FSharp.Compiler.SourceCodeServices.FSharpType.FormatLayout(Microsoft.FSharp.Compiler.SourceCodeServices.FSharpDisplayContext)">
+<summary>
+ Format the type using the rules of the given display context
+</summary>
+</member>
 <member name="M:Microsoft.FSharp.Compiler.SourceCodeServices.FSharpType.Format(Microsoft.FSharp.Compiler.SourceCodeServices.FSharpDisplayContext)">
 <summary>
  Format the type using the rules of the given display context
@@ -24428,6 +24732,11 @@ Special cases where representation uses Lambda.
 <member name="P:Microsoft.FSharp.Compiler.SourceCodeServices.FSharpParameter.IsOptionalArg">
 <summary>
  Indicate this is an optional argument
+</summary>
+</member>
+<member name="P:Microsoft.FSharp.Compiler.SourceCodeServices.FSharpParameter.IsInArg">
+<summary>
+ Indicate this is an in argument
 </summary>
 </member>
 <member name="P:Microsoft.FSharp.Compiler.SourceCodeServices.FSharpParameter.DeclarationLocation">
@@ -24719,6 +25028,11 @@ Special cases where representation uses Lambda.
 <summary>
  Gets the overloads for the current method
  matchParameterNumber indicates whether to filter the overloads to match the number of parameters in the current symbol
+</summary>
+</member>
+<member name="M:Microsoft.FSharp.Compiler.SourceCodeServices.FSharpMemberOrFunctionOrValue.FormatLayout(Microsoft.FSharp.Compiler.SourceCodeServices.FSharpDisplayContext)">
+<summary>
+ Format the type using the rules of the given display context
 </summary>
 </member>
 <member name="T:Microsoft.FSharp.Compiler.SourceCodeServices.FSharpMemberOrFunctionOrValue">
@@ -26306,6 +26620,11 @@ Special cases where representation uses Lambda.
  `RawEntity` list retrieved from an assembly.
 </summary>
 </member>
+<member name="P:Microsoft.FSharp.Compiler.SourceCodeServices.AssemblySymbol.UnresolvedSymbol">
+<summary>
+ Cache display name and namespace, used for completion.
+</summary>
+</member>
 <member name="P:Microsoft.FSharp.Compiler.SourceCodeServices.AssemblySymbol.Kind">
 <summary>
  Function that returns `EntityKind` based of given `LookupKind`.
@@ -27098,6 +27417,11 @@ Special cases where representation uses Lambda.
  <param name="names">The identifiers at the location where the information is being requested.</param>
  <param name="userOpName">An optional string used for tracing compiler operations associated with this request.</param>
 </member>
+<member name="M:Microsoft.FSharp.Compiler.SourceCodeServices.FSharpCheckFileResults.GetDisplayEnvForPos(Microsoft.FSharp.Compiler.Range.pos)">
+<summary>
+ Find the most precise display environment for the given line and column.
+</summary>
+</member>
 <member name="M:Microsoft.FSharp.Compiler.SourceCodeServices.FSharpCheckFileResults.GetDeclarationLocation(System.Int32,System.Int32,System.String,Microsoft.FSharp.Collections.FSharpList{System.String},Microsoft.FSharp.Core.FSharpOption{System.Boolean},Microsoft.FSharp.Core.FSharpOption{System.String})">
  <summary>Resolve the names at the given location to the declaration location of the corresponding construct.</summary>
 
@@ -27818,7 +28142,7 @@ Special cases where representation uses Lambda.
  VisitMatchClause allows overriding clause behavior (note: by default it would defaultTraverse expression)
 </summary>
 </member>
-<member name="M:Microsoft.FSharp.Compiler.SourceCodeServices.AstTraversal.AstVisitorBase`1.VisitLetOrUse(Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Compiler.Ast.SynBinding},Microsoft.FSharp.Compiler.Range.range)">
+<member name="M:Microsoft.FSharp.Compiler.SourceCodeServices.AstTraversal.AstVisitorBase`1.VisitLetOrUse(Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Compiler.SourceCodeServices.AstTraversal.TraverseStep},Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Compiler.Ast.SynBinding,Microsoft.FSharp.Core.FSharpOption{`0}},Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Compiler.Ast.SynBinding},Microsoft.FSharp.Compiler.Range.range)">
 <summary>
  VisitLetOrUse allows overriding behavior when visiting module or local let or use bindings
 </summary>
@@ -27949,7 +28273,7 @@ Special cases where representation uses Lambda.
  Returns lond identifier at position.
 </summary>
 </member>
-<member name="M:Microsoft.FSharp.Compiler.SourceCodeServices.ParsedInput.tryFindNearestPointToInsertOpenDeclaration(System.Int32,Microsoft.FSharp.Compiler.Ast.ParsedInput,System.String[],Microsoft.FSharp.Compiler.SourceCodeServices.OpenStatementInsertionPoint)">
+<member name="M:Microsoft.FSharp.Compiler.SourceCodeServices.ParsedInput.findNearestPointToInsertOpenDeclaration(System.Int32,Microsoft.FSharp.Compiler.Ast.ParsedInput,System.String[],Microsoft.FSharp.Compiler.SourceCodeServices.OpenStatementInsertionPoint)">
 <summary>
  Returns `InsertContext` based on current position and symbol idents.
 </summary>

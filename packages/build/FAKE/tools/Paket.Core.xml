@@ -449,6 +449,11 @@
  Represents the contents of a particular package at a particular version.  Any install-specific actions like Content files, References, Roslyn Analyzers, MsBuild targets are represented here.
 </summary>
 </member>
+<member name="P:Paket.PackageLoadScript.Path">
+<summary>
+ Path of the load script
+</summary>
+</member>
 <member name="P:Paket.AnalyzerLib.Language">
 <summary>
  Target language for the analyzer
@@ -1975,7 +1980,7 @@ SecurityProtocolType.Tls ||| SecurityProtocolType.Tls11 ||| SecurityProtocolType
 </member>
 <member name="T:Paket.DependencyChangeDetection.DependencyChangeType.SettingsChanged">
 <summary>
- The settigns of the package changed
+ The settings of the package changed
 </summary>
 </member>
 <member name="T:Paket.DependencyChangeDetection.DependencyChangeType.RestrictionsChanged">
@@ -2049,6 +2054,11 @@ SecurityProtocolType.Tls ||| SecurityProtocolType.Tls11 ||| SecurityProtocolType
 <member name="M:Paket.RestoreProcess.FindPackagesNotExtractedYet(System.String)">
 <summary>
  Finds packages which would be affected by a restore, i.e. not extracted yet or with the wrong version
+</summary>
+</member>
+<member name="M:Paket.RestoreProcess.CombineCopyLocal(Paket.Requirements.InstallSettings,Paket.PackageInstallSettings)">
+<summary>
+ Combines the copy_local settings from the lock file and a project&apos;s references file
 </summary>
 </member>
 <member name="T:Paket.RestoreProcess">
