@@ -35,7 +35,7 @@ type EngineResult<'SuccessType, 'FailureType> =
 
 type TestResult = EngineResult<unit, FailureType>
 
-type TestingEnvironment =  Map<string, string list>
+type TestingEnvironment =  Map<string, obj>
 
 type Test = 
     {
@@ -54,6 +54,8 @@ type ExecutionResults =
 
 type StepInput = 
     | Initial of Test list
+    | PreviousFailed of (Test * TestResult) list
+    | PreviousSucceeded of (Test * TestResult) list
 
 type Step = 
     {

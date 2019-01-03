@@ -205,7 +205,7 @@ module NeedsToRun =
             |> List.append [
                 // Handling the After test
 
-                "Runs the After of each test, just before running that test method"
+                "Runs the After of each test, just after running that test method"
                 |> testedWith (fun _ ->
                         let mutable afterA = false
                         let mutable resultA = false
@@ -214,7 +214,6 @@ module NeedsToRun =
                             { testTemplate with
                                 Name = name
                                 After = (fun _ -> 
-
                                     markResult (getCalled ())
                                     Success ()
                                 )
@@ -313,6 +312,39 @@ module NeedsToRun =
                         |> ignore
 
                         called
+                        |> shouldBeEqualTo true
+                        |> withFailComment "Test After should have been called"
+                    )
+                    
+                "Calls the after with result in the environment when before fails"
+                |> testedWith (fun _ ->
+                        let mutable gotCorrectResult = false
+                        let expectedFailure : EngineResult<TestingEnvironment, PrePostFailureType> = "Before Failed" |> PrePostSimpleFailure |> Failure
+                        let test = 
+                            { testTemplate with
+                                Before = fun _ -> expectedFailure
+                                TestMethod = fun _ -> (Success ())
+                                After = (fun environment ->
+                                    if environment |> Map.containsKey "Result"
+                                    then
+                                        let result = environment.["Result"]
+                                        match result with
+                                        | :? EngineResult<TestingEnvironment, PrePostFailureType> ->
+                                            let testingResult = result :?> EngineResult<TestingEnvironment, PrePostFailureType>
+                                            
+                                            if testingResult = expectedFailure
+                                            then 
+                                                gotCorrectResult <- true
+                                        | _ -> gotCorrectResult <- false
+                                            
+                                    Success ()
+                                )
+                            }
+
+                        runTestWith emptyEnvironment defaultTestExecutor test
+                        |> ignore
+
+                        gotCorrectResult
                         |> shouldBeEqualTo true
                         |> withFailComment "Test After should have been called"
                     )

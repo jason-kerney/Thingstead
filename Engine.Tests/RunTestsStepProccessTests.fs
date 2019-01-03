@@ -51,6 +51,43 @@ module NeedsToRun =
                         |> List.sort
                         |> shouldBeEqualTo expected
                     )
+
+                "Passes the environment to the test runner"
+                |> testedWith
+                    (fun _ ->
+                        let mutable result = 
+                            "No Results collected"
+                            |> asTestFailure
+
+                        let testEnvironment =
+                            emptyEnvironment.Add ("setup", ["this"; "is";"the";"environment"])
+
+                        let tests = 
+                            [
+                                { testTemplate with
+                                    Name = "1"
+                                }
+
+                                { testTemplate with
+                                    Name = "2"
+                                }
+                            ]
+
+                        let input = 
+                            Initial tests
+
+                        let runner (environment: TestingEnvironment) _ = 
+                                result <- 
+                                    environment
+                                    |> shouldBeEqualTo testEnvironment
+
+                                result
+
+                        runStepProccessWith testEnvironment runner input
+                        |> ignore
+
+                        result
+                    )
             ] 
             |> List.append [
                 // runTestsStepProccess
@@ -176,7 +213,7 @@ module NeedsToRun =
                         | _ -> "Tests failed" |> asTestFailure
                     )
 
-                "Run a multiple tests and returns the tests the results"
+                "Run multiple tests and returns the tests the results"
                 |> testedWith 
                     (fun _ ->
                         let tests = [
@@ -215,4 +252,62 @@ module NeedsToRun =
                             |> List.sort
                             |> shouldBeEqualTo expected
                     )
+
+                "Not run when give a failed input"
+                |> testedWith (fun _ -> 
+                        let mutable called = false
+
+                        let test = 
+                            { testTemplate with
+                                TestMethod = (fun _ ->
+                                    called <- true
+                                    "Should not have been called"
+                                    |> asTestFailure
+                                )
+                            }
+
+                        let input = PreviousFailed [test, successFulTest]
+
+                        runTestsStepProccess emptyEnvironment input
+                        |> ignore
+
+                        called
+                        |> shouldBeEqualTo false
+                        |> withFailComment "Test method should not have executed"
+                    )
+
+                "Run a multiple successful tests and return the results if input comes from successful previous"
+                |> testedWith 
+                    (fun _ ->
+                        let tests = [
+                            { testTemplate with
+                                Name = "1"
+                                TestMethod = fun _ -> successFulTest
+                            }
+
+                            { testTemplate with
+                                Name = "2"
+                                TestMethod = fun _ -> successFulTest
+                            }
+
+                            { testTemplate with
+                                Name = "3"
+                                TestMethod = fun _ -> successFulTest
+                            }
+                        ]
+
+                        let input = 
+                            PreviousSucceeded (tests |> List.map (fun test -> test, "something went wrong but its okay" |> asTestFailure))
+
+                        let result = runTestsStepProccess emptyEnvironment input
+
+                        match result with
+                        | Success tests ->
+                            tests
+                            |> List.map (fun result -> result |> snd<Test, TestResult> |> isSuccess)
+                            |> shouldBeEqualTo [true; true; true]
+                            |> withFailComment "unexpected test failure"
+                        | _ -> "Tests failed" |> asTestFailure
+                    )
+
             ]

@@ -1,16 +1,25 @@
 namespace Thingstead.Engine
 
 open Thingstead.Engine.Tests
-open Thingstead.Engine.Types
 open Thingstead.Types
 
 module Steps = 
-    let runStepProccessWith (environment: TestingEnvironment) testRunner (input: StepInput) : EngineResult<(Test * TestResult) list, (Test * TestResult) list> =
+    let private processInput processor input =
         match input with
         | Initial tests -> 
+            processor tests
+        | PreviousFailed result -> Failure result
+        | PreviousSucceeded result ->
+            result
+            |> List.map fst
+            |> processor
+
+    let runStepProccessWith (environment: TestingEnvironment) testRunner (input: StepInput) : EngineResult<(Test * TestResult) list, (Test * TestResult) list> =
+        let execute = testRunner environment
+        let processTests tests = 
             let results = 
                 tests
-                |> List.map (fun test -> test, testRunner emptyEnvironment test)
+                |> List.map (fun test -> test, execute test)
 
             let hasFailures =
                 results
@@ -19,5 +28,23 @@ module Steps =
             if hasFailures then Failure results
             else Success results
 
+        processInput processTests input
+
     let runTestsStepProccess (environment: TestingEnvironment) (input: StepInput) : EngineResult<(Test * TestResult) list, (Test * TestResult) list> =
         input |> runStepProccessWith environment runTestWithDefaultExecutor
+
+    let blankStep = 
+        {
+            Name = "A Blank Step"
+            BeforeStep = fun environment -> Success environment
+            StepProcess = (fun _env input ->
+                processInput (fun tests -> tests |> List.map (fun test -> test, Success ()) |> Success) input
+            )
+            AfterStep = fun _ -> Success ()
+        }
+
+    let basicTestExecutionStep = 
+        {blankStep with
+            Name = "Basic Test Execution Step"
+            StepProcess = runTestsStepProccess
+        }

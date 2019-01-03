@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <ItemGroup>
@@ -17,6 +17,8 @@
     <Compile Include="DefaultTestExecutorTests.fs" />
     <Compile Include="RunTestWithTests.fs" />
     <Compile Include="RunTestsStepProccessTests.fs" />
+    <Compile Include="EmptyStepTests.fs" />
+    <Compile Include="StepRunnerTests.fs" />
     <Compile Include="Runner.fs" />
     <None Include="App.config" />
   </ItemGroup>

@@ -2,7 +2,7 @@ namespace Thingstead.Types
 
 [<AutoOpen>]
 module Helpers = 
-    let emptyEnvironment : TestingEnvironment = Map.empty<string, string list>
+    let emptyEnvironment : TestingEnvironment = Map.empty<string, obj>
 
     let successFulTest : TestResult = Success ()
     
