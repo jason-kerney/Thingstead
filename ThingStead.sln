@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "SolStone.Assertions", "SolStone.Assertions\SolStone.Assertions.fsproj", "{1B24C315-1B67-44A7-A74E-92ED93048891}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "SolStone.Assertions", "SolStone\SolStone.fsproj", "{1B24C315-1B67-44A7-A74E-92ED93048891}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "ThingStead.Tests", "Tests\ThingStead.Tests.fsproj", "{90CFD86D-E72F-4268-8609-8C2DFEA83EDA}"
 EndProject

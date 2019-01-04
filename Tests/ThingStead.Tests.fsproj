@@ -13,7 +13,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Framework\Framework.fsproj" />
-    <ProjectReference Include="..\SolStone.Assertions\SolStone.Assertions.fsproj" />
+    <ProjectReference Include="..\SolStone\SolStone.fsproj" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>
