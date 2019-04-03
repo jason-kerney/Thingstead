@@ -2,7 +2,7 @@
 
 [<AutoOpen>]
 module Decisions = 
-    let pipeline f a prior =
+    let railroad f a prior =
         match prior with
         | Success ->
             try

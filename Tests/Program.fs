@@ -1,5 +1,6 @@
 ﻿namespace TempRunner
 
+open TempRunner.Utils
 open ThingStead.Framework
 open ThingStead.DomainLanguage.Expectations
 
@@ -11,125 +12,133 @@ type Test<'a> = {
 module Program = 
     open Utils
 
-    let tests = [
-        "Pipeline should: ",
+    let tests = 
         [
-            {
-                Name = "Success Calls function" 
-                Function =
-                    fun _ -> 
-                    (
-                        let mutable a = 0
-                        let call x = 
-                            a <- x
-                            Success
+            "Railroad should: ",
+            [
+                {
+                    Name = "Success Calls function" 
+                    Function =
+                        fun _ -> 
+                        (
+                            let mutable a = 0
+                            let call x = 
+                                a <- x
+                                Success
 
-                        Success |> pipeline call 2 |> ignore
+                            Success |> railroad call 2 |> ignore
 
-                        a |> expectsToBe 2 |> withComment "Function was not called"
-                    )
-            }
-            {
-                Name = "Failure prevents function call"
-                Function = 
-                    fun _ ->
-                    (
-                        let mutable a = 0
-                        let call x =
-                            a <- x
-                            Success
+                            a |> expectsToBe 2 |> withComment "Function was not called"
+                        )
+                }
+                {
+                    Name = "Failure prevents function call"
+                    Function = 
+                        fun _ ->
+                        (
+                            let mutable a = 0
+                            let call x =
+                                a <- x
+                                Success
 
-                        "This is a failure"
-                        |> General |> Failure |> pipeline call 2 |> ignore
+                            "This is a failure"
+                            |> General |> Failure |> railroad call 2 |> ignore
 
-                        a |> expectsToBe 0 |> withComment "Function was called"
-                    )
-            }
-            {
-                Name = "Exception is not thrown out"
-                Function =
-                    fun _ -> 
-                    (
-                        let call x =
-                            failwith "Bang"
+                            a |> expectsToBe 0 |> withComment "Function was called"
+                        )
+                }
+                {
+                    Name = "Exception is not thrown out"
+                    Function =
+                        fun _ -> 
+                        (
+                            let call x =
+                                failwith "Bang"
 
-                        try
-                            Success |> pipeline call 2 |> ignore
-                            Success
-                        with
-                        | ex -> ex |> Exception |> Failure 
-                    )
-            }
-        ];
-        "expectsToBe Should:",
-        [
-            {
-                Name = "succeed when comparing 1 to 1"
-                Function = fun _ -> 1 |> expectsToBe 1
-            }
-            {
-                Name = "Return an expectation failure when comparing 1 to 2"
-                Function = 
-                    (fun _ -> 
-                        match (1 |> expectsToBe 2) with
-                        | Failure (Expectation "1 expected to be 2") ->
-                            Success
-                        | a ->
-                            (sprintf "%A expected to be %A" a ("1 expected to be 2" |> Expectation |> Failure))
-                            |> Expectation |> Failure
-                    )
-            }
-            {
-                Name = "Allow a comment to be added to a failure"
-                Function = 
-                    (fun _ ->
-                        let result = 2 |> expectsToBe 1 |> withComment "This is a failure"
+                            try
+                                Success |> railroad call 2 |> ignore
+                                Success
+                            with
+                            | ex -> ex |> Exception |> Failure 
+                        )
+                }
+            ];
+            "expectsToBe Should:",
+            [
+                {
+                    Name = "succeed when comparing 1 to 1"
+                    Function = fun _ -> 1 |> expectsToBe 1
+                }
+                {
+                    Name = "Return an expectation failure when comparing 1 to 2"
+                    Function = 
+                        (fun _ -> 
+                            match (1 |> expectsToBe 2) with
+                            | Failure (Expectation "1 expected to be 2") ->
+                                Success
+                            | a ->
+                                (sprintf "%A expected to be %A" a ("1 expected to be 2" |> Expectation |> Failure))
+                                |> Expectation |> Failure
+                        )
+                }
+                {
+                    Name = "Allow a comment to be added to a failure"
+                    Function = 
+                        (fun _ ->
+                            let result = 2 |> expectsToBe 1 |> withComment "This is a failure"
 
-                        let expected =
-                            ("This is a failure", "2 expected to be 1" |> Expectation) 
-                            |> WithComment
-                            |> Failure
+                            let expected =
+                                ("This is a failure", "2 expected to be 1" |> Expectation) 
+                                |> WithComment
+                                |> Failure
 
-                        result |> expectsToBe expected
-                    )
-            }
-            {
-                Name = "Comment is not added if expectation is met"
-                Function = 
-                    (fun _ ->
-                        let result = "Hello" |> expectsToBe "Hello" |> withComment "This is a failure"
+                            result |> expectsToBe expected
+                        )
+                }
+                {
+                    Name = "Comment is not added if expectation is met"
+                    Function = 
+                        (fun _ ->
+                            let result = "Hello1" |> expectsToBe "Hello" |> withComment "This is a failure"
 
-                        result |> expectsToBe Success
-                    )
-            }
-        ];
-    ]
+                            result |> expectsToBe Success
+                        )
+                }
+            ];
+        ] |> List.collect (
+            fun (suite, tests) ->
+                tests
+                |> List.map(
+                    fun { Name = name; Function = test} ->
+                        (sprintf "%s %s" suite name), test
+                )
+        )
 
     [<EntryPoint>]
     let main argv =
         let failed = 
             tests
-            |> List.collect (
-                fun (suite, tests) ->
-                    tests 
-                    |> List.map (
-                        fun { Name = name; Function = tst} ->
-                            suite + name, (tst ())
-                    )
-            )
+            |> List.map (fun(name, test)->
+                name, (test ())
+            ) 
             |> List.filter (
                 fun (_, result) ->
                     result <> Success
             )
 
-        failed        
-        |> List.iter (
-            fun (name, result) ->
-                printfn "%s" name
-                printfn "%A" result
-        )
+        let report = 
+            failed        
+            |> List.map (
+                fun (name, result) ->
+                    sprintf "%s\n%A" name result
+            )
+            |> join
 
+        if 0 < report.Length then
+            printfn "%s\n" report
+
+        let failedCount = failed |> List.length
         printfn "%d tests run" (tests |> List.length)
-        printfn "%d tests failed" (failed |> List.length)
+        printfn "%d tests failed" failedCount
 
-        0 // return an integer exit code
+        failedCount
