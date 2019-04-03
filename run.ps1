@@ -1,2 +1,2 @@
 Clear-Host
-dotnet run -p .\ThingStead.Temp.Runner\ThingStead.Temp.Runner.fsproj
+dotnet run -p .\Tests\Tests.fsproj

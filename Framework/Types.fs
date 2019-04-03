@@ -1,4 +1,4 @@
-namespace ThingStead.Engines.SolStone
+namespace ThingStead.Framework
 
 type FailureTypes =
     | General of string

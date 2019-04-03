@@ -4,12 +4,11 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Engines\SolStone\SolStone.fsproj">
-      <Name>SolStone.fsproj</Name>
-    </ProjectReference>
+    <Compile Include="utils.fs" />
+    <Compile Include="Expectations.fs" />
+    <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="utils.fs" />
-    <Compile Include="Program.fs" />
+    <ProjectReference Include="..\Framework\Framework.fsproj" />
   </ItemGroup>
 </Project>
