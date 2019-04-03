@@ -14,7 +14,7 @@ module Program =
 
     let tests = 
         [
-            "Railroad should: ",
+            "Railroad should:",
             [
                 {
                     Name = "Success Calls function" 
@@ -99,12 +99,61 @@ module Program =
                     Name = "Comment is not added if expectation is met"
                     Function = 
                         (fun _ ->
-                            let result = "Hello1" |> expectsToBe "Hello" |> withComment "This is a failure"
+                            let result = "Hello" |> expectsToBe "Hello" |> withComment "This is a failure"
 
                             result |> expectsToBe Success
                         )
                 }
             ];
+            "Setup railroad should:",
+            [
+                {
+                    Name = "Success Calls function" 
+                    Function =
+                        fun _ -> 
+                        (
+                            let mutable a = 0
+                            let call x = 
+                                a <- x
+                                Success
+
+                            Success |> setupRailroad call 2 |> ignore
+
+                            a |> expectsToBe 2 |> withComment "Function was not called"
+                        )
+                }
+                {
+                    Name = "Failure prevents function call"
+                    Function = 
+                        fun _ ->
+                        (
+                            let mutable a = 0
+                            let call x =
+                                a <- x
+                                Success
+
+                            "This is a failure"
+                            |> General |> Failure |> setupRailroad call 2 |> ignore
+
+                            a |> expectsToBe 0 |> withComment "Function was called"
+                        )
+                }
+                {
+                    Name = "Exception is not thrown out"
+                    Function =
+                        fun _ -> 
+                        (
+                            let call x =
+                                failwith "Bang"
+
+                            try
+                                Success |> setupRailroad call 2 |> ignore
+                                Success
+                            with
+                            | ex -> ex |> Exception |> SetupFailure 
+                        )
+                }
+            ]
         ] |> List.collect (
             fun (suite, tests) ->
                 tests
