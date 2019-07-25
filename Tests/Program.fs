@@ -293,29 +293,43 @@ module Program =
 
     [<EntryPoint>]
     let main argv =
-        let results = 
+        let run (tests: TestGroup list) =
             let rand = System.Random()
             let getNext max =
                 rand.Next max
 
+            let flatten tests = 
+                tests
+                |> List.collect (fun { GroupName = groupName; Tags = _; Tests = ts } ->
+                    ts |> List.map (fun test -> groupName, test)
+                )
+
+            let executeEach tests =
+                tests
+                |> List.map (fun (groupName : string, test) ->
+                    groupName, (perform test)
+                )
+            
+            let reinstateGroup tests =
+                tests
+                |> List.groupBy (fun (groupName : string, _) ->
+                    groupName
+                )
+                |> List.map (fun (groupName, results) ->
+                    let outPut =
+                        results 
+                        |> List.map (fun (_, (name : string, result)) -> (name, result))
+                        |> List.filter (fun (_, result) -> result <> Success)
+                    groupName, outPut
+                )
+
             tests
-            |> List.collect (fun { GroupName = groupName; Tags = _; Tests = ts } ->
-                ts |> List.map (fun test -> groupName, test)
-            )
+            |> flatten
             |> randomize getNext
-            |> List.map (fun (groupName, test) ->
-                groupName, (perform test)
-            )
-            |> List.groupBy (fun (groupName, _) ->
-                groupName
-            )
-            |> List.map (fun (groupName, results) ->
-                let outPut =
-                    results 
-                    |> List.map (fun (_, (name, result)) -> (name, result))
-                    |> List.filter (fun (_, result) -> result <> Success)
-                groupName, outPut
-            )
+            |> executeEach
+            |> reinstateGroup
+
+        let results = run tests
 
         let failed = 
             results
@@ -339,12 +353,14 @@ module Program =
         if 0 < report.Length then
             printfn "\n\n%s\n" report
 
-        let failedCount = failed |> List.sumBy (fun (_, results) -> results |> List.length)
+        let countPartsBy getParts items =
+            let numberGetter = getParts >> List.length
+            items |> List.sumBy numberGetter
+
+        let failedCount = failed |> (countPartsBy (fun (_, results) -> results))
         let runCount = 
-            tests 
-            |> List.sumBy (fun { GroupName = _; Tags = _; Tests = tests } ->
-                tests |> List.length
-            )
+            tests |> (countPartsBy(fun { GroupName = _; Tags = _; Tests = tests } -> tests))
+
         printfn "%d tests run" runCount
         printfn "%d tests failed" failedCount
 
