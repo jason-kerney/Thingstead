@@ -21,7 +21,4 @@ module Execution =
     let perform { TestName = name; Function = test } =
         let name = sprintf "%s" name
         name, (test ())
-
-    let execute tests =
-        tests
-        |> List.map perform
+        
