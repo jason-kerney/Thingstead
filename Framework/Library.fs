@@ -16,3 +16,12 @@ module Decisions =
     let setupRailroad f a prior = resultRailroad SetupFailure f a prior
 
     let tearDownRailroad f a prior = resultRailroad TeardownFailure f a prior
+
+module Execution = 
+    let execute tests =
+        tests
+        |> List.map (
+            fun { TestName = name; Function = test } ->
+                let name = sprintf "%s" name
+                name, (test ())
+        )
