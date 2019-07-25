@@ -310,7 +310,7 @@ module Program =
                     groupName, (perform test)
                 )
             
-            let reinstateGroup tests =
+            let groupItems tests =
                 tests
                 |> List.groupBy (fun (groupName : string, _) ->
                     groupName
@@ -327,7 +327,7 @@ module Program =
             |> flatten
             |> randomize getNext
             |> executeEach
-            |> reinstateGroup
+            |> groupItems
 
         let results = run tests
 
