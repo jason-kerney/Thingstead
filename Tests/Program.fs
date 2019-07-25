@@ -5,11 +5,6 @@ open ThingStead.Framework
 open ThingStead.DomainLanguage.Expectations
 open ThingStead.Framework.Execution
 
-type TestTemplate = {
-    Name : string
-    Function : Environment -> Results
-}
-
 module Program = 
     open Utils
 
@@ -32,20 +27,10 @@ module Program =
             if suiteName.Trim().Length > 0 then suiteName.Trim()
             else ""
 
-        let tests = 
-            templates
-            |> List.map (
-                fun { Name = name; Function = tst } ->
-                    {
-                        TestName = name
-                        Function = tst
-                    }
-            )
-
         {
             GroupName = suiteName
             Tags = []
-            Tests = tests
+            Tests = templates
         }
 
     let tests = 
@@ -53,7 +38,7 @@ module Program =
             "Railroad should:" |> asTests
                 [
                     {
-                        Name = "Success Calls function" 
+                        TestName = "Success Calls function" 
                         Function =
                             fun _ -> 
                             (
@@ -68,7 +53,7 @@ module Program =
                             )
                     }
                     {
-                        Name = "Failure prevents function call"
+                        TestName = "Failure prevents function call"
                         Function = 
                             fun _ ->
                             (
@@ -84,7 +69,7 @@ module Program =
                             )
                     }
                     {
-                        Name = "Exception is not thrown out"
+                        TestName = "Exception is not thrown out"
                         Function =
                             fun _ -> 
                             (
@@ -102,11 +87,11 @@ module Program =
             "expectsToBe Should:" |> asTests
                 [
                     {
-                        Name = "succeed when comparing 1 to 1"
+                        TestName = "succeed when comparing 1 to 1"
                         Function = fun _ -> 1 |> expectsToBe 1
                     }
                     {
-                        Name = "Return an expectation failure when comparing 1 to 2"
+                        TestName = "Return an expectation failure when comparing 1 to 2"
                         Function = 
                             (fun _ -> 
                                 match (1 |> expectsToBe 2) with
@@ -118,7 +103,7 @@ module Program =
                             )
                     }
                     {
-                        Name = "Allow a comment to be added to a failure"
+                        TestName = "Allow a comment to be added to a failure"
                         Function = 
                             (fun _ ->
                                 let result = 2 |> expectsToBe 1 |> withComment "This is a failure"
@@ -132,7 +117,7 @@ module Program =
                             )
                     }
                     {
-                        Name = "Comment is not added if expectation is met"
+                        TestName = "Comment is not added if expectation is met"
                         Function = 
                             (fun _ ->
                                 let result = "Hello" |> expectsToBe "Hello" |> withComment "This is a failure"
@@ -144,7 +129,7 @@ module Program =
             "Setup railroad should:" |> asTests
                 [
                     {
-                        Name = "Success Calls function" 
+                        TestName = "Success Calls function" 
                         Function =
                             fun _ -> 
                             (
@@ -159,7 +144,7 @@ module Program =
                             )
                     }
                     {
-                        Name = "Failure prevents function call"
+                        TestName = "Failure prevents function call"
                         Function = 
                             fun _ ->
                             (
@@ -175,7 +160,7 @@ module Program =
                             )
                     }
                     {
-                        Name = "Exception is not thrown out"
+                        TestName = "Exception is not thrown out"
                         Function =
                             fun _ -> 
                             (
@@ -193,7 +178,7 @@ module Program =
             "Teardown railroad should:" |> asTests
                 [
                     {
-                        Name = "Success Calls function" 
+                        TestName = "Success Calls function" 
                         Function =
                             fun _ -> 
                             (
@@ -208,7 +193,7 @@ module Program =
                             )
                     }
                     {
-                        Name = "Failure prevents function call"
+                        TestName = "Failure prevents function call"
                         Function = 
                             fun _ ->
                             (
@@ -224,7 +209,7 @@ module Program =
                             )
                     }
                     {
-                        Name = "Exception is not thrown out"
+                        TestName = "Exception is not thrown out"
                         Function =
                             fun _ -> 
                             (
@@ -242,7 +227,7 @@ module Program =
             "Randomize should randomize:" |> asTests
                 [
                     {
-                        Name = "Using a randomizer"
+                        TestName = "Using a randomizer"
                         Function = 
                             fun _ ->
                             (
@@ -265,7 +250,7 @@ module Program =
                             )
                     }
                     {
-                        Name = "Actually using randomizer"
+                        TestName = "Actually using randomizer"
                         Function = 
                             fun _ ->
                             (
