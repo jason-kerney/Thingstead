@@ -294,15 +294,28 @@ module Program =
     [<EntryPoint>]
     let main argv =
         let results = 
-            tests
-            |> List.map (
-                fun testGroup -> 
-                    let results = 
-                        execute (testGroup.Tests)
-                        |> List.filter (fun (_, result) -> result <> Success)
+            let rand = System.Random()
+            let getNext max =
+                rand.Next max
 
-                    (testGroup.GroupName, results)
-                )
+            tests
+            |> List.collect (fun { GroupName = groupName; Tags = _; Tests = ts } ->
+                ts |> List.map (fun test -> groupName, test)
+            )
+            |> randomize getNext
+            |> List.map (fun (groupName, test) ->
+                groupName, (perform test)
+            )
+            |> List.groupBy (fun (groupName, _) ->
+                groupName
+            )
+            |> List.map (fun (groupName, results) ->
+                let outPut =
+                    results 
+                    |> List.map (fun (_, (name, result)) -> (name, result))
+                    |> List.filter (fun (_, result) -> result <> Success)
+                groupName, outPut
+            )
 
         let failed = 
             results
@@ -327,7 +340,12 @@ module Program =
             printfn "\n\n%s\n" report
 
         let failedCount = failed |> List.sumBy (fun (_, results) -> results |> List.length)
-        printfn "%d tests run" (tests |> List.length)
+        let runCount = 
+            tests 
+            |> List.sumBy (fun { GroupName = _; Tags = _; Tests = tests } ->
+                tests |> List.length
+            )
+        printfn "%d tests run" runCount
         printfn "%d tests failed" failedCount
 
         failedCount

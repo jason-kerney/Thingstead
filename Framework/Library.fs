@@ -18,10 +18,10 @@ module Decisions =
     let tearDownRailroad f a prior = resultRailroad TeardownFailure f a prior
 
 module Execution = 
+    let perform { TestName = name; Function = test } =
+        let name = sprintf "%s" name
+        name, (test ())
+
     let execute tests =
         tests
-        |> List.map (
-            fun { TestName = name; Function = test } ->
-                let name = sprintf "%s" name
-                name, (test ())
-        )
+        |> List.map perform
