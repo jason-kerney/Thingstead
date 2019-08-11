@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
@@ -6,6 +6,11 @@
   <ItemGroup>
     <Compile Include="Utils.fs" />
     <Compile Include="Expectations.fs" />
+    <Compile Include="Railroad.tests.fs" />
+    <Compile Include="ExpectToBe.tests.fs" />
+    <Compile Include="SetupRailroad.tests.fs" />
+    <Compile Include="TeardownRailroad.fs" />
+    <Compile Include="Randomize.tests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>

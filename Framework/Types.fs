@@ -30,3 +30,10 @@ type TestGroup =
     }
 
 type TestSuite = TestGroup
+
+[<AutoOpen>]
+module TypeHelpers =
+    let generalFailure message =
+        message
+        |> General
+        |> Failure
