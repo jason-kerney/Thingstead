@@ -17,7 +17,7 @@ module Program =
         ]
 
     [<EntryPoint>]
-    let main argv =
+    let main _argv =
         let run (tests: TestGroup list) =
             let rand = System.Random()
             let getNext max =
@@ -32,19 +32,19 @@ module Program =
             let executeEach tests =
                 tests
                 |> List.map (fun (groupName : string, test) ->
-                    groupName, (perform test)
+                    groupName, (perform test), test
                 )
             
             let groupItems tests =
                 tests
-                |> List.groupBy (fun (groupName : string, _) ->
+                |> List.groupBy (fun (groupName : string, _, _) ->
                     groupName
                 )
                 |> List.map (fun (groupName, results) ->
                     let outPut =
                         results 
-                        |> List.map (fun (_, (name : string, result)) -> (name, result))
-                        |> List.filter (fun (_, result) -> result <> Success)
+                        |> List.map (fun (_, (name : string, result), test) -> (name, result, test))
+                        |> List.filter (fun (_, result, _) -> result <> Success)
                     groupName, outPut
                 )
 
@@ -58,15 +58,15 @@ module Program =
 
         let failed = 
             results
-            |> List.filter (fun (_, results) -> results <> [])
+            |> List.filter (fun (_, results) -> results |> List.isEmpty |> not)
 
         let report = 
-            failed        
+            failed
             |> List.map (
                 fun (group_name, results) ->
                     let reportedResults = 
                         results
-                        |> List.mapi (fun index (name, result) ->
+                        |> List.mapi (fun index (name, result, _test) ->
                             sprintf "\t%d: %s %A\n" (index + 1) name result
                         )
                         |> join
