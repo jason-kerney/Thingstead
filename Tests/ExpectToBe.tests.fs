@@ -7,7 +7,7 @@ open ThingStead.DomainLanguage.Expectations
 
 module ExpectToBe = 
     let tests = 
-        "expectsToBe Should:" |> asTests
+        "expectsToBe Should" |> asTests
             [
                 {
                     TestName = "succeed when comparing 1 to 1"

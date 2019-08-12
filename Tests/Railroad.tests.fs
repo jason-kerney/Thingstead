@@ -7,7 +7,7 @@ open ThingStead.DomainLanguage.Expectations
 
 module Railroad = 
     let tests = 
-        "Railroad should:" |> asTests
+        "Railroad should" |> asTests
             [
                 {
                     TestName = "Success Calls function" 

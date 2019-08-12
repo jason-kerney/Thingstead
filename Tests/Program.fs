@@ -18,50 +18,10 @@ module Program =
 
     [<EntryPoint>]
     let main _argv =
-        let run (tests: TestGroup list) =
-            let rand = System.Random()
-            let getNext max =
-                rand.Next max
-
-            let flatten tests = 
-                tests
-                |> List.collect (fun { GroupName = groupName; Tags = _; Tests = ts } ->
-                    ts |> List.map (fun test -> groupName, test)
-                )
-
-            let executeEach tests =
-                tests
-                |> List.map (fun (groupName : string, test) ->
-                    groupName, (perform test), test
-                )
-            
-            let groupItems tests =
-                tests
-                |> List.groupBy (fun (groupName : string, _, _) ->
-                    groupName
-                )
-                |> List.map (fun (groupName, results) ->
-                    let outPut =
-                        results 
-                        |> List.map (fun (_, (name : string, result), test) -> (name, result, test))
-                        |> List.filter (fun (_, result, _) -> result <> Success)
-                    groupName, outPut
-                )
-
-            tests
-            |> flatten
-            |> randomize getNext
-            |> executeEach
-            |> groupItems
-
         let results = run tests
 
-        let failed = 
-            results
-            |> List.filter (fun (_, results) -> results |> List.isEmpty |> not)
-
         let report = 
-            failed
+            results.Failures
             |> List.map (
                 fun (group_name, results) ->
                     let reportedResults = 
@@ -82,7 +42,7 @@ module Program =
             let numberGetter = getParts >> List.length
             items |> List.sumBy numberGetter
 
-        let failedCount = failed |> (countPartsBy (fun (_, results) -> results))
+        let failedCount = results.Failures |> (countPartsBy (fun (_, results) -> results))
         let runCount = 
             tests |> (countPartsBy(fun { GroupName = _; Tags = _; Tests = tests } -> tests))
 

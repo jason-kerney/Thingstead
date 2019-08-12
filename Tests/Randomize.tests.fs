@@ -7,7 +7,7 @@ open ThingStead.Framework.Execution
 
 module Randomizer = 
     let tests =
-        "Randomize should randomize:" |> asTests
+        "Randomize should randomize" |> asTests
             [
                 {
                     TestName = "Using a randomizer"

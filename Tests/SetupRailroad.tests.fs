@@ -6,7 +6,7 @@ open ThingStead.Framework
 
 module SetupRailroad =
     let tests =
-        "Setup railroad should:" |> asTests
+        "Setup railroad should" |> asTests
             [
                 {
                     TestName = "Success Calls function" 
