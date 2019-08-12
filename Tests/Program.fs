@@ -5,8 +5,6 @@ open ThingStead.Framework
 open ThingStead.Framework.Execution
 
 module Program = 
-    open Utils
-
     let tests = 
         {
             TestGroups =
