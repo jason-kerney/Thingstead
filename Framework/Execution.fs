@@ -1,5 +1,7 @@
 ﻿namespace ThingStead.Framework
 
+open FSharp.Collections.ParallelSeq
+
 module Execution = 
     type ExecutionResult = {
         Results: (string * (string * Results * Test) list) list
@@ -29,6 +31,7 @@ module Execution =
     let perform { TestName = name; Function = testAction } =
             let name = sprintf "%s" name
             name, (testAction ()), { TestName = name; Function = testAction }
+
     let runStatic { TestGroups = tests } seed =
         let rand = System.Random seed
         let getNext max =
@@ -42,9 +45,10 @@ module Execution =
 
         let executeEach tests =
             tests
-            |> List.map (fun (groupName : string, test) ->
+            |> PSeq.map (fun (groupName : string, test) ->
                 groupName, (perform test)
             )
+            |> PSeq.toList
         
         let groupItems tests =
             tests
