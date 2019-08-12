@@ -8,13 +8,16 @@ module Program =
     open Utils
 
     let tests = 
-        [
-            Expectations.ExpectToBe.tests
-            Framework.Railroad.tests
-            Framework.SetupRailroad.tests
-            Framework.TeardownRailroad.tests
-            Framework.Execution.Randomizer.tests
-        ]
+        {
+            TestGroups =
+                [
+                    Expectations.ExpectToBe.tests
+                    Framework.Railroad.tests
+                    Framework.SetupRailroad.tests
+                    Framework.TeardownRailroad.tests
+                    Framework.Execution.Randomizer.tests
+                ]
+        }
 
     [<EntryPoint>]
     let main _argv =
@@ -44,9 +47,10 @@ module Program =
 
         let failedCount = results.Failures |> (countPartsBy (fun (_, results) -> results))
         let runCount = 
-            tests |> (countPartsBy(fun { GroupName = _; Tags = _; Tests = tests } -> tests))
+            tests.TestGroups |> (countPartsBy(fun { GroupName = _; Tags = _; Tests = tests } -> tests))
 
         printfn "%d tests run" runCount
         printfn "%d tests failed" failedCount
+        printfn "\tSeeded With: %d" results.Seed
 
         failedCount

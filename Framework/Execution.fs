@@ -5,6 +5,11 @@ module Execution =
         Results: (string * (string * Results * Test) list) list
         Failures: (string * (string * Results * Test) list) list
         Successes: (string * (string * Results * Test) list) list
+        Seed: int
+    }
+
+    type EngineParameters = {
+        TestGroups: TestGroup list
     }
 
     let randomize (getIndex: int -> int) (items: 'a List) = 
@@ -24,9 +29,8 @@ module Execution =
     let perform { TestName = name; Function = testAction } =
             let name = sprintf "%s" name
             name, (testAction ()), { TestName = name; Function = testAction }
-
-    let run (tests: TestGroup list) =
-        let rand = System.Random()
+    let runStatic { TestGroups = tests } seed =
+        let rand = System.Random seed
         let getNext max =
             rand.Next max
 
@@ -80,5 +84,9 @@ module Execution =
             Results = results |> groupItems
             Failures = failed
             Successes = succeeded
+            Seed = seed
         }
+
+    let run tests =
+        runStatic tests (int(System.DateTime.Now.Ticks) &&& 0x0000FFFF)
         
