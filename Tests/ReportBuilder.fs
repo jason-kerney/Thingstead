@@ -34,4 +34,4 @@ module ReportBuilder =
         let report = sprintf "%s%d tests failed\n" report failedCount
         let report = sprintf "%s\tSeeded With: %d\n" report results.Seed
 
-        report
+        printf "%s" report
