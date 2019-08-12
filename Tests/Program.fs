@@ -1,7 +1,6 @@
 ﻿namespace Tests
 
 open Tests.Utils
-open ThingStead.Framework
 open ThingStead.Framework.Execution
    
 module Program = 
