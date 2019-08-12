@@ -11,6 +11,7 @@
     <Compile Include="SetupRailroad.tests.fs" />
     <Compile Include="TeardownRailroad.tests.fs" />
     <Compile Include="Randomize.tests.fs" />
+    <Compile Include="ReportBuilder.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>

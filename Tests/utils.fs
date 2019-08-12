@@ -22,3 +22,7 @@ module Utils =
             Tags = []
             Tests = templates
         }
+
+    let countPartsBy getParts items =
+        let numberGetter = getParts >> List.length
+        items |> List.sumBy numberGetter
