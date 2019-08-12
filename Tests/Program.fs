@@ -20,9 +20,9 @@ module Program =
     [<EntryPoint>]
     let main _argv =
         let results = run tests
-        let failedCount = results.Failures |> (countPartsBy (fun (_, results) -> results))
 
         let report = ReportBuilder.reportOn results
         printf "%s" report
 
+        let failedCount = results.Failures |> (countPartsBy (fun (_, results) -> results))
         failedCount
