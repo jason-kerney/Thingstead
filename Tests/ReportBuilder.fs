@@ -30,8 +30,10 @@ module ReportBuilder =
             else
                 report
 
-        let report = sprintf "%s%d tests run\n" report runCount
-        let report = sprintf "%s%d tests failed\n" report failedCount
-        let report = sprintf "%s\tSeeded With: %d\n" report results.Seed
-
+        let timeElapsed = double(results.TimeElapsedMilliseconds) / 1000.0
+        
         printf "%s" report
+        printfn "%d tests run" runCount
+        printfn "%d tests failed" failedCount
+        printfn "\tSeeded With: %d" results.Seed
+        printfn "\n\nElapsed Time: %f Seconds" timeElapsed

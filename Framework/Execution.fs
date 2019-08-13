@@ -8,6 +8,7 @@ module Execution =
         Failures: (string * (string * Results * Test) list) list
         Successes: (string * (string * Results * Test) list) list
         Seed: int
+        TimeElapsedMilliseconds: int64
     }
 
     type EngineParameters = {
@@ -33,6 +34,8 @@ module Execution =
             name, (testAction ()), { TestName = name; Function = testAction }
 
     let runStatic { TestGroups = tests } seed =
+        let stopWatch = System.Diagnostics.Stopwatch.StartNew()
+
         let rand = System.Random seed
         let getNext max =
             rand.Next max
@@ -84,11 +87,14 @@ module Execution =
                 )
             |> groupItems
 
+        stopWatch.Stop()
+
         {
             Results = results |> groupItems
             Failures = failed
             Successes = succeeded
             Seed = seed
+            TimeElapsedMilliseconds = stopWatch.ElapsedMilliseconds
         }
 
     let run tests =
