@@ -65,11 +65,12 @@ module Execution =
                 groupName, outPut
             )
 
+        let testRunner =
+            flatten >> (randomize getNext) >> executeEach
+
         let results = 
             tests
-            |> flatten
-            |> randomize getNext
-            |> executeEach
+            |> testRunner
 
         let failed = 
             results
