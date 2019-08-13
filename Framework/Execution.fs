@@ -6,7 +6,7 @@ module Execution =
     type ExecutedTest =
         {
             TestName: string
-            Result: Results
+            Result: Result
             Test: Test
         }
 
@@ -17,7 +17,7 @@ module Execution =
         }
 
     type ExecutionResult = {
-        Results: ExecutedTestGroup list
+        Result: ExecutedTestGroup list
         Failures: ExecutedTestGroup list
         Successes: ExecutedTestGroup list
         Seed: int
@@ -112,7 +112,7 @@ module Execution =
         stopWatch.Stop()
 
         {
-            Results = results |> groupItems
+            Result = results |> groupItems
             Failures = failed
             Successes = succeeded
             Seed = seed

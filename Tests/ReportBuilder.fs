@@ -8,7 +8,7 @@ module ReportBuilder =
     let reportOn results =
         let getTestResults { GroupName = _; TestResults = results } = results
         let failedCount = results.Failures |> (countPartsBy getTestResults)
-        let runCount = results.Results |> (countPartsBy getTestResults)
+        let runCount = results.Result |> (countPartsBy getTestResults)
 
         let report = 
             results.Failures
@@ -37,4 +37,5 @@ module ReportBuilder =
         printfn "%d tests run" runCount
         printfn "%d tests failed" failedCount
         printfn "\tSeeded With: %d" results.Seed
+        printfn "\n%.2f %% Successful"  ((float(runCount - failedCount) / float(runCount)) * 100.)
         printfn "\n\nElapsed Time: %f Seconds" timeElapsed

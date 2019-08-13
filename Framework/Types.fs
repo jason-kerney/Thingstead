@@ -1,25 +1,25 @@
 namespace ThingStead.Framework
 open System
 
-type FailureTypes =
-    | WithComment of string * FailureTypes
+type FailureType =
+    | WithComment of string * FailureType
     | General of string
     | Exception of exn
     | Expectation of string
 
-type Results =
+type Result =
     | Success
-    | Failure of FailureTypes
-    | SetupFailure of FailureTypes
-    | TeardownFailure of FailureTypes
-    | CustomFailure of FailureTypes
+    | Failure of FailureType
+    | SetupFailure of FailureType
+    | TeardownFailure of FailureType
+    | CustomFailure of FailureType
 
 type Environment = unit
 
 type Test =
     {
         TestName : string
-        Function: Environment -> Results
+        Function: Environment -> Result
     }
 
 type TestGroup =
