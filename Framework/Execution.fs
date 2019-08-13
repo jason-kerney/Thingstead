@@ -3,10 +3,23 @@
 open FSharp.Collections.ParallelSeq
 
 module Execution = 
+    type ExecutedTest =
+        {
+            TestName: string
+            Result: Results
+            Test: Test
+        }
+
+    type ExecutedTestGroup =
+        {
+            GroupName: string
+            TestResults: ExecutedTest list
+        }
+
     type ExecutionResult = {
-        Results: (string * (string * Results * Test) list) list
-        Failures: (string * (string * Results * Test) list) list
-        Successes: (string * (string * Results * Test) list) list
+        Results: ExecutedTestGroup list
+        Failures: ExecutedTestGroup list
+        Successes: ExecutedTestGroup list
         Seed: int
         TimeElapsedMilliseconds: int64
     }
@@ -28,10 +41,14 @@ module Execution =
                 walk (index + 1) arr
 
         walk 0 (items |> List.toArray)
-        
-    let perform { TestName = name; Function = testAction } =
+
+    let perform { TestName = name; Function = testAction } (groupName : string) =
             let name = sprintf "%s" name
-            name, (testAction ()), { TestName = name; Function = testAction }
+            groupName, {
+                    TestName = name
+                    Result = testAction ()
+                    Test = { TestName = name; Function = testAction }
+                }
 
     let runStatic { TestGroups = tests } seed =
         let stopWatch = System.Diagnostics.Stopwatch.StartNew()
@@ -49,20 +66,24 @@ module Execution =
         let executeEach tests =
             tests
             |> PSeq.map (fun (groupName : string, test) ->
-                groupName, (perform test)
+                perform test groupName
             )
             |> PSeq.toList
         
-        let groupItems tests =
+        let groupItems (tests: (string * ExecutedTest) list) =
             tests
             |> List.groupBy (fun (groupName : string, _) ->
                 groupName
             )
             |> List.map (fun (groupName, results) ->
-                let outPut =
-                    results 
-                    |> List.map (fun (_, (name : string, result, test)) -> (name, result, test))
-                groupName, outPut
+                let results =
+                    results
+                    |> List.map (fun (_, result) -> result)
+
+                {
+                    GroupName = groupName
+                    TestResults = results
+                }
             )
 
         let testRunner =
@@ -75,7 +96,7 @@ module Execution =
         let failed = 
             results
             |> List.filter 
-                (fun (_, (_, result, _)) ->
+                (fun (_, { TestName = _; Result = result; Test = _ }) ->
                     result <> Success
                 )
             |> groupItems
@@ -83,7 +104,7 @@ module Execution =
         let succeeded = 
             results
             |> List.filter 
-                (fun (_, (_, result, _)) ->
+                (fun (_, {TestName = _; Result = result; Test = _}) ->
                     result = Success
                 )
             |> groupItems

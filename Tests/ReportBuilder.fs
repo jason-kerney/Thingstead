@@ -6,16 +6,17 @@ open Tests.Utils
 module ReportBuilder =
     
     let reportOn results =
-        let failedCount = results.Failures |> (countPartsBy (fun (_, results) -> results))
-        let runCount = results.Results |> (countPartsBy(fun (_, results) -> results))
+        let getTestResults { GroupName = _; TestResults = results } = results
+        let failedCount = results.Failures |> (countPartsBy getTestResults)
+        let runCount = results.Results |> (countPartsBy getTestResults)
 
         let report = 
             results.Failures
             |> List.map (
-                fun (group_name, results) ->
+                fun { GroupName = group_name; TestResults = results } ->
                     let reportedResults = 
                         results
-                        |> List.mapi (fun index (name, result, _test) ->
+                        |> List.mapi (fun index { TestName = name; Result = result; Test = _ } ->
                             sprintf "\t%d: %s %A\n" (index + 1) name result
                         )
                         |> join

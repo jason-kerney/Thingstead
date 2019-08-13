@@ -48,4 +48,11 @@ module ExpectToBe =
                             result |> expectsToBe Success
                         )
                 }
+                //{
+                //    TestName = "This will fail"
+                //    Function =
+                //        (fun _ ->
+                //            true |> expectsToBe false
+                //        )
+                //}
             ]

@@ -23,5 +23,5 @@ module Program =
 
         ReportBuilder.reportOn results
 
-        let failedCount = results.Failures |> (countPartsBy (fun (_, results) -> results))
+        let failedCount = results.Failures |> (countPartsBy (fun { GroupName = _; TestResults = results } -> results))
         failedCount
