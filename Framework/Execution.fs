@@ -42,13 +42,14 @@ module Execution =
 
         walk 0 (items |> List.toArray)
 
-    let perform { TestName = name; Function = testAction } (groupName : string) =
+    let perform { TestName = name; Function = testAction } =
             let name = sprintf "%s" name
-            groupName, {
-                    TestName = name
-                    Result = testAction ()
-                    Test = { TestName = name; Function = testAction }
-                }
+
+            {
+                TestName = name
+                Result = testAction ()
+                Test = { TestName = name; Function = testAction }
+            }
 
     let runStatic { TestGroups = tests } seed =
         let stopWatch = System.Diagnostics.Stopwatch.StartNew()
@@ -66,7 +67,7 @@ module Execution =
         let executeEach tests =
             tests
             |> PSeq.map (fun (groupName : string, test) ->
-                perform test groupName
+                groupName, (perform test)
             )
             |> PSeq.toList
         
